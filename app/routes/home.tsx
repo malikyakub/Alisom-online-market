@@ -2,9 +2,11 @@ import type { Route } from "./+types/home";
 import { Welcome } from "../welcome/welcome";
 import CategoryCard from "components/CategoryCard";
 import ProductCard from "components/ProductCard";
-
+import { IoStorefrontSharp } from "react-icons/io5";
 import { RiComputerFill } from "react-icons/ri";
 import { CgSmartphone } from "react-icons/cg";
+import InformationCard from "components/InformationCard";
+import { CiDollar } from "react-icons/ci";
 
 export function meta({}: Route.MetaArgs) {
   return [
@@ -32,6 +34,21 @@ export default function Home() {
           rating={4}
         />
       </div>
+      <div className="flex flex-row  items-center gap-3">
+      <InformationCard 
+        icon={IoStorefrontSharp}
+        value="10.5k"
+        label="Sellers active on our site"
+        iconBgColor="#1A2238"
+        textColor="#1A2238"
+      />   
+      <InformationCard 
+        icon={CiDollar}
+        value="33k"
+        label="Monthly Produduct Sale"
+        iconBgColor="#1A2238"
+        textColor="#1A2238"
+      />    </div>
     </div>
   );
 }
