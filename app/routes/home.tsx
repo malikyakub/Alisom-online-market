@@ -17,7 +17,7 @@ export function meta({}: Route.MetaArgs) {
 
 export default function Home() {
   return (
-    <div className="bg-[#17C3B2] flex-row items-center justify-center min-h-screen p-5 gap-8">
+    <div className="flex-row items-center justify-center min-h-screen p-5 gap-8">
       <CategoryCard icon={RiComputerFill} text="Computers" />
       <CategoryCard icon={CgSmartphone} text="SmartPhones" />
       <div className="flex flex-row  items-center flex-wrap">
@@ -35,20 +35,21 @@ export default function Home() {
         />
       </div>
       <div className="flex flex-row  items-center gap-3">
-      <InformationCard 
-        icon={IoStorefrontSharp}
-        value="10.5k"
-        label="Sellers active on our site"
-        iconBgColor="#1A2238"
-        textColor="#1A2238"
-      />   
-      <InformationCard 
-        icon={CiDollar}
-        value="33k"
-        label="Monthly Produduct Sale"
-        iconBgColor="#1A2238"
-        textColor="#1A2238"
-      />    </div>
+        <InformationCard
+          icon={IoStorefrontSharp}
+          value="10.5k"
+          label="Sellers active on our site"
+          iconBgColor="#1A2238"
+          textColor="#1A2238"
+        />
+        <InformationCard
+          icon={CiDollar}
+          value="33k"
+          label="Monthly Produduct Sale"
+          iconBgColor="#1A2238"
+          textColor="#1A2238"
+        />
+      </div>
     </div>
   );
 }
