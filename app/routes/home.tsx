@@ -7,6 +7,7 @@ import { RiComputerFill } from "react-icons/ri";
 import { CgSmartphone } from "react-icons/cg";
 import InformationCard from "components/InformationCard";
 import { CiDollar } from "react-icons/ci";
+import TotalCard from "components/TotalCard";
 
 export function meta({}: Route.MetaArgs) {
   return [
@@ -27,13 +28,13 @@ export function meta({}: Route.MetaArgs) {
 
 export default function Home() {
   return (
-    <div className="flex-row items-center justify-center min-h-screen p-5 gap-8">
-      <div className="flex flex-row items-center gap-8">
+    <div className="bg-[#17C3B2] min-h-screen p-5 flex flex-col gap-10">
+      <div className="flex flex-row items-center gap-4">
         <CategoryCard icon={RiComputerFill} text="Computers" />
         <CategoryCard icon={CgSmartphone} text="SmartPhones" />
       </div>
 
-      <div className="flex flex-row items-center flex-wrap gap-8">
+      <div className="flex flex-row flex-wrap items-center  gap-4">
         <ProductCard
           image="https://i.pinimg.com/736x/ee/3e/4c/ee3e4c0c619248199d6cef77294db156.jpg"
           title="laptop"
@@ -48,7 +49,7 @@ export default function Home() {
         />
       </div>
 
-      <div className="flex flex-row items-center gap-3">
+      <div className="flex flex-row flex-wrap items-center gap-4">
         <InformationCard
           icon={IoStorefrontSharp}
           value="10.5k"
@@ -59,10 +60,15 @@ export default function Home() {
         <InformationCard
           icon={CiDollar}
           value="33k"
-          label="Monthly Product Sale"
+          label="Monthly Produduct Sale"
           iconBgColor="#1A2238"
           textColor="#1A2238"
         />
+      </div>
+      <div className="flex ">
+        <div className="w-full md:w-[320px]">
+          <TotalCard />
+        </div>
       </div>
     </div>
   );
