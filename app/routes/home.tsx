@@ -11,8 +11,18 @@ import TotalCard from "components/TotalCard";
 
 export function meta({}: Route.MetaArgs) {
   return [
-    { title: "New React Router App" },
-    { name: "description", content: "Welcome to React Router!" },
+    { title: "Alisom Online market - Online Market for Gadgets and Devices" },
+    {
+      name: "description",
+      content:
+        "Explore the latest electronics, gadgets, and devices at unbeatable prices. Shop now at Alisom Electronics!",
+    },
+    {
+      name: "keywords",
+      content:
+        "electronics, gadgets, smartphones, laptops, computers, online market, Alisom",
+    },
+    { name: "robots", content: "index, follow" },
   ];
 }
 
@@ -55,7 +65,6 @@ export default function Home() {
           textColor="#1A2238"
         />
       </div>
-
       <div className="flex ">
         <div className="w-full md:w-[320px]">
           <TotalCard />
