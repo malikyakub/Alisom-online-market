@@ -1,6 +1,6 @@
-import React from 'react';
+import React from "react";
 
-const TotalCart = () => {
+const TotalCard = () => {
   return (
     <div className="bg-white p-6 rounded-lg shadow-md w-80">
       <h2 className="text-lg font-bold mb-4">Cart Total</h2>
@@ -24,11 +24,11 @@ const TotalCart = () => {
         <span className="font-semibold">$1750</span>
       </div>
 
-      <button className="bg-blue-600 text-white w-full py-2 rounded-md hover:bg-blue-700 transition">
+      <button className="bg-[#007BFF]/80 text-white w-full py-2 rounded-md hover:bg-[#007BFF] transition">
         Proceed to checkout
       </button>
     </div>
   );
 };
 
-export default TotalCart;
+export default TotalCard;

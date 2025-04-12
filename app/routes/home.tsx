@@ -7,8 +7,7 @@ import { RiComputerFill } from "react-icons/ri";
 import { CgSmartphone } from "react-icons/cg";
 import InformationCard from "components/InformationCard";
 import { CiDollar } from "react-icons/ci";
-import TotalCart from "components/TotalCart";
-
+import TotalCard from "components/TotalCard";
 
 export function meta({}: Route.MetaArgs) {
   return [
@@ -20,14 +19,11 @@ export function meta({}: Route.MetaArgs) {
 export default function Home() {
   return (
     <div className="bg-[#17C3B2] min-h-screen p-5 flex flex-col gap-10">
-      
-      {/* Category Section */}
       <div className="flex flex-row items-center gap-4">
         <CategoryCard icon={RiComputerFill} text="Computers" />
         <CategoryCard icon={CgSmartphone} text="SmartPhones" />
       </div>
 
-      {/* Product Section */}
       <div className="flex flex-row flex-wrap items-center  gap-4">
         <ProductCard
           image="https://i.pinimg.com/736x/ee/3e/4c/ee3e4c0c619248199d6cef77294db156.jpg"
@@ -43,31 +39,28 @@ export default function Home() {
         />
       </div>
 
-      {/* Information Cards Section */}
       <div className="flex flex-row flex-wrap items-center gap-4">
-        <InformationCard 
+        <InformationCard
           icon={IoStorefrontSharp}
           value="10.5k"
           label="Sellers active on our site"
           iconBgColor="#1A2238"
           textColor="#1A2238"
-        />   
-        <InformationCard 
+        />
+        <InformationCard
           icon={CiDollar}
           value="33k"
           label="Monthly Produduct Sale"
           iconBgColor="#1A2238"
           textColor="#1A2238"
-        />    
+        />
       </div>
 
-      {/* Total Cart Section */}
       <div className="flex ">
         <div className="w-full md:w-[320px]">
-          <TotalCart />
+          <TotalCard />
         </div>
       </div>
-
     </div>
   );
 }
