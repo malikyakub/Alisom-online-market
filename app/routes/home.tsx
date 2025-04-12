@@ -28,7 +28,7 @@ export function meta({}: Route.MetaArgs) {
 
 export default function Home() {
   return (
-    <div className="bg-[#17C3B2] min-h-screen p-5 flex flex-col gap-10">
+    <div className="min-h-screen p-5 flex flex-col gap-10">
       <div className="flex flex-row items-center gap-4">
         <CategoryCard icon={RiComputerFill} text="Computers" />
         <CategoryCard icon={CgSmartphone} text="SmartPhones" />
