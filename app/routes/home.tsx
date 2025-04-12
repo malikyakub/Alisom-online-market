@@ -10,17 +10,30 @@ import { CiDollar } from "react-icons/ci";
 
 export function meta({}: Route.MetaArgs) {
   return [
-    { title: "New React Router App" },
-    { name: "description", content: "Welcome to React Router!" },
+    { title: "Alisom Online market - Online Market for Gadgets and Devices" },
+    {
+      name: "description",
+      content:
+        "Explore the latest electronics, gadgets, and devices at unbeatable prices. Shop now at Alisom Electronics!",
+    },
+    {
+      name: "keywords",
+      content:
+        "electronics, gadgets, smartphones, laptops, computers, online market, Alisom",
+    },
+    { name: "robots", content: "index, follow" },
   ];
 }
 
 export default function Home() {
   return (
-    <div className="bg-[#17C3B2] flex-row items-center justify-center min-h-screen p-5 gap-8">
-      <CategoryCard icon={RiComputerFill} text="Computers" />
-      <CategoryCard icon={CgSmartphone} text="SmartPhones" />
-      <div className="flex flex-row  items-center flex-wrap">
+    <div className="flex-row items-center justify-center min-h-screen p-5 gap-8">
+      <div className="flex flex-row items-center gap-8">
+        <CategoryCard icon={RiComputerFill} text="Computers" />
+        <CategoryCard icon={CgSmartphone} text="SmartPhones" />
+      </div>
+
+      <div className="flex flex-row items-center flex-wrap gap-8">
         <ProductCard
           image="https://i.pinimg.com/736x/ee/3e/4c/ee3e4c0c619248199d6cef77294db156.jpg"
           title="laptop"
@@ -34,21 +47,23 @@ export default function Home() {
           rating={4}
         />
       </div>
-      <div className="flex flex-row  items-center gap-3">
-      <InformationCard 
-        icon={IoStorefrontSharp}
-        value="10.5k"
-        label="Sellers active on our site"
-        iconBgColor="#1A2238"
-        textColor="#1A2238"
-      />   
-      <InformationCard 
-        icon={CiDollar}
-        value="33k"
-        label="Monthly Produduct Sale"
-        iconBgColor="#1A2238"
-        textColor="#1A2238"
-      />    </div>
+
+      <div className="flex flex-row items-center gap-3">
+        <InformationCard
+          icon={IoStorefrontSharp}
+          value="10.5k"
+          label="Sellers active on our site"
+          iconBgColor="#1A2238"
+          textColor="#1A2238"
+        />
+        <InformationCard
+          icon={CiDollar}
+          value="33k"
+          label="Monthly Product Sale"
+          iconBgColor="#1A2238"
+          textColor="#1A2238"
+        />
+      </div>
     </div>
   );
 }
