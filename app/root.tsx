@@ -6,7 +6,6 @@ import {
   Scripts,
   ScrollRestoration,
 } from "react-router";
-
 import type { Route } from "./+types/root";
 import "./app.css";
 import Header from "components/Header";
@@ -34,12 +33,10 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <Links />
       </head>
       <body className="bg-[#007BFF] text-gray-900 font-sans min-h-screen flex flex-col">
-        {/* Fixed max width container */}
         <div className="w-full max-w-[1170px] mx-auto px-4 sm:px-6">
           <Header />
         </div>
 
-        {/* Page content */}
         <main className="flex-1 w-full max-w-[1170px] mx-auto px-4 sm:px-6 py-6">
           {children}
         </main>
