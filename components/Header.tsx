@@ -1,5 +1,4 @@
-import React, { useState } from "react";
-import { Link, useLocation } from "react-router-dom";
+import React, { useEffect, useState } from "react";
 import { BiSearch } from "react-icons/bi";
 import { CiHeart } from "react-icons/ci";
 import { LuShoppingCart } from "react-icons/lu";
@@ -10,7 +9,11 @@ const Header = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [cartCount] = useState(3);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const location = useLocation();
+  const [currentPath, setCurrentPath] = useState("/");
+
+  useEffect(() => {
+    setCurrentPath(window.location.pathname);
+  }, []);
 
   const navItems = [
     { tab: "Home", link: "/" },
@@ -19,46 +22,39 @@ const Header = () => {
     { tab: "Signup", link: "/signup" },
   ];
 
-  interface NavItem {
-    tab: string;
-    link: string;
-  }
-
-  const isActive = (path: string): boolean => location.pathname === path;
-
   const handleSearch = () => {
     if (searchQuery.trim()) {
       console.log("Searching for:", searchQuery);
-      // Optionally route to a search page: navigate(`/search?q=${searchQuery}`)
+      // window.location.href = `/search?q=${searchQuery}`; // optional search page navigation
     }
   };
 
   return (
     <header className="w-full">
       <div className="max-w-[1170px] mx-auto py-4 px-6 flex items-center justify-between gap-6">
-        <Link to="/">
+        <a href="/">
           <img
             src="/assets/images/logo.png"
             alt="Company Logo"
             className="w-10 h-10 object-contain"
           />
-        </Link>
+        </a>
 
         {/* Desktop Nav */}
         <nav className="hidden md:flex flex-1 justify-center">
           <ul className="flex items-center gap-6 text-sm sm:text-base font-medium">
             {navItems.map((item) => (
               <li key={item.tab}>
-                <Link
-                  to={item.link}
+                <a
+                  href={item.link}
                   className={`cursor-pointer hover:text-[#007BFF] transition-colors ${
-                    isActive(item.link)
+                    currentPath === item.link
                       ? "text-[#007BFF] underline underline-offset-4"
                       : "text-gray-700"
                   }`}
                 >
                   {item.tab}
-                </Link>
+                </a>
               </li>
             ))}
           </ul>
@@ -134,17 +130,17 @@ const Header = () => {
           <ul className="flex flex-col gap-4 text-gray-700 text-sm font-medium">
             {navItems.map((item) => (
               <li key={item.tab}>
-                <Link
-                  to={item.link}
+                <a
+                  href={item.link}
                   className={`cursor-pointer hover:text-[#007BFF] transition-colors ${
-                    isActive(item.link)
+                    currentPath === item.link
                       ? "text-[#007BFF] underline underline-offset-4"
                       : ""
                   }`}
                   onClick={() => setMobileMenuOpen(false)}
                 >
                   {item.tab}
-                </Link>
+                </a>
               </li>
             ))}
           </ul>
