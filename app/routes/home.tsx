@@ -8,6 +8,7 @@ import { CgSmartphone } from "react-icons/cg";
 import InformationCard from "components/InformationCard";
 import { CiDollar } from "react-icons/ci";
 import TotalCard from "components/TotalCard";
+import ProductDetailsCard from "components/ProductDetailsCard";
 
 export function meta({}: Route.MetaArgs) {
   return [
@@ -69,6 +70,9 @@ export default function Home() {
         <div className="w-full md:w-[320px]">
           <TotalCard />
         </div>
+      </div>
+      <div className="flex ">
+        <ProductDetailsCard/>
       </div>
     </div>
   );
