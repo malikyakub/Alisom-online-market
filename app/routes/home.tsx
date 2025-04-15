@@ -1,5 +1,3 @@
-
-
 import type { Route } from "./+types/home";
 import { Welcome } from "../welcome/welcome";
 import CategoryCard from "components/CategoryCard";
@@ -10,12 +8,10 @@ import { CgSmartphone } from "react-icons/cg";
 import InformationCard from "components/InformationCard";
 import { CiDollar } from "react-icons/ci";
 import TotalCard from "components/TotalCard";
- productCard_2
 import ProductCard2 from "components/ProductCard2";
 
 import DashboardCard from "components/DashboardCard";
 import { FiBox, FiDollarSign } from "react-icons/fi";
-main
 
 export function meta({}: Route.MetaArgs) {
   return [
@@ -37,15 +33,14 @@ export function meta({}: Route.MetaArgs) {
 export default function Home() {
   return (
     <div className="min-h-screen p-5 flex flex-col gap-10">
-      
       {/* Categories */}
-      <div className="flex flex-row items-center gap-4">
+      <div className="flex flex-row items-center gap-4 flex-wrap">
         <CategoryCard icon={RiComputerFill} text="Computers" />
         <CategoryCard icon={CgSmartphone} text="SmartPhones" />
       </div>
 
       {/* Product Cards */}
-      <div className="flex flex-row flex-wrap items-center gap-4">
+      <div className="flex flex-row items-center gap-4 flex-wrap">
         <ProductCard
           image="https://i.pinimg.com/736x/ee/3e/4c/ee3e4c0c619248199d6cef77294db156.jpg"
           title="laptop"
@@ -61,7 +56,7 @@ export default function Home() {
       </div>
 
       {/* Information Cards */}
-      <div className="flex flex-row flex-wrap items-center gap-4">
+      <div className="flex flex-row items-center gap-4 flex-wrap">
         <InformationCard
           icon={IoStorefrontSharp}
           value="10.5k"
@@ -79,64 +74,60 @@ export default function Home() {
       </div>
 
       {/* TotalCard */}
-      <div className="flex">
+      <div className="flex flex-row items-center gap-4 flex-wrap">
         <div className="w-full md:w-[320px]">
           <TotalCard />
         </div>
       </div>
-productCard_2
 
       {/* ProductCard2 */}
-      
-      <div>
-  <div className="mt-6">
-    <ProductCard2
-      image="https://i.pinimg.com/474x/69/95/67/699567b89b880a8ea5cfd3ccb9ee8071.jpg"
-      name="CANON EOS DSLR Camera"
-      price={360}
-      rating={4}
-      reviews={95}
-    />
-  </div>
-  <div className="mt-6">
-    <ProductCard2
-      image="https://i.pinimg.com/736x/36/70/5e/36705ec9917ce4b400898fd8bd53eeda.jpg"
-      name="ASUS FHD Gaming Laptop"
-      price={700}
-      rating={5}
-      reviews={325}
-    />
-  </div>
-      <div>
+
+      <div className="flex flex-row items-center gap-4 flex-wrap">
         <div className="mt-6">
-    <ProductCard2
-      image="https://i.pinimg.com/736x/a2/46/89/a24689a207646ccfb0b878a007f115d8.jpg"
-      name="Curology Product Set"
-      price={500}
-      rating={5}
-      reviews={145}
-    />
-  </div>
-      </div>
-       
-</div>
-
-
-      <div className=" flex flex-row gap-4 ">
-          <DashboardCard
-            title="Total Revenue"
-            amount="$32,875"
-            growth="+20.1% from last month"
-            icon={FiDollarSign}
-          /> 
-          <DashboardCard
-            title="Products Sold"
-            amount="$8,294"
-            growth="+180.1% from last month"
-            icon={FiBox}
-          /> 
+          <ProductCard2
+            image="https://i.pinimg.com/474x/69/95/67/699567b89b880a8ea5cfd3ccb9ee8071.jpg"
+            name="CANON EOS DSLR Camera"
+            price={360}
+            rating={4}
+            reviews={95}
+          />
         </div>
- main
+        <div className="mt-6">
+          <ProductCard2
+            image="https://i.pinimg.com/736x/36/70/5e/36705ec9917ce4b400898fd8bd53eeda.jpg"
+            name="ASUS FHD Gaming Laptop"
+            price={700}
+            rating={5}
+            reviews={325}
+          />
+        </div>
+        <div>
+          <div className="mt-6">
+            <ProductCard2
+              image="https://i.pinimg.com/736x/a2/46/89/a24689a207646ccfb0b878a007f115d8.jpg"
+              name="Curology Product Set"
+              price={500}
+              rating={5}
+              reviews={145}
+            />
+          </div>
+        </div>
+      </div>
+
+      <div className="flex flex-row items-center gap-4 flex-wrap">
+        <DashboardCard
+          title="Total Revenue"
+          amount="$32,875"
+          growth="+20.1% from last month"
+          icon={FiDollarSign}
+        />
+        <DashboardCard
+          title="Products Sold"
+          amount="$8,294"
+          growth="+180.1% from last month"
+          icon={FiBox}
+        />
+      </div>
     </div>
   );
 }
