@@ -7,6 +7,7 @@ import { RiComputerFill } from "react-icons/ri";
 import { CgSmartphone } from "react-icons/cg";
 import InformationCard from "components/InformationCard";
 import { CiDollar } from "react-icons/ci";
+import ProductDetailsCard from "components/ProductDetailsCard";
 
 export function meta({}: Route.MetaArgs) {
   return [
@@ -49,6 +50,7 @@ export default function Home() {
         iconBgColor="#1A2238"
         textColor="#1A2238"
       />    </div>
+      <ProductDetailsCard/>
     </div>
   );
 }
