@@ -157,6 +157,11 @@ export default function Home() {
         />
       </div>
       <ProfilePopup />
+      <div className="my-4 gap-2 flex flex-col">
+        {products.map((prod) => (
+          <ProductDetailsCard key={prod.name} product={prod} />
+        ))}
+      </div>
     </div>
   );
 }
