@@ -12,6 +12,7 @@ import ProductCard2 from "components/ProductCard2";
 
 import DashboardCard from "components/DashboardCard";
 import { FiBox, FiDollarSign } from "react-icons/fi";
+import StaffCard from "components/Staffcard";
 
 export function meta({}: Route.MetaArgs) {
   return [
@@ -79,7 +80,6 @@ export default function Home() {
           <TotalCard />
         </div>
       </div>
-
       {/* ProductCard2 */}
 
       <div className="flex flex-row items-center gap-4 flex-wrap">
@@ -126,6 +126,18 @@ export default function Home() {
           amount="$8,294"
           growth="+180.1% from last month"
           icon={FiBox}
+        />
+      </div>
+      <div className="flex flex-row gap-4">
+        <StaffCard
+          image="https://i.pinimg.com/736x/0d/91/d7/0d91d7b01edad7276029d89550d14942.jpg"
+          name="huwei"
+          title="wireless earbuds"
+          socials={{
+            twitter: "#",
+            instagram: "#",
+            linkedin: "#",
+          }}
         />
       </div>
     </div>
