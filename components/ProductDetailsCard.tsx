@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import productImage from "../public/assets/images/product.jpg";
 
 interface Product {
   name: string;
@@ -21,7 +20,7 @@ const ProductDetailsCard: React.FC<{ product: Product }> = ({ product }) => {
       <div className="flex items-center gap-4">
         <div className="w-20 h-20 rounded overflow-hidden">
           <img
-            src={productImage}
+            src={product.image}
             alt="product image"
             className="w-full h-full"
           />
@@ -65,20 +64,4 @@ const ProductDetailsCard: React.FC<{ product: Product }> = ({ product }) => {
   );
 };
 
-const App = () => {
-  const productData = {
-    name: "tablet",
-
-    price: 400,
-
-    image: "/assets/images/product.jpg",
-  };
-
-  return (
-    <div className="p-4">
-      <ProductDetailsCard product={productData} />
-    </div>
-  );
-};
-
-export default App;
+export default ProductDetailsCard;

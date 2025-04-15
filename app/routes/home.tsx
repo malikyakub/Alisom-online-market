@@ -16,6 +16,21 @@ export function meta({}: Route.MetaArgs) {
   ];
 }
 
+const products = [
+  {
+    name: "Laoptop",
+    price: 200,
+    image:
+      "https://i.pinimg.com/236x/98/6f/00/986f0030e53505927d45fde3c2115af3.jpg",
+  },
+  {
+    name: "gaming console",
+    price: 1200,
+    image:
+      "https://i.pinimg.com/236x/dd/17/5a/dd175a0d5c42312003026b4e4cad2a44.jpg",
+  },
+];
+
 export default function Home() {
   return (
     <div className="bg-[#17C3B2] flex-row items-center justify-center min-h-screen p-5 gap-8">
@@ -36,21 +51,26 @@ export default function Home() {
         />
       </div>
       <div className="flex flex-row  items-center gap-3">
-      <InformationCard 
-        icon={IoStorefrontSharp}
-        value="10.5k"
-        label="Sellers active on our site"
-        iconBgColor="#1A2238"
-        textColor="#1A2238"
-      />   
-      <InformationCard 
-        icon={CiDollar}
-        value="33k"
-        label="Monthly Produduct Sale"
-        iconBgColor="#1A2238"
-        textColor="#1A2238"
-      />    </div>
-      <ProductDetailsCard/>
+        <InformationCard
+          icon={IoStorefrontSharp}
+          value="10.5k"
+          label="Sellers active on our site"
+          iconBgColor="#1A2238"
+          textColor="#1A2238"
+        />
+        <InformationCard
+          icon={CiDollar}
+          value="33k"
+          label="Monthly Produduct Sale"
+          iconBgColor="#1A2238"
+          textColor="#1A2238"
+        />{" "}
+      </div>
+      <div className="flex flex-col gap-2 my-4">
+        {products.map((prod) => (
+          <ProductDetailsCard key={prod.name} product={prod} />
+        ))}
+      </div>
     </div>
   );
 }
