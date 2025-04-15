@@ -45,21 +45,5 @@ const StaffCard: React.FC<StaffCardProps> = ({ image, name, title, socials }) =>
   );
 };
 
-const App = () => {
-  return (
-    <div className="min-h-screen flex items-center justify-center p-4">
-      <StaffCard
-        image="https://i.pinimg.com/736x/0d/91/d7/0d91d7b01edad7276029d89550d14942.jpg"
-        name="huwei"
-        title="wireless earbuds"
-        socials={{
-          twitter: '#',
-          instagram: '#',
-          linkedin: '#',
-        }}
-      />
-    </div>
-  );
-};
 
-export default App;
+export default StaffCard;

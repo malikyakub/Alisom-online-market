@@ -10,7 +10,7 @@ import { CiDollar } from "react-icons/ci";
 import TotalCard from "components/TotalCard";
 import DashboardCard from "components/DashboardCard";
 import { FiBox, FiDollarSign } from "react-icons/fi";
-import StaffCardPage from "components/Staffcard";
+import StaffCard from "components/Staffcard";
 
 export function meta({}: Route.MetaArgs) {
   return [
@@ -74,23 +74,32 @@ export default function Home() {
         </div>
       </div>
       <div className=" flex flex-row gap-4 ">
-          <DashboardCard
-            title="Total Revenue"
-            amount="$32,875"
-            growth="+20.1% from last month"
-            icon={FiDollarSign}
-          /> 
-          <DashboardCard
-            title="Products Sold"
-            amount="$8,294"
-            growth="+180.1% from last month"
-            icon={FiBox}
-          /> 
-        </div>
-         
+        <DashboardCard
+          title="Total Revenue"
+          amount="$32,875"
+          growth="+20.1% from last month"
+          icon={FiDollarSign}
+        />
+        <DashboardCard
+          title="Products Sold"
+          amount="$8,294"
+          growth="+180.1% from last month"
+          icon={FiBox}
+        />
+      </div>
+
       <div className="flex flex-row gap-4">
-        <StaffCardPage />
-        </div>
+        <StaffCard
+          image="https://i.pinimg.com/736x/0d/91/d7/0d91d7b01edad7276029d89550d14942.jpg"
+          name="huwei"
+          title="wireless earbuds"
+          socials={{
+            twitter: "#",
+            instagram: "#",
+            linkedin: "#",
+          }}
+        />
+      </div>
     </div>
   );
 }
