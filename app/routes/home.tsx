@@ -8,11 +8,27 @@ import { CgSmartphone } from "react-icons/cg";
 import InformationCard from "components/InformationCard";
 import { CiDollar } from "react-icons/ci";
 import ProductDetailsCard from "components/ProductDetailsCard";
+import TotalCard from "components/TotalCard";
+import ProductCard2 from "components/ProductCard2";
+import ProfilePopup from "components/ProfilePopup";
+import DashboardCard from "components/DashboardCard";
+import { FiBox, FiDollarSign } from "react-icons/fi";
+import StaffCard from "components/Staffcard";
 
 export function meta({}: Route.MetaArgs) {
   return [
-    { title: "New React Router App" },
-    { name: "description", content: "Welcome to React Router!" },
+    { title: "Alisom Online market - Online Market for Gadgets and Devices" },
+    {
+      name: "description",
+      content:
+        "Explore the latest electronics, gadgets, and devices at unbeatable prices. Shop now at Alisom Electronics!",
+    },
+    {
+      name: "keywords",
+      content:
+        "electronics, gadgets, smartphones, laptops, computers, online market, Alisom",
+    },
+    { name: "robots", content: "index, follow" },
   ];
 }
 
@@ -33,10 +49,15 @@ const products = [
 
 export default function Home() {
   return (
-    <div className="bg-[#17C3B2] flex-row items-center justify-center min-h-screen p-5 gap-8">
-      <CategoryCard icon={RiComputerFill} text="Computers" />
-      <CategoryCard icon={CgSmartphone} text="SmartPhones" />
-      <div className="flex flex-row  items-center flex-wrap">
+    <div className="min-h-screen p-5 flex flex-col gap-10">
+      {/* Categories */}
+      <div className="flex flex-row items-center gap-4 flex-wrap">
+        <CategoryCard icon={RiComputerFill} text="Computers" />
+        <CategoryCard icon={CgSmartphone} text="SmartPhones" />
+      </div>
+
+      {/* Product Cards */}
+      <div className="flex flex-row items-center gap-4 flex-wrap">
         <ProductCard
           image="https://i.pinimg.com/736x/ee/3e/4c/ee3e4c0c619248199d6cef77294db156.jpg"
           title="laptop"
@@ -50,7 +71,9 @@ export default function Home() {
           rating={4}
         />
       </div>
-      <div className="flex flex-row  items-center gap-3">
+
+      {/* Information Cards */}
+      <div className="flex flex-row items-center gap-4 flex-wrap">
         <InformationCard
           icon={IoStorefrontSharp}
           value="10.5k"
@@ -61,16 +84,79 @@ export default function Home() {
         <InformationCard
           icon={CiDollar}
           value="33k"
-          label="Monthly Produduct Sale"
+          label="Monthly Product Sale"
           iconBgColor="#1A2238"
           textColor="#1A2238"
-        />{" "}
+        />
       </div>
-      <div className="flex flex-col gap-2 my-4">
-        {products.map((prod) => (
-          <ProductDetailsCard key={prod.name} product={prod} />
-        ))}
+
+      {/* TotalCard */}
+      <div className="flex flex-row items-center gap-4 flex-wrap">
+        <div className="w-full md:w-[320px]">
+          <TotalCard />
+        </div>
       </div>
+      {/* ProductCard2 */}
+
+      <div className="flex flex-row items-center gap-4 flex-wrap">
+        <div className="mt-6">
+          <ProductCard2
+            image="https://i.pinimg.com/474x/69/95/67/699567b89b880a8ea5cfd3ccb9ee8071.jpg"
+            name="CANON EOS DSLR Camera"
+            price={360}
+            rating={4}
+            reviews={95}
+          />
+        </div>
+        <div className="mt-6">
+          <ProductCard2
+            image="https://i.pinimg.com/736x/36/70/5e/36705ec9917ce4b400898fd8bd53eeda.jpg"
+            name="ASUS FHD Gaming Laptop"
+            price={700}
+            rating={5}
+            reviews={325}
+          />
+        </div>
+        <div>
+          <div className="mt-6">
+            <ProductCard2
+              image="https://i.pinimg.com/736x/a2/46/89/a24689a207646ccfb0b878a007f115d8.jpg"
+              name="Curology Product Set"
+              price={500}
+              rating={5}
+              reviews={145}
+            />
+          </div>
+        </div>
+      </div>
+
+      <div className="flex flex-row items-center gap-4 flex-wrap">
+        <DashboardCard
+          title="Total Revenue"
+          amount="$32,875"
+          growth="+20.1% from last month"
+          icon={FiDollarSign}
+        />
+        <DashboardCard
+          title="Products Sold"
+          amount="$8,294"
+          growth="+180.1% from last month"
+          icon={FiBox}
+        />
+      </div>
+      <div className="flex flex-row gap-4">
+        <StaffCard
+          image="https://i.pinimg.com/736x/0d/91/d7/0d91d7b01edad7276029d89550d14942.jpg"
+          name="huwei"
+          title="wireless earbuds"
+          socials={{
+            twitter: "#",
+            instagram: "#",
+            linkedin: "#",
+          }}
+        />
+      </div>
+      <ProfilePopup />
     </div>
   );
 }
