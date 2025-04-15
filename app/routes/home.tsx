@@ -4,6 +4,7 @@ import CategoryCard from "components/CategoryCard";
 import ProductCard from "components/ProductCard";
 import { IoStorefrontSharp } from "react-icons/io5";
 import { RiComputerFill } from "react-icons/ri";
+import { TbDeviceAirpodsCase } from "react-icons/tb";
 import { CgSmartphone } from "react-icons/cg";
 import InformationCard from "components/InformationCard";
 import { CiDollar } from "react-icons/ci";
@@ -32,7 +33,7 @@ export default function Home() {
   return (
     <div className="min-h-screen p-5 flex flex-col gap-10">
       <div className="flex flex-row items-center gap-4">
-        <CategoryCard icon={RiComputerFill} text="Computers" />
+        <CategoryCard icon={TbDeviceAirpodsCase} text="Wearables" />
         <CategoryCard icon={CgSmartphone} text="SmartPhones" />
       </div>
 
