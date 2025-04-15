@@ -9,7 +9,7 @@ import InformationCard from "components/InformationCard";
 import { CiDollar } from "react-icons/ci";
 import TotalCard from "components/TotalCard";
 import ProductCard2 from "components/ProductCard2";
-
+import ProfilePopup from "components/ProfilePopup";
 import DashboardCard from "components/DashboardCard";
 import { FiBox, FiDollarSign } from "react-icons/fi";
 import StaffCard from "components/Staffcard";
@@ -140,6 +140,7 @@ export default function Home() {
           }}
         />
       </div>
+      <ProfilePopup />
     </div>
   );
 }
