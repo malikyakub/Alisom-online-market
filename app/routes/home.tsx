@@ -7,6 +7,7 @@ import { RiComputerFill } from "react-icons/ri";
 import { CgSmartphone } from "react-icons/cg";
 import InformationCard from "components/InformationCard";
 import { CiDollar } from "react-icons/ci";
+import ProductDetailsCard from "components/ProductDetailsCard";
 import TotalCard from "components/TotalCard";
 import ProductCard2 from "components/ProductCard2";
 import ProfilePopup from "components/ProfilePopup";
@@ -30,6 +31,21 @@ export function meta({}: Route.MetaArgs) {
     { name: "robots", content: "index, follow" },
   ];
 }
+
+const products = [
+  {
+    name: "Laoptop",
+    price: 200,
+    image:
+      "https://i.pinimg.com/236x/98/6f/00/986f0030e53505927d45fde3c2115af3.jpg",
+  },
+  {
+    name: "gaming console",
+    price: 1200,
+    image:
+      "https://i.pinimg.com/236x/dd/17/5a/dd175a0d5c42312003026b4e4cad2a44.jpg",
+  },
+];
 
 export default function Home() {
   return (
@@ -141,6 +157,11 @@ export default function Home() {
         />
       </div>
       <ProfilePopup />
+      <div className="my-4 gap-2 flex flex-col">
+        {products.map((prod) => (
+          <ProductDetailsCard key={prod.name} product={prod} />
+        ))}
+      </div>
     </div>
   );
 }
