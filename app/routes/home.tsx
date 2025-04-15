@@ -10,7 +10,12 @@ import { CgSmartphone } from "react-icons/cg";
 import InformationCard from "components/InformationCard";
 import { CiDollar } from "react-icons/ci";
 import TotalCard from "components/TotalCard";
+ productCard_2
 import ProductCard2 from "components/ProductCard2";
+
+import DashboardCard from "components/DashboardCard";
+import { FiBox, FiDollarSign } from "react-icons/fi";
+main
 
 export function meta({}: Route.MetaArgs) {
   return [
@@ -79,6 +84,7 @@ export default function Home() {
           <TotalCard />
         </div>
       </div>
+productCard_2
 
       {/* ProductCard2 */}
       
@@ -115,6 +121,22 @@ export default function Home() {
        
 </div>
 
+
+      <div className=" flex flex-row gap-4 ">
+          <DashboardCard
+            title="Total Revenue"
+            amount="$32,875"
+            growth="+20.1% from last month"
+            icon={FiDollarSign}
+          /> 
+          <DashboardCard
+            title="Products Sold"
+            amount="$8,294"
+            growth="+180.1% from last month"
+            icon={FiBox}
+          /> 
+        </div>
+ main
     </div>
   );
 }
