@@ -10,6 +10,7 @@ import { CiDollar } from "react-icons/ci";
 import TotalCard from "components/TotalCard";
 import DashboardCard from "components/DashboardCard";
 import { FiBox, FiDollarSign } from "react-icons/fi";
+import StaffCardPage from "components/Staffcard";
 
 export function meta({}: Route.MetaArgs) {
   return [
@@ -85,6 +86,10 @@ export default function Home() {
             growth="+180.1% from last month"
             icon={FiBox}
           /> 
+        </div>
+         
+      <div className="flex flex-row gap-4">
+        <StaffCardPage />
         </div>
     </div>
   );
