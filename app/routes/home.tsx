@@ -14,6 +14,10 @@ import ProfilePopup from "components/ProfilePopup";
 import DashboardCard from "components/DashboardCard";
 import { FiBox, FiDollarSign } from "react-icons/fi";
 import StaffCard from "components/Staffcard";
+import HerCard from "components/HerCard";
+import iPhoneImage from "../../public/assets/images/iphone.png";
+import Airpods from "../../public/assets/images/airpods.png";
+import appleWatch from "../../public/assets/images/apple-watch.png";
 
 export function meta({}: Route.MetaArgs) {
   return [
@@ -47,9 +51,35 @@ const products = [
   },
 ];
 
+const HeroProducts = [
+  {
+    title: "Apple iPhone 14",
+    offer: "Up to $120 off on iPhone 14",
+    image: iPhoneImage,
+    logo: "/assets/images/apple-logo.png",
+    link: "/products/iphone-14",
+  },
+  {
+    title: "AirPods Pro (2nd Gen)",
+    offer: "Now starting at $199 — limited time!",
+    image: Airpods,
+    logo: "/assets/images/apple-logo.png",
+    link: "/products/airpods-pro-2",
+  },
+  {
+    title: "Apple Watch Series 9",
+    offer: "Up to 15% off Apple Watch Series 9",
+    image: appleWatch,
+    logo: "/assets/images/apple-logo.png",
+    link: "/products/apple-watch-series-9",
+  },
+];
+
 export default function Home() {
   return (
     <div className="min-h-screen p-5 flex flex-col gap-10">
+      {/* hero section */}
+      <HerCard products={HeroProducts} />
       {/* Categories */}
       <div className="flex flex-row items-center gap-4 flex-wrap">
         <CategoryCard icon={RiComputerFill} text="Computers" />
