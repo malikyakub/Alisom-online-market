@@ -3,7 +3,7 @@ import React from "react";
 interface InformationCardProps {
   icon: React.ComponentType<React.SVGProps<SVGSVGElement>>;
   value?: string;
-  label?: string;
+  title?: string;
   iconBgColor?: string;
   textColor?: string;
 }
@@ -11,7 +11,7 @@ interface InformationCardProps {
 const InformationCard: React.FC<InformationCardProps> = ({
   icon: Icon,
   value = "0",
-  label = "Label goes here",
+  title = "Label goes here",
   iconBgColor = "#1A2238",
   textColor = "#1A2238",
 }) => {
@@ -31,13 +31,13 @@ const InformationCard: React.FC<InformationCardProps> = ({
       </div>
       <div className="text-center">
         <h2 className="text-2xl font-bold transition-colors duration-300 group-hover:text-white">
-          {value}
+          {title}
         </h2>
         <p
           className="text-sm mt-1 font-bold transition-colors duration-300 group-hover:text-white"
           style={{ color: textColor }}
         >
-          {label}
+          {value}
         </p>
       </div>
     </div>

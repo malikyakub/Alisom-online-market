@@ -1,14 +1,16 @@
 import type { Route } from "./+types/home";
 import CategoryCard from "components/CategoryCard";
-import ProductCard from "components/ProductCard";
+import FeaturedProductCard from "components/FeaturedProductCard";
+import { DiResponsive } from "react-icons/di";
 import { IoStorefrontSharp } from "react-icons/io5";
 import { RiComputerFill } from "react-icons/ri";
 import { CgSmartphone } from "react-icons/cg";
 import InformationCard from "components/InformationCard";
 import { CiDollar } from "react-icons/ci";
+import { TbTruckDelivery } from "react-icons/tb";
 import ProductDetailsCard from "components/ProductDetailsCard";
 import TotalCard from "components/TotalCard";
-import ProductCard2 from "components/ProductCard2";
+import ProductCard from "components/ProductCard";
 import ProfilePopup from "components/ProfilePopup";
 import DashboardCard from "components/DashboardCard";
 import { FiBox, FiDollarSign } from "react-icons/fi";
@@ -20,7 +22,9 @@ import iPhoneImage from "/assets/images/iphone.png";
 import Airpods from "/assets/images/airpods.png";
 import appleWatch from "/assets/images/apple-watch.png";
 import { useState } from "react";
+import { MdPayment } from "react-icons/md";
 import AddCategoryModal from "components/AddCategoryModal";
+import { PiResizeFill } from "react-icons/pi";
 
 export function meta({}: Route.MetaArgs) {
   return [
@@ -39,7 +43,18 @@ export function meta({}: Route.MetaArgs) {
   ];
 }
 
-const products = [
+const categories = [
+  {
+    icon: RiComputerFill,
+    text: "Computers",
+  },
+  {
+    icon: CgSmartphone,
+    text: "Smart phones",
+  },
+];
+
+const productsInCart = [
   {
     name: "Laoptop",
     price: 200,
@@ -78,154 +93,103 @@ const HeroProducts = [
   },
 ];
 
+const featuredProducts = [
+  {
+    image:
+      "https://i.pinimg.com/736x/8c/db/e1/8cdbe123010c380e20f264a8fdd57938.jpg",
+    title: "JBL Headphones",
+    price: 200,
+    rating: 5,
+  },
+  {
+    image:
+      "https://i.pinimg.com/736x/62/46/c7/6246c74e3d7d9f2a4d298f911aad9dcf.jpg",
+    title: "Oculus",
+    price: 20,
+    rating: 4,
+  },
+];
+
+const Products = [
+  {
+    image:
+      "https://i.pinimg.com/736x/8c/db/e1/8cdbe123010c380e20f264a8fdd57938.jpg",
+    name: "JBL Headphones",
+    price: 200,
+    rating: 5,
+    reviews: 100,
+  },
+  {
+    image:
+      "https://i.pinimg.com/736x/62/46/c7/6246c74e3d7d9f2a4d298f911aad9dcf.jpg",
+    name: "Oculus",
+    price: 20,
+    rating: 4,
+    reviews: 56,
+  },
+];
+
+const informations = [
+  {
+    icon: TbTruckDelivery,
+    title: "Fast Delivery",
+    value: "Real-time tracking updates",
+  },
+  {
+    icon: PiResizeFill,
+    title: "Mobile Optimization",
+    value: "Responsive design for all devices",
+  },
+  {
+    icon: MdPayment,
+    title: "Secure Payments",
+    value: "Multiple trusted payment methods",
+  },
+];
+
 export default function Home() {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   return (
-    <div className="min-h-screen p-5 flex flex-col gap-10">
-      {/* hero section */}
+    <div className="p-5 flex flex-col gap-10">
       <HerCard products={HeroProducts} />
 
-      {/* Categories */}
-      <div className="flex flex-row items-center gap-4 flex-wrap">
-        <CategoryCard icon={RiComputerFill} text="Computers" />
-        <CategoryCard icon={CgSmartphone} text="SmartPhones" />
-      </div>
-
-      <ProductDropdown /> {/* This is the dropdown menu for products */}
-
-      <div className="flex flex-row flex-wrap items-center gap-4">
-      {/* Product Cards */}
-      <div className="flex flex-row items-center gap-4 flex-wrap">
-        <ProductCard
-          image="https://i.pinimg.com/736x/ee/3e/4c/ee3e4c0c619248199d6cef77294db156.jpg"
-          title="laptop"
-          price="400"
-          rating={6}
-        />
-        <ProductCard
-          image="https://i.pinimg.com/474x/13/a9/9c/13a99cc7ae16f759b9a9ec6ffad1591a.jpg"
-          title="iphone 16 pro"
-          price="200"
-          rating={4}
-        />
-      </div>
-
-      {/* Information Cards */}
-      <div className="flex flex-row items-center gap-4 flex-wrap">
-        <InformationCard
-          icon={IoStorefrontSharp}
-          value="10.5k"
-          label="Sellers active on our site"
-          iconBgColor="#1A2238"
-          textColor="#1A2238"
-        />
-        <InformationCard
-          icon={CiDollar}
-          value="33k"
-          label="Monthly Product Sale"
-          iconBgColor="#1A2238"
-          textColor="#1A2238"
-        />
-      </div>
-      <div className="flex">
-
-      {/* TotalCard */}
-      <div className="flex flex-row items-center gap-4 flex-wrap">
-        <div className="w-full md:w-[320px]">
-          <TotalCard />
-        </div>
-      </div>
-      <div className="flex flex-row gap-4">
-
-      {/* ProductCard2 */}
-      <div className="flex flex-row items-center gap-4 flex-wrap">
-        <div className="mt-6">
-          <ProductCard2
-            image="https://i.pinimg.com/474x/69/95/67/699567b89b880a8ea5cfd3ccb9ee8071.jpg"
-            name="CANON EOS DSLR Camera"
-            price={360}
-            rating={4}
-            reviews={95}
-          />
-        </div>
-        <div className="mt-6">
-          <ProductCard2
-            image="https://i.pinimg.com/736x/36/70/5e/36705ec9917ce4b400898fd8bd53eeda.jpg"
-            name="ASUS FHD Gaming Laptop"
-            price={700}
-            rating={5}
-            reviews={325}
-          />
-        </div>
-        <div>
-          <div className="mt-6">
-            <ProductCard2
-              image="https://i.pinimg.com/736x/a2/46/89/a24689a207646ccfb0b878a007f115d8.jpg"
-              name="Curology Product Set"
-              price={500}
-              rating={5}
-              reviews={145}
-            />
-          </div>
-        </div>
-      </div>
-
-      {/* Dashboard Cards */}
-      <div className="flex flex-row items-center gap-4 flex-wrap">
-        <DashboardCard
-          title="Total Revenue"
-          amount="$32,875"
-          growth="+20.1% from last month"
-          icon={FiDollarSign}
-        />
-        <DashboardCard
-          title="Products Sold"
-          amount="$8,294"
-          growth="+180.1% from last month"
-          icon={FiBox}
-        />
-      </div>
-
-      <div className="flex flex-row gap-4">
-        <StaffCardPage />
-      </div>
-      {/* Staff */}
-      <div className="flex flex-row gap-4">
-        <StaffCard
-          image="https://i.pinimg.com/736x/0d/91/d7/0d91d7b01edad7276029d89550d14942.jpg"
-          name="huwei"
-          title="wireless earbuds"
-          socials={{
-            twitter: "#",
-            instagram: "#",
-            linkedin: "#",
-          }}
-        />
-      </div>
-
-      <ProfilePopup />
-
-      {/* Product Details */}
-      <div className="my-4 gap-2 flex flex-col">
-        {products.map((prod) => (
-          <ProductDetailsCard key={prod.name} product={prod} />
+      <div className="flex flex-row flex-wrap gap-4 items-center">
+        {categories.map((cat) => (
+          <CategoryCard icon={cat.icon} text={cat.text} />
         ))}
       </div>
-
-      {/* Button to open modal */}
-      <button
-        onClick={() => setIsModalOpen(true)}
-        className="bg-blue-600 text-white px-4 py-2 rounded"
-      >
-        Add New Category
-      </button>
-
-      {/* Modal */}
-      <AddCategoryModal
-        isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
-      />
+      <div className="flex flex-row flex-wrap gap-4 items-center">
+        {featuredProducts.map((prod) => (
+          <FeaturedProductCard
+            image={prod.image}
+            price={prod.price}
+            rating={prod.rating}
+            title={prod.title}
+          />
+        ))}
+      </div>
+      <div className="flex flex-row flex-wrap gap-4 items-center">
+        {Products.map((prod) => (
+          <ProductCard
+            image={prod.image}
+            price={prod.price}
+            rating={prod.rating}
+            name={prod.name}
+            reviews={prod.reviews}
+          />
+        ))}
+      </div>
+      <div className="flex flex-row flex-wrap gap-4 items-center">
+        {informations.map((info) => (
+          <InformationCard
+            icon={info.icon}
+            title={info.title}
+            value={info.value}
+          />
+        ))}
+      </div>
+      <div className="flex flex-row flex-wrap gap-4 items-center"></div>
     </div>
   );
 }
