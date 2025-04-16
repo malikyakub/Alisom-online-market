@@ -1,5 +1,4 @@
 import type { Route } from "./+types/home";
-import { Welcome } from "../welcome/welcome";
 import CategoryCard from "components/CategoryCard";
 import ProductCard from "components/ProductCard";
 import { IoStorefrontSharp } from "react-icons/io5";
@@ -11,6 +10,7 @@ import TotalCard from "components/TotalCard";
 import DashboardCard from "components/DashboardCard";
 import { FiBox, FiDollarSign } from "react-icons/fi";
 import StaffCardPage from "components/Staffcard";
+import ProductDropdown from "components/productDropdown";
 
 export function meta({}: Route.MetaArgs) {
   return [
@@ -37,7 +37,9 @@ export default function Home() {
         <CategoryCard icon={CgSmartphone} text="SmartPhones" />
       </div>
 
-      <div className="flex flex-row flex-wrap items-center  gap-4">
+      <ProductDropdown /> {/* This is the dropdown menu for products */}
+
+      <div className="flex flex-row flex-wrap items-center gap-4">
         <ProductCard
           image="https://i.pinimg.com/736x/ee/3e/4c/ee3e4c0c619248199d6cef77294db156.jpg"
           title="laptop"
@@ -68,29 +70,29 @@ export default function Home() {
           textColor="#1A2238"
         />
       </div>
-      <div className="flex ">
+      <div className="flex">
         <div className="w-full md:w-[320px]">
           <TotalCard />
         </div>
       </div>
-      <div className=" flex flex-row gap-4 ">
-          <DashboardCard
-            title="Total Revenue"
-            amount="$32,875"
-            growth="+20.1% from last month"
-            icon={FiDollarSign}
-          /> 
-          <DashboardCard
-            title="Products Sold"
-            amount="$8,294"
-            growth="+180.1% from last month"
-            icon={FiBox}
-          /> 
-        </div>
-         
+      <div className="flex flex-row gap-4">
+        <DashboardCard
+          title="Total Revenue"
+          amount="$32,875"
+          growth="+20.1% from last month"
+          icon={FiDollarSign}
+        />
+        <DashboardCard
+          title="Products Sold"
+          amount="$8,294"
+          growth="+180.1% from last month"
+          icon={FiBox}
+        />
+      </div>
+
       <div className="flex flex-row gap-4">
         <StaffCardPage />
-        </div>
+      </div>
     </div>
   );
 }
