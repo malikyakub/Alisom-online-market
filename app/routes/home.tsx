@@ -18,8 +18,12 @@ import HerCard from "components/HerCard";
 import iPhoneImage from "../../public/assets/images/iphone.png";
 import Airpods from "../../public/assets/images/airpods.png";
 import appleWatch from "../../public/assets/images/apple-watch.png";
+import { useState } from "react";
+import AddCategoryModal from "components/AddCategoryModal";
 
 export function meta({}: Route.MetaArgs) {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
   return [
     { title: "Alisom Online market - Online Market for Gadgets and Devices" },
     {
@@ -76,6 +80,10 @@ const HeroProducts = [
 ];
 
 export default function Home() {
+  function setIsModalOpen(arg0: boolean): void {
+    throw new Error("Function not implemented.");
+  }
+
   return (
     <div className="min-h-screen p-5 flex flex-col gap-10">
       {/* hero section */}
@@ -192,6 +200,13 @@ export default function Home() {
           <ProductDetailsCard key={prod.name} product={prod} />
         ))}
       </div>
+      <button
+        onClick={() => setIsModalOpen(true)}
+        className="bg-blue-600 text-white px-4 py-2 rounded"
+      >
+        Add New Category
+      </button>
+<AddCategoryModal isOpen onClose={() => setIsModalOpen(false)} />
     </div>
   );
 }
