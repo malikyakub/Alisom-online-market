@@ -15,9 +15,11 @@ import DashboardCard from "components/DashboardCard";
 import { FiBox, FiDollarSign } from "react-icons/fi";
 import StaffCard from "components/Staffcard";
 import HerCard from "components/HerCard";
-import iPhoneImage from "../../public/assets/images/iphone.png";
-import Airpods from "../../public/assets/images/airpods.png";
-import appleWatch from "../../public/assets/images/apple-watch.png";
+import iPhoneImage from "/assets/images/iphone.png";
+import Airpods from "/assets/images/airpods.png";
+import appleWatch from "/assets/images/apple-watch.png";
+import { useState } from "react";
+import AddCategoryModal from "components/AddCategoryModal";
 
 export function meta({}: Route.MetaArgs) {
   return [
@@ -76,10 +78,13 @@ const HeroProducts = [
 ];
 
 export default function Home() {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
   return (
     <div className="min-h-screen p-5 flex flex-col gap-10">
       {/* hero section */}
       <HerCard products={HeroProducts} />
+
       {/* Categories */}
       <div className="flex flex-row items-center gap-4 flex-wrap">
         <CategoryCard icon={RiComputerFill} text="Computers" />
@@ -126,8 +131,8 @@ export default function Home() {
           <TotalCard />
         </div>
       </div>
-      {/* ProductCard2 */}
 
+      {/* ProductCard2 */}
       <div className="flex flex-row items-center gap-4 flex-wrap">
         <div className="mt-6">
           <ProductCard2
@@ -160,6 +165,7 @@ export default function Home() {
         </div>
       </div>
 
+      {/* Dashboard Cards */}
       <div className="flex flex-row items-center gap-4 flex-wrap">
         <DashboardCard
           title="Total Revenue"
@@ -174,6 +180,8 @@ export default function Home() {
           icon={FiBox}
         />
       </div>
+
+      {/* Staff */}
       <div className="flex flex-row gap-4">
         <StaffCard
           image="https://i.pinimg.com/736x/0d/91/d7/0d91d7b01edad7276029d89550d14942.jpg"
@@ -186,12 +194,29 @@ export default function Home() {
           }}
         />
       </div>
+
       <ProfilePopup />
+
+      {/* Product Details */}
       <div className="my-4 gap-2 flex flex-col">
         {products.map((prod) => (
           <ProductDetailsCard key={prod.name} product={prod} />
         ))}
       </div>
+
+      {/* Button to open modal */}
+      <button
+        onClick={() => setIsModalOpen(true)}
+        className="bg-blue-600 text-white px-4 py-2 rounded"
+      >
+        Add New Category
+      </button>
+
+      {/* Modal */}
+      <AddCategoryModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+      />
     </div>
   );
 }
