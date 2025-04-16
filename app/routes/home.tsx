@@ -1,5 +1,4 @@
 import type { Route } from "./+types/home";
-import { Welcome } from "../welcome/welcome";
 import CategoryCard from "components/CategoryCard";
 import ProductCard from "components/ProductCard";
 import { IoStorefrontSharp } from "react-icons/io5";
@@ -13,6 +12,8 @@ import ProductCard2 from "components/ProductCard2";
 import ProfilePopup from "components/ProfilePopup";
 import DashboardCard from "components/DashboardCard";
 import { FiBox, FiDollarSign } from "react-icons/fi";
+import StaffCardPage from "components/Staffcard";
+import ProductDropdown from "components/productDropdown";
 import StaffCard from "components/Staffcard";
 import HerCard from "components/HerCard";
 import iPhoneImage from "/assets/images/iphone.png";
@@ -91,6 +92,9 @@ export default function Home() {
         <CategoryCard icon={CgSmartphone} text="SmartPhones" />
       </div>
 
+      <ProductDropdown /> {/* This is the dropdown menu for products */}
+
+      <div className="flex flex-row flex-wrap items-center gap-4">
       {/* Product Cards */}
       <div className="flex flex-row items-center gap-4 flex-wrap">
         <ProductCard
@@ -124,6 +128,7 @@ export default function Home() {
           textColor="#1A2238"
         />
       </div>
+      <div className="flex">
 
       {/* TotalCard */}
       <div className="flex flex-row items-center gap-4 flex-wrap">
@@ -131,6 +136,7 @@ export default function Home() {
           <TotalCard />
         </div>
       </div>
+      <div className="flex flex-row gap-4">
 
       {/* ProductCard2 */}
       <div className="flex flex-row items-center gap-4 flex-wrap">
@@ -181,6 +187,9 @@ export default function Home() {
         />
       </div>
 
+      <div className="flex flex-row gap-4">
+        <StaffCardPage />
+      </div>
       {/* Staff */}
       <div className="flex flex-row gap-4">
         <StaffCard
