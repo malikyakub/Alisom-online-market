@@ -7,4 +7,5 @@ export default [
   route("User", "routes/User/_layout.tsx", {}, [
     route("Account", "routes/User/Account.tsx"),
   ]),
+  route("*", "routes/NotFound.tsx"),
 ] satisfies RouteConfig;
