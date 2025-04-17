@@ -8,6 +8,10 @@ import { CgSmartphone } from "react-icons/cg";
 import InformationCard from "components/InformationCard";
 import { CiDollar } from "react-icons/ci";
 import ProductDetailsCard from "components/ProductDetailsCard";
+import PaymentApprovalModal from "components/PaymentApprovalModal";
+
+
+
 
 export function meta({}: Route.MetaArgs) {
   return [
@@ -51,6 +55,9 @@ export default function Home() {
         textColor="#1A2238"
       />    </div>
       <ProductDetailsCard/>
+      <PaymentApprovalModal></PaymentApprovalModal>
+
     </div>
+    
   );
 }
