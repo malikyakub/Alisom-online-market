@@ -1,18 +1,31 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { BiSearch } from "react-icons/bi";
 import { CiHeart } from "react-icons/ci";
 import { LuShoppingCart } from "react-icons/lu";
 import { CgProfile } from "react-icons/cg";
 import { HiOutlineMenuAlt3, HiOutlineX } from "react-icons/hi";
+import ProfilePopup from "./ProfilePopup";
 
 const Header = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [cartCount] = useState(3);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [currentPath, setCurrentPath] = useState("/");
+  const [showProfilePopup, setShowProfilePopup] = useState(false);
+  const profileRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
     setCurrentPath(window.location.pathname);
+  }, []);
+
+  useEffect(() => {
+    function handleClickOutside(event: any) {
+      if (profileRef.current && !profileRef.current.contains(event.target)) {
+        setShowProfilePopup(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
   const navItems = [
@@ -25,12 +38,12 @@ const Header = () => {
   const handleSearch = () => {
     if (searchQuery.trim()) {
       console.log("Searching for:", searchQuery);
-      // window.location.href = `/search?q=${searchQuery}`; // optional search page navigation
     }
   };
 
   return (
-    <header className="w-full">
+    <header className="w-full relative">
+      {" "}
       <div className="max-w-[1170px] mx-auto py-4 px-6 flex items-center justify-between gap-6">
         <a href="/">
           <img
@@ -40,7 +53,6 @@ const Header = () => {
           />
         </a>
 
-        {/* Desktop Nav */}
         <nav className="hidden md:flex flex-1 justify-center">
           <ul className="flex items-center gap-6 text-sm sm:text-base font-medium">
             {navItems.map((item) => (
@@ -60,8 +72,7 @@ const Header = () => {
           </ul>
         </nav>
 
-        {/* Desktop Search and Icons */}
-        <div className="hidden sm:flex items-center gap-6">
+        <div className="hidden sm:flex items-center gap-6 relative">
           <div className="bg-gray-100 hover:shadow-md transition-shadow duration-200 p-2 px-4 rounded-lg flex items-center gap-3">
             <input
               value={searchQuery}
@@ -100,16 +111,23 @@ const Header = () => {
               )}
             </button>
 
-            <button
-              className="text-gray-600 hover:text-[#007BFF]"
-              aria-label="Profile"
-            >
-              <CgProfile size={24} />
-            </button>
+            <div className="relative" ref={profileRef}>
+              <button
+                className="text-gray-600 hover:text-[#007BFF]"
+                aria-label="Profile"
+                onClick={() => setShowProfilePopup(!showProfilePopup)}
+              >
+                <CgProfile size={24} />
+              </button>
+              {showProfilePopup && (
+                <div className="absolute top-10 right-0 z-50">
+                  <ProfilePopup />
+                </div>
+              )}
+            </div>
           </div>
         </div>
 
-        {/* Mobile Menu Toggle */}
         <div className="md:hidden">
           <button
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
@@ -123,8 +141,6 @@ const Header = () => {
           </button>
         </div>
       </div>
-
-      {/* Mobile Menu */}
       {mobileMenuOpen && (
         <div className="md:hidden px-6 pb-4">
           <ul className="flex flex-col gap-4 text-gray-700 text-sm font-medium">
