@@ -6,11 +6,13 @@ import {
   Scripts,
   ScrollRestoration,
 } from "react-router";
-
 import type { Route } from "./+types/root";
 import "./app.css";
+import Header from "components/Header";
+import Footer from "components/Footer";
 
 export const links: Route.LinksFunction = () => [
+  { rel: "icon", href: "/favicon.ico" },
   { rel: "preconnect", href: "https://fonts.googleapis.com" },
   {
     rel: "preconnect",
@@ -32,8 +34,16 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <Meta />
         <Links />
       </head>
-      <body>
-        {children}
+      {/* <body className="bg-[#007BFF] text-gray-900 font-sans min-h-screen flex flex-col"> */}
+      <body className="text-gray-900 font-sans min-h-screen flex flex-col">
+        <div className="w-full mx-auto px-4 sm:px-6 sticky top-0 z-50 bg-[#F4F4F4b3] backdrop-blur-md">
+          <Header />
+        </div>
+
+        <main className="flex-1 w-full max-w-[1170px] mx-auto px-4 sm:px-6 py-6">
+          {children}
+        </main>
+        <Footer />
         <ScrollRestoration />
         <Scripts />
       </body>
