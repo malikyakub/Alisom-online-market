@@ -1,8 +1,48 @@
-import React from "react";
+import React, { useState, type ChangeEvent, type FormEvent } from "react";
 
-const RegisterForm = ({ isLogin = false }) => {
+type RegisterFormProps = {
+  isLogin?: boolean;
+  isLoading?: boolean;
+  onSubmit?: (formData: FormData) => void;
+};
+
+type FormData = {
+  name: string;
+  phone: string;
+  address: string;
+  email: string;
+  password: string;
+  confirmPassword: string;
+};
+
+const RegisterForm: React.FC<RegisterFormProps> = ({
+  isLogin = false,
+  isLoading = false,
+  onSubmit,
+}) => {
+  const [formData, setFormData] = useState<FormData>({
+    name: "",
+    phone: "",
+    address: "",
+    email: "",
+    password: "",
+    confirmPassword: "",
+  });
+
+  const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleFormSubmit = (e: FormEvent) => {
+    e.preventDefault();
+    if (onSubmit) {
+      onSubmit(formData);
+    }
+  };
+
   return (
-    <div className="min-h-screen flex items-center justify-center p-4 sm:p-6 lg:p-8">
+    <div className="flex items-center justify-center p-4 sm:p-6 lg:p-8">
       <div className="w-full lg:max-w-md">
         <h2 className="text-2xl font-bold mb-1">
           {isLogin ? "Welcome back" : "Create an account"}
@@ -13,21 +53,30 @@ const RegisterForm = ({ isLogin = false }) => {
             : "Enter your details below"}
         </p>
 
-        <form className="space-y-4">
+        <form className="space-y-4" onSubmit={handleFormSubmit}>
           {!isLogin && (
             <>
               <input
                 type="text"
+                name="name"
+                value={formData.name}
+                onChange={handleChange}
                 placeholder="Name"
                 className="w-full border border-gray-300 rounded px-4 py-2 focus:outline-none focus:bg-blue-100 focus:border-[#007BFF]"
               />
               <input
                 type="text"
+                name="phone"
+                value={formData.phone}
+                onChange={handleChange}
                 placeholder="Phone"
                 className="w-full border border-gray-300 rounded px-4 py-2 focus:outline-none focus:bg-blue-100 focus:border-[#007BFF]"
               />
               <input
                 type="text"
+                name="address"
+                value={formData.address}
+                onChange={handleChange}
                 placeholder="Address"
                 className="w-full border border-gray-300 rounded px-4 py-2 focus:outline-none focus:bg-blue-100 focus:border-[#007BFF]"
               />
@@ -35,17 +84,26 @@ const RegisterForm = ({ isLogin = false }) => {
           )}
           <input
             type="text"
+            name="email"
+            value={formData.email}
+            onChange={handleChange}
             placeholder="Email"
             className="w-full border border-gray-300 rounded px-4 py-2 focus:outline-none focus:bg-blue-100 focus:border-[#007BFF]"
           />
           <input
             type="password"
+            name="password"
+            value={formData.password}
+            onChange={handleChange}
             placeholder={isLogin ? "Password" : "Create Password"}
             className="w-full border border-gray-300 rounded px-4 py-2 focus:outline-none focus:bg-blue-100 focus:border-[#007BFF]"
           />
           {!isLogin && (
             <input
               type="password"
+              name="confirmPassword"
+              value={formData.confirmPassword}
+              onChange={handleChange}
               placeholder="Confirm Password"
               className="w-full border border-gray-300 rounded px-4 py-2 focus:outline-none focus:bg-blue-100 focus:border-[#007BFF]"
             />
@@ -53,9 +111,21 @@ const RegisterForm = ({ isLogin = false }) => {
 
           <button
             type="submit"
-            className="w-full bg-blue-600 text-white rounded px-4 py-2 font-semibold"
+            className="w-full bg-blue-600 text-white rounded px-4 py-2 font-semibold flex items-center justify-center"
+            disabled={isLoading}
           >
-            {isLogin ? "Log In" : "Create Account"}
+            {isLoading ? (
+              <>
+                <div
+                  className="w-5 h-5 border-2 border-t-transparent border-white rounded-full animate-spin"
+                  role="status"
+                  aria-label="loading"
+                />
+                <span className="ml-2">Please wait...</span>
+              </>
+            ) : (
+              <span>{isLogin ? "Log In" : "Create Account"}</span>
+            )}
           </button>
         </form>
 

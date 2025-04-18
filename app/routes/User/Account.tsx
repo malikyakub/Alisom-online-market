@@ -20,7 +20,7 @@ const UserAccount = () => {
   };
 
   return (
-    <div className="min-h-screen bg-white p-4 sm:p-6 md:p-10 font-sans">
+    <div className="bg-white p-4 sm:p-6 md:p-10 font-sans">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 space-y-2 sm:space-y-0">
         <div className="text-sm text-gray-500">
           Home / <span className="text-black font-semibold">My Account</span>

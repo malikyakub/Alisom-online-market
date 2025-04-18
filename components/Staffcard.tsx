@@ -1,9 +1,5 @@
-import React from 'react';
-import {
-  FaTwitter,
-  FaInstagram,
-  FaLinkedin,
-} from 'react-icons/fa';
+import React from "react";
+import { FaTwitter, FaInstagram, FaLinkedin } from "react-icons/fa";
 
 interface StaffCardProps {
   image: string;
@@ -16,27 +12,49 @@ interface StaffCardProps {
   };
 }
 
-const StaffCard: React.FC<StaffCardProps> = ({ image, name, title, socials }) => {
+const StaffCard: React.FC<StaffCardProps> = ({
+  image,
+  name,
+  title,
+  socials,
+}) => {
   return (
-    <div className="max-w-sm w-full bg-white rounded-lg overflow-hidden shadow-md shadow-black/30">
-      <img src={image} alt={name} className="w-full h-80 object-cover" />
-      <div className="p-6">
-        <h2 className="text-xl font-bold text-gray-800 mb-1">{name}</h2>
-        <p className="text-gray-600 text-sm mb-4">{title}</p>
-        <div className="flex space-x-4 text-gray-600">
+    <div className="w-[370px] h-[564px] bg-white rounded-lg overflow-hidden shadow-md shadow-black/30">
+      <div className="w-full h-[430px] bg-[#f5f5f5] flex items-center justify-center">
+        <img src={image} alt={name} className="w-full h-full object-center" />
+      </div>
+      <div className="px-4 pt-4 pb-2">
+        <h2 className="text-xl font-bold text-black mb-1">{name}</h2>
+        <p className="text-sm font-semibold text-gray-800 mb-4">{title}</p>
+        <div className="flex gap-4 text-black text-[18px]">
           {socials.twitter && (
-            <a href={socials.twitter} target="_blank" rel="noopener noreferrer">
-              <FaTwitter size={20} />
+            <a
+              href={socials.twitter}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-2xl hover:text-[#007BFF]"
+            >
+              <FaTwitter />
             </a>
           )}
           {socials.instagram && (
-            <a href={socials.instagram} target="_blank" rel="noopener noreferrer">
-              <FaInstagram size={20} />
+            <a
+              href={socials.instagram}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-2xl hover:text-[#007BFF]"
+            >
+              <FaInstagram />
             </a>
           )}
           {socials.linkedin && (
-            <a href={socials.linkedin} target="_blank" rel="noopener noreferrer">
-              <FaLinkedin size={20} />
+            <a
+              href={socials.linkedin}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-2xl hover:text-[#007BFF]"
+            >
+              <FaLinkedin />
             </a>
           )}
         </div>
@@ -44,6 +62,5 @@ const StaffCard: React.FC<StaffCardProps> = ({ image, name, title, socials }) =>
     </div>
   );
 };
-
 
 export default StaffCard;
