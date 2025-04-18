@@ -14,7 +14,6 @@ import ProductCard from "components/ProductCard";
 import ProfilePopup from "components/ProfilePopup";
 import DashboardCard from "components/DashboardCard";
 import { FiBox, FiDollarSign } from "react-icons/fi";
-import StaffCardPage from "components/Staffcard";
 import ProductDropdown from "components/productDropdown";
 import StaffCard from "components/Staffcard";
 import HerCard from "components/HerCard";
@@ -155,13 +154,14 @@ export default function Home() {
       <HerCard products={HeroProducts} />
 
       <div className="flex flex-row flex-wrap gap-4 items-center">
-        {categories.map((cat) => (
-          <CategoryCard icon={cat.icon} text={cat.text} />
+        {categories.map((cat, index) => (
+          <CategoryCard key={index} icon={cat.icon} text={cat.text} />
         ))}
       </div>
       <div className="flex flex-row flex-wrap gap-4 items-center">
-        {featuredProducts.map((prod) => (
+        {featuredProducts.map((prod, index) => (
           <FeaturedProductCard
+            key={index}
             image={prod.image}
             price={prod.price}
             rating={prod.rating}
@@ -170,8 +170,9 @@ export default function Home() {
         ))}
       </div>
       <div className="flex flex-row flex-wrap gap-4 items-center">
-        {Products.map((prod) => (
+        {Products.map((prod, index) => (
           <ProductCard
+            key={index}
             image={prod.image}
             price={prod.price}
             rating={prod.rating}
@@ -181,8 +182,9 @@ export default function Home() {
         ))}
       </div>
       <div className="flex flex-row flex-wrap gap-4 items-center">
-        {informations.map((info) => (
+        {informations.map((info, index) => (
           <InformationCard
+            key={index}
             icon={info.icon}
             title={info.title}
             value={info.value}

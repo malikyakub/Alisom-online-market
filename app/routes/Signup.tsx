@@ -1,26 +1,119 @@
+import React, { useState } from "react";
 import RegisterForm from "components/RegisterForm";
-import React from "react";
-import SignupIllustrator from "../../public/assets/images/Login-illustrator.png";
+import SignupIllustrator from "/assets/images/Login-illustrator.png";
+import useAuth from "hooks/useAuth";
+import Alert from "components/Alert";
+import useUsers from "hooks/useUsers";
 
 export function meta() {
   return [{ title: "Alisom Online Market - Signup" }];
 }
 
 const Signup: React.FC = () => {
-  const handleSubmit = (event: React.FormEvent) => {
-    event.preventDefault();
-    console.log("Signup form submitted");
+  const { signup } = useAuth();
+  const { NewUser } = useUsers();
+  const [isLoading, setIsLoading] = useState(false);
+  const [alertOpen, setAlertOpen] = useState(false);
+  const [alertProps, setAlertProps] = useState<{
+    title: string;
+    description: string;
+    type?: "success" | "warning" | "danger" | "info";
+  }>({ title: "", description: "", type: "info" });
+
+  const triggerAlert = (
+    title: string,
+    description: string,
+    type: "success" | "warning" | "danger" | "info" = "info"
+  ) => {
+    setAlertProps({ title, description, type });
+    setAlertOpen(true);
+  };
+
+  const handleSubmit = async (formData: {
+    name: string;
+    phone: string;
+    address: string;
+    email: string;
+    password: string;
+    confirmPassword: string;
+  }) => {
+    if (formData.password !== formData.confirmPassword) {
+      triggerAlert("Password Mismatch", "Passwords do not match.", "warning");
+      return;
+    }
+
+    setIsLoading(true);
+
+    try {
+      const { user: authUser } = await signup(
+        formData.email,
+        formData.password
+      );
+
+      if (!authUser) {
+        triggerAlert(
+          "Signup Failed",
+          "No user was returned after signup. Please try again.",
+          "danger"
+        );
+        return;
+      }
+
+      const newUser = {
+        fullname: formData.name,
+        email: formData.email,
+        phone: formData.phone,
+        address: formData.address,
+      };
+
+      const { data: userData, err: userError } = await NewUser(newUser);
+      console.log("NewUser response:", { userData, userError });
+
+      // if (userError) {
+      //   triggerAlert(
+      //     "Signup Failed",
+      //     typeof userError === "string"
+      //       ? userError
+      //       : "An error occurred while creating your profile.",
+      //     "danger"
+      //   );
+      //   return;
+      // }
+
+      triggerAlert("Signup Successful", "Welcome aboard!", "success");
+      console.log("Signup successful!", userData);
+      window.location.href = "/user/account";
+    } catch (error: any) {
+      const errorMsg =
+        error?.message || error?.toString() || "Unexpected error occurred.";
+      console.error("Signup failed:", error);
+      triggerAlert("Signup Error", errorMsg, "danger");
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
-    <div className="min-h-screen p-5 flex flex-col gap-10 justify-center items-center">
+    <div className="p-5 flex flex-col gap-10 justify-center items-center">
+      <Alert
+        title={alertProps.title}
+        description={alertProps.description}
+        type={alertProps.type}
+        isOpen={alertOpen}
+        onClose={() => setAlertOpen(false)}
+      />
+
       <div className="flex flex-col lg:flex-row justify-between items-center px-5 w-full max-w-7xl">
         <div className="w-full lg:w-1/2 overflow-hidden hidden lg:block">
           <img src={SignupIllustrator} alt="signup illustrator" />
         </div>
 
         <div className="w-full lg:w-1/2">
-          <RegisterForm isLogin={false} />
+          <RegisterForm
+            isLogin={false}
+            onSubmit={handleSubmit}
+            isLoading={isLoading}
+          />
         </div>
       </div>
     </div>
