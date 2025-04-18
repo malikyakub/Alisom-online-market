@@ -146,6 +146,30 @@ const informations = [
   },
 ];
 
+const staffData = [
+  {
+    image:
+      "https://i.pinimg.com/236x/5b/72/cc/5b72ccd75cd3a72e6d3e90c2b1bcdc19.jpg",
+    name: "Emily Carter",
+    title: "Marketing Lead",
+    socials: {
+      twitter: "https://twitter.com/emilycarter",
+      instagram: "https://instagram.com/emilycarter",
+      linkedin: "https://linkedin.com/in/emilycarter",
+    },
+  },
+  {
+    image:
+      "https://i.pinimg.com/236x/a2/98/a7/a298a7a052ff391205d94e65ee130b81.jpg",
+    name: "Jake Thompson",
+    title: "Senior Developer",
+    socials: {
+      twitter: "https://twitter.com/jakethompson",
+      linkedin: "https://linkedin.com/in/jakethompson",
+    },
+  },
+];
+
 export default function Home() {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
@@ -191,7 +215,32 @@ export default function Home() {
           />
         ))}
       </div>
-      <div className="flex flex-row flex-wrap gap-4 items-center"></div>
+      <div className="flex flex-row flex-wrap gap-4 items-center">
+        <div className="flex flex-row flex-wrap gap-4 items-center">
+          {staffData.map((staff, index) => (
+            <StaffCard
+              key={index}
+              image={staff.image}
+              name={staff.name}
+              title={staff.title}
+              socials={staff.socials}
+            />
+          ))}
+        </div>
+      </div>
+      <div className="flex flex-row flex-wrap gap-4 items-center">
+        <TotalCard />
+      </div>
+      <button
+        className="p-4 rounded-xl w-52 bg-[#17C3B2] justify-center items-center text-white font-bold"
+        onClick={() => setIsModalOpen(true)}
+      >
+        open
+      </button>
+      <AddCategoryModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+      />
     </div>
   );
 }

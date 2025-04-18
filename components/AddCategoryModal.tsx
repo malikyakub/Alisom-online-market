@@ -12,7 +12,7 @@ const AddCategoryModal = ({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 flex items-center justify-center bg-white/30 backdrop-blur-sm z-50">
+    <div className="fixed inset-0 flex items-center justify-center bg-[#1a22384d] backdrop-blur-sm z-50 shadow-2xl">
       <div className="bg-white p-6 rounded-lg shadow-lg w-96">
         <div className="flex justify-between items-center mb-4">
           <h2 className="text-xl font-bold">Add Category</h2>
@@ -30,7 +30,7 @@ const AddCategoryModal = ({
              focus:outline-none focus:ring-2 focus:ring-blue-400  // Stronger blue ring
              focus:bg-blue-100                 // More intense blue background (100 instead of 50)
              hover:bg-blue-50                  // Optional: subtle hover (unchanged)
-             transition-colors duration-200"   // Smoother transition"
+             transition-colors duration-200" // Smoother transition"
         />
         <div className="flex justify-end mt-4">
           <button className="bg-blue-600 text-white px-4 py-2 rounded-md">
