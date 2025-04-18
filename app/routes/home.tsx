@@ -10,9 +10,6 @@ import { CiDollar } from "react-icons/ci";
 import ProductDetailsCard from "components/ProductDetailsCard";
 import PaymentApprovalModal from "components/PaymentApprovalModal";
 
-
-
-
 export function meta({}: Route.MetaArgs) {
   return [
     { title: "New React Router App" },
@@ -40,24 +37,23 @@ export default function Home() {
         />
       </div>
       <div className="flex flex-row  items-center gap-3">
-      <InformationCard 
-        icon={IoStorefrontSharp}
-        value="10.5k"
-        label="Sellers active on our site"
-        iconBgColor="#1A2238"
-        textColor="#1A2238"
-      />   
-      <InformationCard 
-        icon={CiDollar}
-        value="33k"
-        label="Monthly Produduct Sale"
-        iconBgColor="#1A2238"
-        textColor="#1A2238"
-      />    </div>
-      <ProductDetailsCard/>
-      <PaymentApprovalModal></PaymentApprovalModal>
-
+        <InformationCard
+          icon={IoStorefrontSharp}
+          value="10.5k"
+          label="Sellers active on our site"
+          iconBgColor="#1A2238"
+          textColor="#1A2238"
+        />
+        <InformationCard
+          icon={CiDollar}
+          value="33k"
+          label="Monthly Produduct Sale"
+          iconBgColor="#1A2238"
+          textColor="#1A2238"
+        />{" "}
+      </div>
+      <ProductDetailsCard />
+      <PaymentApprovalModal />
     </div>
-    
   );
 }
