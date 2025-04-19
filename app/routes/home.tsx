@@ -25,6 +25,7 @@ import { MdPayment } from "react-icons/md";
 import AddCategoryModal from "components/AddCategoryModal";
 import { PiResizeFill } from "react-icons/pi";
 
+
 export function meta({}: Route.MetaArgs) {
   return [
     { title: "Alisom Online market - Online Market for Gadgets and Devices" },
