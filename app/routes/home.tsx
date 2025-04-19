@@ -24,7 +24,7 @@ import { useState } from "react";
 import { MdPayment } from "react-icons/md";
 import AddCategoryModal from "components/AddCategoryModal";
 import { PiResizeFill } from "react-icons/pi";
-
+import ServiceBookCard from "components/ServiceBookedCard";
 
 export function meta({}: Route.MetaArgs) {
   return [
@@ -232,6 +232,7 @@ export default function Home() {
       <div className="flex flex-row flex-wrap gap-4 items-center">
         <TotalCard />
       </div>
+      <ServiceBookCard />
       <button
         className="p-4 rounded-xl w-52 bg-[#17C3B2] justify-center items-center text-white font-bold"
         onClick={() => setIsModalOpen(true)}
