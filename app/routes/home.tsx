@@ -233,8 +233,12 @@ export default function Home() {
       <div className="flex flex-row flex-wrap gap-4 items-center">
         <TotalCard />
       </div>
-      <ServiceBookCard />
-      <ProductFullDetails />
+      <div className="flex flex-row flex-wrap gap-4 items-center">
+        <ServiceBookCard />
+      </div>
+      <div className="flex flex-row flex-wrap gap-4 items-center">
+        <ProductFullDetails />
+      </div>
       <button
         className="p-4 rounded-xl w-52 bg-[#17C3B2] justify-center items-center text-white font-bold"
         onClick={() => setIsModalOpen(true)}

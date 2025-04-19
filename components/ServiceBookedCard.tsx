@@ -9,7 +9,7 @@ const ServiceBookCard = () => {
   ];
 
   return (
-    <div className="bg-gray-800 text-white p-6 rounded-lg shadow-md max-w-md mx-auto">
+    <div className="bg-gray-800 text-white p-6 rounded-lg shadow-md max-w-md">
       <h2 className="text-xl font-semibold mb-4">Services booked</h2>
       <p className="mb-4">You have {bookings.length}  you have 2 service bookings today.</p>
       <ul>
