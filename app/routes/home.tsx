@@ -26,6 +26,7 @@ import AddCategoryModal from "components/AddCategoryModal";
 import { PiResizeFill } from "react-icons/pi";
 import ServiceBookCard from "components/ServiceBookedCard";
 import ProductFullDetails from "components/Productfulldetails";
+import RecentOrders from "components/RecentOrders";
 
 export function meta({}: Route.MetaArgs) {
   return [
@@ -249,6 +250,7 @@ export default function Home() {
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
       />
+    <RecentOrders/>
     </div>
   );
 }
