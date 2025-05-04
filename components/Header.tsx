@@ -81,7 +81,7 @@ const Header = () => {
       <div className="max-w-[1170px] mx-auto py-4 px-6 flex items-center justify-between gap-6">
         <a href="/">
           <img
-            src="/assets/images/logo.png"
+            src="/assets/images/logo.svg"
             alt="Company Logo"
             className="w-10 h-10 object-contain"
           />

@@ -7,18 +7,21 @@ const AdminHeader = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isDarkMode, setIsDarkMode] = useState(false);
+  const [currentPath, setCurrentPath] = useState("/");
 
   const navLinks = [
-    "Dashboard",
-    "Categories",
-    "Products",
-    "Orders",
-    "Customers",
-    "Staff",
-    "Settings",
+    { name: "Dashboard", link: "/admin/dashboard" },
+    { name: "Categories", link: "/admin/categories" },
+    { name: "Products", link: "/admin/products" },
+    { name: "Orders", link: "/admin/orders" },
+    { name: "Customers", link: "/admin/customers" },
+    { name: "Staff", link: "/admin/staff" },
+    { name: "Settings", link: "/admin/settings" },
   ];
 
   useEffect(() => {
+    setCurrentPath(window.location.pathname);
+
     const prefersDark = window.matchMedia(
       "(prefers-color-scheme: dark)"
     ).matches;
@@ -47,21 +50,28 @@ const AdminHeader = () => {
       <div className="mx-auto max-w-7xl px-4 py-4 flex items-center justify-between">
         <div className="flex items-center gap-6">
           <div className="w-10 h-10">
-            <img
-              src="/assets/images/logo.png"
-              alt="logo"
-              className="object-contain"
-            />
+            <a href="/">
+              <img
+                src="/assets/images/logo.svg"
+                alt="logo"
+                className="object-contain"
+              />
+            </a>
           </div>
 
+          {/* Desktop nav */}
           <ul className="hidden md:flex gap-6 text-sm font-medium text-gray-700 dark:text-gray-200">
-            {navLinks.map((link) => (
-              <li key={link}>
+            {navLinks.map((item) => (
+              <li key={item.name}>
                 <a
-                  href={`#${link.toLowerCase()}`}
-                  className="hover:text-[#007BFF] transition-colors duration-150"
+                  href={item.link}
+                  className={`hover:text-[#007BFF] transition-colors duration-150 ${
+                    currentPath === item.link
+                      ? "text-[#007BFF] underline underline-offset-4"
+                      : ""
+                  }`}
                 >
-                  {link}
+                  {item.name}
                 </a>
               </li>
             ))}
@@ -69,6 +79,7 @@ const AdminHeader = () => {
         </div>
 
         <div className="flex items-center gap-4">
+          {/* Search */}
           <div className="hidden sm:flex bg-white/70 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 hover:shadow-md transition-shadow duration-200 p-2 px-4 rounded-lg items-center gap-3">
             <input
               value={searchQuery}
@@ -104,16 +115,22 @@ const AdminHeader = () => {
         </div>
       </div>
 
+      {/* Mobile nav */}
       {isMobileMenuOpen && (
         <div className="md:hidden px-4 pb-4">
           <ul className="flex flex-col gap-2 text-sm font-medium text-gray-700 dark:text-gray-200">
-            {navLinks.map((link) => (
-              <li key={link}>
+            {navLinks.map((item) => (
+              <li key={item.name}>
                 <a
-                  href={`#${link.toLowerCase()}`}
-                  className="block px-2 py-1 rounded hover:bg-gray-100 dark:hover:bg-gray-800 transition"
+                  href={item.link}
+                  onClick={() => setIsMobileMenuOpen(false)}
+                  className={`block px-2 py-1 rounded hover:bg-gray-100 dark:hover:bg-gray-800 transition ${
+                    currentPath === item.link
+                      ? "text-[#007BFF] underline underline-offset-4"
+                      : ""
+                  }`}
                 >
-                  {link}
+                  {item.name}
                 </a>
               </li>
             ))}

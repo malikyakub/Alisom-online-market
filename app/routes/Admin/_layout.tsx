@@ -8,7 +8,7 @@ export default function AdminLayout() {
         <AdminHeader />
       </header>
 
-      <main className="flex-1 w-full px-4 py-6 sm:px-6 md:px-8">
+      <main className="flex-1 w-full">
         <Outlet />
       </main>
     </div>

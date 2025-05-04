@@ -5,6 +5,7 @@ import {
   Outlet,
   Scripts,
   ScrollRestoration,
+  useLocation,
 } from "react-router";
 import type { Route } from "./+types/root";
 import "./app.css";
@@ -26,6 +27,10 @@ export const links: Route.LinksFunction = () => [
 ];
 
 export function Layout({ children }: { children: React.ReactNode }) {
+  const location = useLocation();
+
+  const isAdmin = location.pathname.startsWith("/admin");
+
   return (
     <html lang="en">
       <head>
@@ -35,13 +40,22 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <Links />
       </head>
       <body className="text-gray-900 font-sans min-h-screen flex flex-col">
-        <div className="w-full mx-auto px-4 sm:px-6 sticky top-0 z-50 bg-[#F4F4F4b3] backdrop-blur-md">
-          <Header />
-        </div>
-        <main className="flex-1 w-full max-w-[1170px] mx-auto px-4 sm:px-6 py-6">
+        {!isAdmin && (
+          <div className="w-full mx-auto px-4 sm:px-6 sticky top-0 z-50 bg-[#F4F4F4b3] backdrop-blur-md">
+            <Header />
+          </div>
+        )}
+
+        <main
+          className={`flex-1 w-full mx-auto ${
+            !isAdmin ? "max-w-[1170px] px-4 sm:px-6 py-6" : "p-0"
+          }`}
+        >
           {children}
         </main>
-        <Footer />
+
+        {!isAdmin && <Footer />}
+
         <ScrollRestoration />
         <Scripts />
       </body>
