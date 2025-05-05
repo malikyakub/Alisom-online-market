@@ -20,10 +20,11 @@ const UserAccount = () => {
   };
 
   return (
-    <div className="bg-white p-4 sm:p-6 md:p-10 font-sans">
+    <div>
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 space-y-2 sm:space-y-0">
         <div className="text-sm text-gray-500">
-          Home / <span className="text-black font-semibold">My Account</span>
+          Home / User /{" "}
+          <span className="text-black font-semibold">My Account</span>
         </div>
         <div className="text-sm">
           Welcome! <span className="text-red-600 font-medium">Mohmoud!</span>
@@ -55,7 +56,7 @@ const UserAccount = () => {
                   placeholder="Enter your first name"
                   value={formData.firstName}
                   onChange={handleChange}
-                  className="w-full border p-2 rounded bg-gray-95 focus:bg-[#007BFF33] focus:border-[#007BFF] outline-none"
+                  className="w-full border p-2 rounded bg-gray-200 focus:bg-[#007BFF33] focus:border-[#007BFF] outline-none"
                 />
               </div>
               <div>
@@ -66,7 +67,7 @@ const UserAccount = () => {
                   placeholder="Enter your last name"
                   value={formData.lastName}
                   onChange={handleChange}
-                  className="w-full border p-2 rounded bg-gray-95 focus:bg-[#007BFF33] focus:border-[#007BFF] outline-none"
+                  className="w-full border p-2 rounded bg-gray-200 focus:bg-[#007BFF33] focus:border-[#007BFF] outline-none"
                 />
               </div>
               <div>
@@ -77,7 +78,7 @@ const UserAccount = () => {
                   placeholder="Enter your email"
                   value={formData.email}
                   onChange={handleChange}
-                  className="w-full border p-2 rounded bg-gray-95 focus:bg-[#007BFF33] focus:border-[#007BFF] outline-none"
+                  className="w-full border p-2 rounded bg-gray-200 focus:bg-[#007BFF33] focus:border-[#007BFF] outline-none"
                 />
               </div>
               <div>
@@ -88,7 +89,7 @@ const UserAccount = () => {
                   placeholder="Enter your address"
                   value={formData.address}
                   onChange={handleChange}
-                  className="w-full border p-2 rounded bg-gray-95 focus:bg-[#007BFF33] focus:border-[#007BFF] outline-none"
+                  className="w-full border p-2 rounded bg-gray-200 focus:bg-[#007BFF33] focus:border-[#007BFF] outline-none"
                 />
               </div>
             </div>
@@ -102,7 +103,7 @@ const UserAccount = () => {
                   placeholder="Current Password"
                   value={formData.currentPassword}
                   onChange={handleChange}
-                  className="w-full border p-2 rounded bg-gray-95 focus:bg-[#007BFF33] focus:border-[#007BFF] outline-none"
+                  className="w-full border p-2 rounded bg-gray-200 focus:bg-[#007BFF33] focus:border-[#007BFF] outline-none"
                 />
                 <input
                   type="password"
@@ -110,7 +111,7 @@ const UserAccount = () => {
                   placeholder="New Password"
                   value={formData.newPassword}
                   onChange={handleChange}
-                  className="w-full border p-2 rounded bg-gray-95 focus:bg-[#007BFF33] focus:border-[#007BFF] outline-none"
+                  className="w-full border p-2 rounded bg-gray-200 focus:bg-[#007BFF33] focus:border-[#007BFF] outline-none"
                 />
                 <input
                   type="password"
@@ -118,7 +119,7 @@ const UserAccount = () => {
                   placeholder="Confirm New Password"
                   value={formData.confirmPassword}
                   onChange={handleChange}
-                  className="w-full border p-2 rounded bg-gray-95 focus:bg-[#007BFF33] focus:border-[#007BFF] outline-none"
+                  className="w-full border p-2 rounded bg-gray-200 focus:bg-[#007BFF33] focus:border-[#007BFF] outline-none"
                 />
               </div>
             </div>
