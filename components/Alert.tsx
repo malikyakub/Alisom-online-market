@@ -1,5 +1,9 @@
 import React, { useEffect, useState, type JSX } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import successIcon from "../public/assets/icons/success.png";
+import warningIcon from "../public/assets/icons/warning.png";
+import dangerIcon from "../public/assets/icons/danger.png";
+import infoIcon from "../public/assets/icons/info.png";
 
 interface AlertProps {
   title: string;
@@ -18,24 +22,32 @@ const alertColors: Record<string, string> = {
 
 const alertIcons: Record<string, JSX.Element> = {
   success: (
-    <svg className="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 16 16">
-      <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM6.97 11.03a.75.75 0 0 0 1.08-.02L11.03 8l-1.06-1.06-2.47 2.47L6.97 7.97 5.91 9.03l1.06 1.06z" />
-    </svg>
+    <img
+      src={successIcon}
+      alt="success"
+      className="w-8 h-8 drop-shadow-[0_0_2px_white]"
+    />
   ),
   warning: (
-    <svg className="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 16 16">
-      <path d="M8.982 1.566a1.13 1.13 0 0 0-1.964 0L.165 13.233c-.457.778.091 1.767.982 1.767h13.707c.89 0 1.438-.99.982-1.767L8.982 1.566zM8 5c.535 0 .954.462.9.995l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 5.995A.905.905 0 0 1 8 5zm.002 6a1 1 0 1 1-2.002 0 1 1 0 0 1 2.002 0z" />
-    </svg>
+    <img
+      src={warningIcon}
+      alt="warning"
+      className="w-8 h-8 drop-shadow-[0_0_2px_white]"
+    />
   ),
   danger: (
-    <svg className="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 16 16">
-      <path d="M8.982 1.566a1.13 1.13 0 0 0-1.964 0L.165 13.233c-.457.778.091 1.767.982 1.767h13.707c.89 0 1.438-.99.982-1.767L8.982 1.566zM8 5c.535 0 .954.462.9.995l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 5.995A.905.905 0 0 1 8 5zm.002 6a1 1 0 1 1-2.002 0 1 1 0 0 1 2.002 0z" />
-    </svg>
+    <img
+      src={dangerIcon}
+      alt="danger"
+      className="w-8 h-8 drop-shadow-[0_0_2px_white]"
+    />
   ),
   info: (
-    <svg className="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 16 16">
-      <path d="M8 0a8 8 0 1 0 0 16A8 8 0 0 0 8 0zM8.93 4.588a.5.5 0 1 1-1 0 .5.5 0 0 1 1 0zM8 6a.5.5 0 0 1 .5.5v4a.5.5 0 0 1-1 0v-4A.5.5 0 0 1 8 6z" />
-    </svg>
+    <img
+      src={infoIcon}
+      alt="info"
+      className="w-8 h-8 drop-shadow-[0_0_2px_white]"
+    />
   ),
 };
 
