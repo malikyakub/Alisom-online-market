@@ -7,7 +7,9 @@ export default [
   route("Contact", "routes/Contact.tsx"),
   route("User", "routes/User/_layout.tsx", {}, [
     route("Account", "routes/User/Account.tsx"),
+    route("Checkout", "routes/User/Checkout.tsx"),
   ]),
+
   route("Admin", "routes/Admin/_layout.tsx", {}, [
     route("Dashboard", "routes/Admin/Dashboard.tsx"),
   ]),
