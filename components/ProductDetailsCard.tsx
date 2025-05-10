@@ -14,51 +14,43 @@ const ProductDetailsCard: React.FC<{ product: Product }> = ({ product }) => {
   const totalPrice = product.price * quantity;
 
   return (
-    <div className="bg-white rounded shadow-md p-4 w-full flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+    <div className="grid grid-cols-[2fr_1fr_1fr_1fr] items-center bg-white p-4 rounded-md shadow-sm w-full">
+      {/* Product */}
       <div className="flex items-center gap-4">
-        <div className="w-20 h-20 rounded overflow-hidden flex-shrink-0">
-          <img
-            src={product.image}
-            alt="product image"
-            className="w-full h-full object-cover"
-          />
-        </div>
-        <h1 className="text-[#1A2238] font-bold text-xl">{product.name}</h1>
+        <img
+          src={product.image}
+          alt={product.name}
+          className="w-16 h-16 object-cover rounded"
+        />
+        <span className="font-medium text-gray-800">{product.name}</span>
       </div>
 
-      <div className="flex flex-col sm:flex-row sm:items-center sm:gap-8 w-full sm:w-auto justify-between">
-        <div className="flex justify-between items-center gap-4 sm:gap-8 w-full sm:w-auto">
-          <p className="font-semibold text-lg text-gray-700">
-            ${product.price.toFixed(2)}
-          </p>
+      {/* Price */}
+      <span className="text-gray-700 text-sm font-semibold">
+        ${product.price.toFixed(2)}
+      </span>
 
-          <div className="flex items-center border border-gray-300 rounded-lg overflow-hidden">
-            <button
-              onClick={decrement}
-              className="px-2 py-1 bg-gray-100 hover:bg-gray-200 text-lg font-bold text-gray-700"
-              aria-label="Decrease quantity"
-            >
-              −
-            </button>
-            <div className="px-3 py-1 text-center min-w-[2rem] text-sm">
-              {quantity}
-            </div>
-            <button
-              onClick={increment}
-              className="px-2 py-1 bg-gray-100 hover:bg-gray-200 text-lg font-bold text-gray-700"
-              aria-label="Increase quantity"
-            >
-              +
-            </button>
-          </div>
-        </div>
-
-        <div className="text-right sm:text-left mt-2 sm:mt-0">
-          <p className="font-semibold text-lg text-[#28A745]">
-            ${totalPrice.toFixed(2)}
-          </p>
-        </div>
+      {/* Quantity */}
+      <div className="flex items-center border border-gray-300 rounded">
+        <button
+          onClick={decrement}
+          className="px-2 py-1 bg-gray-100 hover:bg-gray-200 font-bold"
+        >
+          −
+        </button>
+        <span className="px-3 text-sm">{quantity}</span>
+        <button
+          onClick={increment}
+          className="px-2 py-1 bg-gray-100 hover:bg-gray-200 font-bold"
+        >
+          +
+        </button>
       </div>
+
+      {/* Subtotal */}
+      <span className="font-bold text-[#28A745] text-sm">
+        ${totalPrice.toFixed(2)}
+      </span>
     </div>
   );
 };

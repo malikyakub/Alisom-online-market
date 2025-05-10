@@ -8,6 +8,7 @@ export default [
   route("User", "routes/User/_layout.tsx", {}, [
     route("Account", "routes/User/Account.tsx"),
     route("Checkout", "routes/User/Checkout.tsx"),
+    route("Cart", "routes/User/Cart.tsx"),
   ]),
 
   route("Admin", "routes/Admin/_layout.tsx", {}, [
