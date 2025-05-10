@@ -1,9 +1,9 @@
 import React, { useEffect, useState, type JSX } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import successIcon from "../public/assets/icons/success.png";
-import warningIcon from "../public/assets/icons/warning.png";
-import dangerIcon from "../public/assets/icons/danger.png";
-import infoIcon from "../public/assets/icons/info.png";
+import successIcon from "/assets/icons/success.png";
+import warningIcon from "/assets/icons/warning.png";
+import dangerIcon from "/assets/icons/danger.png";
+import infoIcon from "/assets/icons/info.png";
 
 interface AlertProps {
   title: string;
