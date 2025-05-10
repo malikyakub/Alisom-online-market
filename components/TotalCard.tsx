@@ -13,7 +13,7 @@ const TotalCard: React.FC<TotalCardProps> = ({ subtotal, shipping, total }) => {
 
       <div className="flex justify-between mb-2">
         <span className="font-semibold">Subtotal:</span>
-        <span className="font-semibold">${subtotal}</span>
+        <span className="font-semibold">${subtotal.toFixed(2)}</span>
       </div>
 
       <hr className="my-2" />
@@ -27,7 +27,7 @@ const TotalCard: React.FC<TotalCardProps> = ({ subtotal, shipping, total }) => {
 
       <div className="flex justify-between mb-4">
         <span className="font-semibold">Total:</span>
-        <span className="font-semibold">${total}</span>
+        <span className="font-semibold">${total.toFixed(2)}</span>
       </div>
 
       <button className="bg-[#007BFF]/80 text-white w-full py-2 rounded-md hover:bg-[#007BFF] transition">

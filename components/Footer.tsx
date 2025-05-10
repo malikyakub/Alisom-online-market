@@ -1,10 +1,15 @@
-import React from 'react';
-import { FaFacebookF, FaTwitter, FaInstagram, FaLinkedinIn } from 'react-icons/fa';
+import React from "react";
+import {
+  FaFacebookF,
+  FaTwitter,
+  FaInstagram,
+  FaLinkedinIn,
+} from "react-icons/fa";
 
 const Footer = () => {
   return (
     <div className="bg-[#1A2238] text-white p-8">
-      <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-8">
+      <div className="max-w-[1170px] mx-auto grid grid-cols-1 md:grid-cols-4 gap-8">
         {/* Exclusive */}
         <div>
           <h2 className="text-xl font-bold mb-4">Exclusive</h2>
@@ -38,7 +43,9 @@ const Footer = () => {
         {/* Support */}
         <div>
           <h2 className="text-xl font-bold mb-4">Support</h2>
-          <p className="text-sm">123 Sample Street, Dharkeynley District, Mogadishu, Somalia</p>
+          <p className="text-sm">
+            123 Sample Street, Dharkeynley District, Mogadishu, Somalia
+          </p>
           <p className="mt-2">alisommarket@gmail.com</p>
           <p className="mt-1">+252-610-000000</p>
         </div>

@@ -232,9 +232,6 @@ export default function Home() {
         </div>
       </div>
       <div className="flex flex-row flex-wrap gap-4 items-center">
-        <TotalCard />
-      </div>
-      <div className="flex flex-row flex-wrap gap-4 items-center">
         <ServiceBookCard />
       </div>
       <div className="flex flex-row flex-wrap gap-4 items-center">
@@ -250,7 +247,7 @@ export default function Home() {
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
       />
-    <RecentOrders/>
+      <RecentOrders />
     </div>
   );
 }

@@ -20,7 +20,7 @@ const UserAccount = () => {
   };
 
   return (
-    <div>
+    <div p-4 sm:p-6 lg:p-8 h-full>
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 space-y-2 sm:space-y-0">
         <div className="text-sm text-gray-500">
           Home / User /{" "}

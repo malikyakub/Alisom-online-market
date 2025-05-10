@@ -2,7 +2,7 @@ import React from "react";
 
 const NotFound = () => {
   return (
-    <div>
+    <div className="p-4 sm:p-6 lg:p-8 h-full">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6">
         <div className="text-sm text-gray-500">
           Home / <span className="text-black font-semibold">404 Error</span>
