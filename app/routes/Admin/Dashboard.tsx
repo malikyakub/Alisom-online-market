@@ -12,33 +12,36 @@ const Dashboard = () => {
       amount: "$32,875",
       growth: "+20.1% from last month",
       icon: FaDollarSign,
-      borderColor: "border-green-400",
     },
     {
       title: "Products Sold",
       amount: "8,294",
       growth: "+180.1% from last month",
       icon: FaCartPlus,
-      borderColor: "border-orange-400",
     },
     {
       title: "Products In Stock",
       amount: "234",
       growth: "+19% from last month",
       icon: FaWarehouse,
-      borderColor: "border-blue-400",
     },
     {
       title: "New Orders",
       amount: "16",
       growth: "10 unpaid",
       icon: FaBox,
-      borderColor: "border-red-400",
     },
   ];
 
   return (
     <div className="flex flex-col w-full">
+      <div className="p-4">
+        <h1 className="text-3xl font-bold text-[#1A2238]">Dashboard</h1>
+        <p className="text-lg text-[#666666]">
+          This is an overview of your store and its performance.
+        </p>
+      </div>
+
       <div className="flex flex-wrap justify-between gap-3 p-4">
         {cardsData.map((card, index) => (
           <div key={index} className="w-full sm:w-[48%] lg:w-[24%]">
@@ -53,7 +56,10 @@ const Dashboard = () => {
       </div>
 
       <div className="flex flex-col lg:flex-row gap-3 p-4">
-        <div className="lg:w-2/3 rounded-lg border border-[#007BFF] w-full max-w-full">
+        <div
+          className="lg:w-2/3 rounded-lg border"
+          style={{ borderColor: "#007BFF" }}
+        >
           <DashboardChart />
         </div>
 
