@@ -35,14 +35,14 @@ const Dashboard = () => {
 
   return (
     <div className="flex flex-col w-full">
-      <div className="p-4">
-        <h1 className="text-3xl font-bold text-[#1A2238]">Dashboard</h1>
+      <div className="p-6">
+        <h1 className="text-2xl font-bold text-[#1A2238]">Dashboard</h1>
         <p className="text-lg text-[#666666]">
           This is an overview of your store and its performance.
         </p>
       </div>
 
-      <div className="flex flex-wrap justify-between gap-3 p-4">
+      <div className="flex flex-wrap justify-between gap-3 p-6">
         {cardsData.map((card, index) => (
           <div key={index} className="w-full sm:w-[48%] lg:w-[24%]">
             <DashboardCard
@@ -55,7 +55,7 @@ const Dashboard = () => {
         ))}
       </div>
 
-      <div className="flex flex-col lg:flex-row gap-3 p-4">
+      <div className="flex flex-col lg:flex-row gap-3 p-6">
         <div
           className="lg:w-2/3 rounded-lg border"
           style={{ borderColor: "#007BFF" }}

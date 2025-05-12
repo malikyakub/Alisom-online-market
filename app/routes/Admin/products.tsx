@@ -67,9 +67,9 @@ const ProductTable: React.FC = () => {
   );
 
   return (
-    <div className="p-4">
+    <div className="p-6">
       {/* Header */}
-      <div className="flex flex-wrap flex-row justify-between items-start sm:items-center mb-4 gap-2">
+      <div className="flex flex-wrap flex-row justify-between items-start sm:items-center mb-6 gap-2">
         <div>
           <h1 className="text-3xl font-bold text-[#1A2238]">
             Products ({filteredProducts.length})
@@ -84,7 +84,7 @@ const ProductTable: React.FC = () => {
       </div>
 
       {/* Filters */}
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 gap-4">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
         <div className="flex flex-wrap gap-2">
           <input
             type="text"
