@@ -13,6 +13,7 @@ export default [
 
   route("Admin", "routes/Admin/_layout.tsx", {}, [
     route("Dashboard", "routes/Admin/Dashboard.tsx"),
+    route("AddProduct", "routes/Admin/AddProduct.tsx"),
   ]),
   route("*", "routes/NotFound.tsx"),
 ] satisfies RouteConfig;
