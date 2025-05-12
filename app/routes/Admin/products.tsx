@@ -71,10 +71,10 @@ const ProductTable: React.FC = () => {
       {/* Header */}
       <div className="flex flex-wrap flex-row justify-between items-start sm:items-center mb-4 gap-2">
         <div>
-          <h1 className="text-2xl font-bold text-[#1A2238]">
+          <h1 className="text-3xl font-bold text-[#1A2238]">
             Products ({filteredProducts.length})
           </h1>
-          <p className="text-[#666666] text-sm">
+          <p className="text-lg text-[#666666]">
             Manage your products and track restocks here.
           </p>
         </div>
