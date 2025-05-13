@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { AnimatePresence, motion } from "framer-motion";
 
 type Customer = {
   id: number;
@@ -11,6 +12,7 @@ type Customer = {
   since: string;
 };
 
+// Generate sample data
 const initialCustomers: Customer[] = Array.from({ length: 14 }).map((_, i) => ({
   id: i + 1,
   fullName: `Customer ${i + 1}`,
@@ -23,16 +25,14 @@ const initialCustomers: Customer[] = Array.from({ length: 14 }).map((_, i) => ({
 }));
 
 const CustomerTable: React.FC = () => {
-  const [selectedCustomer, setSelectedCustomer] = useState<number | null>(null);
+  const [selectedCustomerIds, setSelectedCustomerIds] = useState<Set<number>>(
+    new Set()
+  );
   const [dropdownOpenId, setDropdownOpenId] = useState<number | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const rowsPerPage = 12;
   const totalPages = Math.ceil(initialCustomers.length / rowsPerPage);
-
-  const handleSelect = (id: number) => {
-    setSelectedCustomer(id === selectedCustomer ? null : id);
-  };
 
   const handleAction = (action: string, id: number) => {
     if (action === "delete") alert(`Delete customer ${id}`);
@@ -50,6 +50,46 @@ const CustomerTable: React.FC = () => {
     currentPage * rowsPerPage
   );
 
+  const isSelected = (id: number) => selectedCustomerIds.has(id);
+
+  const toggleSelect = (id: number) => {
+    setSelectedCustomerIds((prev) => {
+      const newSet = new Set(prev);
+      if (newSet.has(id)) {
+        newSet.delete(id);
+      } else {
+        newSet.add(id);
+      }
+      return newSet;
+    });
+  };
+
+  const selectAllOnPage = () => {
+    const newSet = new Set(selectedCustomerIds);
+    paginatedCustomers.forEach((customer) => newSet.add(customer.id));
+    setSelectedCustomerIds(newSet);
+  };
+
+  const deselectAllOnPage = () => {
+    setSelectedCustomerIds((prev) => {
+      const newSet = new Set(prev);
+      paginatedCustomers.forEach((customer) => newSet.delete(customer.id));
+      return newSet;
+    });
+  };
+
+  const areAllOnPageSelected = paginatedCustomers.every((c) =>
+    selectedCustomerIds.has(c.id)
+  );
+
+  const toggleSelectAll = () => {
+    if (areAllOnPageSelected) {
+      deselectAllOnPage();
+    } else {
+      selectAllOnPage();
+    }
+  };
+
   return (
     <div className="p-6">
       {/* Header */}
@@ -62,10 +102,9 @@ const CustomerTable: React.FC = () => {
             Manage your customer profiles and order stats.
           </p>
         </div>
-        
       </div>
 
-      {/* Filters */}
+      {/* Search */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
         <input
           type="text"
@@ -77,12 +116,20 @@ const CustomerTable: React.FC = () => {
       </div>
 
       {/* Table */}
-      <div className="overflow-x-auto bg-white rounded shadow">
-        <table className="min-w-full table-auto">
-          <thead className="bg-[#F4F4F4] text-left">
+
+      <div className="overflow-x-auto bg-white rounded">
+        <table className="min-w-full text-sm">
+          <thead className="bg-[#F4F4F4] text-[#333]">
             <tr>
+              <th className="px-4 py-3 text-left">
+                <input
+                  type="checkbox"
+                  className="accent-[#007BFF]"
+                  checked={areAllOnPageSelected}
+                  onChange={toggleSelectAll}
+                />
+              </th>
               {[
-                "Select",
                 "Full Name",
                 "Phone",
                 "Email",
@@ -91,11 +138,8 @@ const CustomerTable: React.FC = () => {
                 "Highest Order",
                 "Since",
                 "",
-              ].map((header, index) => (
-                <th
-                  key={index}
-                  className="px-4 py-2 whitespace-nowrap text-[#333333] text-sm"
-                >
+              ].map((header, idx) => (
+                <th key={idx} className="px-4 py-3 text-left">
                   {header}
                 </th>
               ))}
@@ -105,72 +149,73 @@ const CustomerTable: React.FC = () => {
             {paginatedCustomers.map((customer) => (
               <tr
                 key={customer.id}
-                className={`border-t ${
-                  selectedCustomer === customer.id ? "bg-[#E6F0FF]" : ""
+                className={`border-t transition-colors ${
+                  isSelected(customer.id)
+                    ? "bg-[#E6F0FF]"
+                    : "hover:bg-[#F9FAFB]"
                 }`}
               >
-                <td className="px-4 py-2 whitespace-nowrap">
+                <td className="px-4 py-3">
                   <input
                     type="checkbox"
-                    checked={selectedCustomer === customer.id}
-                    onChange={() => handleSelect(customer.id)}
+                    className="accent-[#007BFF]"
+                    checked={isSelected(customer.id)}
+                    onChange={() => toggleSelect(customer.id)}
                   />
                 </td>
-                <td className="px-4 py-2 whitespace-nowrap text-[#333333] font-bold">
+                <td className="px-4 py-3 font-semibold text-[#333]">
                   {customer.fullName}
                 </td>
-                <td className="px-4 py-2 whitespace-nowrap text-[#333333]">
-                  {customer.phone}
-                </td>
-                <td className="px-4 py-2 whitespace-nowrap text-[#333333]">
-                  {customer.email}
-                </td>
-                <td className="px-4 py-2 whitespace-nowrap text-[#333333]">
-                  {customer.address}
-                </td>
-                <td className="px-4 py-2 whitespace-nowrap text-[#333333]">
-                  {customer.repeat}
-                </td>
-                <td className="px-4 py-2 whitespace-nowrap text-[#333333]">
+                <td className="px-4 py-3 text-[#333]">{customer.phone}</td>
+                <td className="px-4 py-3 text-[#333]">{customer.email}</td>
+                <td className="px-4 py-3 text-[#333]">{customer.address}</td>
+                <td className="px-4 py-3 text-[#333]">{customer.repeat}</td>
+                <td className="px-4 py-3 text-[#333]">
                   {customer.highestOrder}
                 </td>
-                <td className="px-4 py-2 whitespace-nowrap text-[#333333]">
-                  {customer.since}
-                </td>
-                <td className="px-4 py-2 relative whitespace-nowrap">
+                <td className="px-4 py-3 text-[#333]">{customer.since}</td>
+                <td className="px-4 py-3 relative">
                   <button
                     onClick={() =>
                       setDropdownOpenId((prev) =>
                         prev === customer.id ? null : customer.id
                       )
                     }
-                    className="text-[#666666] hover:text-[#333333]"
+                    className="text-xl text-[#666] hover:text-[#000] transition"
                   >
-                    &#x2026;
+                    ⋯
                   </button>
-                  {dropdownOpenId === customer.id && (
-                    <div className="absolute right-0 mt-2 w-40 bg-white border border-[#A3A3A3] rounded-lg shadow-lg z-10 p-2 space-y-1">
-                      <button
-                        onClick={() => handleAction("edit", customer.id)}
-                        className="block w-full text-left px-3 py-2 text-sm font-medium text-[#333333] rounded-md hover:bg-[#F4F4F4]"
+
+                  <AnimatePresence>
+                    {dropdownOpenId === customer.id && (
+                      <motion.div
+                        initial={{ opacity: 0, scale: 0.95, y: -5 }}
+                        animate={{ opacity: 1, scale: 1, y: 0 }}
+                        exit={{ opacity: 0, scale: 0.95, y: -5 }}
+                        transition={{ duration: 0.15 }}
+                        className="absolute z-10 right-0 mt-2 w-44 bg-white border border-gray-200 rounded-lg shadow-md p-2"
                       >
-                        Edit
-                      </button>
-                      <button
-                        onClick={() => handleAction("copy-id", customer.id)}
-                        className="block w-full text-left px-3 py-2 text-sm font-medium text-[#333333] rounded-md hover:bg-[#F4F4F4]"
-                      >
-                        Copy ID
-                      </button>
-                      <button
-                        onClick={() => handleAction("delete", customer.id)}
-                        className="flex items-center justify-between w-full px-3 py-2 text-sm font-semibold rounded-md bg-[#DC3545] text-white hover:bg-[#C82333]"
-                      >
-                        Delete
-                        <span className="text-xs opacity-80">⌘ ⌫</span>
-                      </button>
-                    </div>
-                  )}
+                        <button
+                          onClick={() => handleAction("edit", customer.id)}
+                          className="block w-full text-left px-4 py-2 text-sm text-[#333] hover:bg-gray-100 rounded"
+                        >
+                          Edit
+                        </button>
+                        <button
+                          onClick={() => handleAction("copy-id", customer.id)}
+                          className="block w-full text-left px-4 py-2 text-sm text-[#333] hover:bg-gray-100 rounded"
+                        >
+                          Copy ID
+                        </button>
+                        <button
+                          onClick={() => handleAction("delete", customer.id)}
+                          className="block w-full text-left px-4 py-2 text-sm text-white bg-[#DC3545] hover:bg-[#C82333] rounded"
+                        >
+                          Delete
+                        </button>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
                 </td>
               </tr>
             ))}
@@ -178,39 +223,30 @@ const CustomerTable: React.FC = () => {
         </table>
 
         {/* Footer */}
-        <div className="p-4 bg-[#F4F4F4] flex flex-col sm:flex-row justify-between items-start sm:items-center text-sm text-[#333333] border-t border-[#A3A3A3] gap-2">
+        <div className="p-4 bg-[#F4F4F4] flex flex-col sm:flex-row justify-between items-center text-sm text-[#333] gap-2 border-t">
           <p>
-            {selectedCustomer
-              ? `1 of ${filteredCustomers.length} row(s) selected`
-              : "No row selected"}
+            {selectedCustomerIds.size > 0
+              ? `${selectedCustomerIds.size} of ${filteredCustomers.length} selected`
+              : "No selection"}
           </p>
-
-          <div className="flex items-center gap-2">
-            <span>Rows per page</span>
-            <select
-              className="border border-[#A3A3A3] rounded px-2 py-1 text-sm focus:outline-none text-[#333333]"
-              value={rowsPerPage}
-              disabled
-            >
-              <option value={12}>20</option>
-            </select>
+          <div className="flex items-center gap-3">
             <span>
               Page {currentPage} of {totalPages}
             </span>
-            <div className="flex items-center border border-[#A3A3A3] rounded">
+            <div className="flex items-center border rounded overflow-hidden">
               <button
-                className="px-2 py-1 text-[#666666] hover:text-[#333333] disabled:opacity-50"
-                onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+                onClick={() => setCurrentPage((p) => Math.max(p - 1, 1))}
                 disabled={currentPage === 1}
+                className="px-3 py-1 hover:bg-white disabled:opacity-50"
               >
                 &lt;
               </button>
               <button
-                className="px-2 py-1 text-[#666666] hover:text-[#333333] disabled:opacity-50"
                 onClick={() =>
-                  setCurrentPage((prev) => Math.min(prev + 1, totalPages))
+                  setCurrentPage((p) => Math.min(p + 1, totalPages))
                 }
                 disabled={currentPage === totalPages}
+                className="px-3 py-1 hover:bg-white disabled:opacity-50"
               >
                 &gt;
               </button>
