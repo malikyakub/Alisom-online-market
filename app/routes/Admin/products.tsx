@@ -1,8 +1,5 @@
 import React, { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { AiOutlineAntDesign } from "react-icons/ai";
-import { FaFontAwesome } from "react-icons/fa6";
-import { BiPlusCircle } from "react-icons/bi";
 import { FaPlusCircle } from "react-icons/fa";
 
 type Product = {
@@ -85,9 +82,8 @@ const ProductTable: React.FC = () => {
   };
 
   return (
-    <div className="p-6 space-y-6">
-      {/* Header */}
-      <div className="flex flex-wrap justify-between items-start sm:items-center gap-4">
+    <div className="">
+      <div className="flex flex-wrap flex-row justify-between items-start sm:items-center mb-6 gap-2">
         <div>
           <h1 className="text-2xl sm:text-3xl font-bold text-[#1A2238]">
             Products ({filteredProducts.length})
@@ -106,7 +102,6 @@ const ProductTable: React.FC = () => {
         </a>
       </div>
 
-      {/* Filters */}
       <div className="flex flex-col sm:flex-row justify-between gap-4">
         <div className="flex flex-wrap gap-3">
           <input
@@ -137,9 +132,9 @@ const ProductTable: React.FC = () => {
         </div>
       </div>
 
-      {/* Table */}
-      <div className="overflow-x-auto bg-white rounded">
-        <table className="min-w-full text-sm">
+      {/* Added margin-top to separate filters from table */}
+      <div className="w-full overflow-x-auto bg-white rounded mt-6">
+        <table className="min-w-[1000px] text-sm">
           <thead className="bg-[#F4F4F4] text-[#333]">
             <tr>
               <th className="px-4 py-3 text-left">
@@ -191,7 +186,7 @@ const ProductTable: React.FC = () => {
                     className="accent-[#007BFF]"
                   />
                 </td>
-                <td className="px-4 py-3">{product.name}</td>
+                <td className="px-4 py-3 font-bold">{product.name}</td>
                 <td className="px-4 py-3">{product.price}</td>
                 <td className="px-4 py-3">{product.cost}</td>
                 <td className="px-4 py-3">{product.quantity}</td>
@@ -247,36 +242,33 @@ const ProductTable: React.FC = () => {
             ))}
           </tbody>
         </table>
+      </div>
 
-        {/* Footer */}
-        <div className="p-4 bg-[#F4F4F4] flex flex-col sm:flex-row justify-between items-center text-sm text-[#333] gap-2 border-t">
-          <p>
-            {selectedProducts.length > 0
-              ? `${selectedProducts.length} of ${filteredProducts.length} selected`
-              : "No selection"}
-          </p>
-          <div className="flex items-center gap-3">
-            <span>
-              Page {currentPage} of {totalPages}
-            </span>
-            <div className="flex items-center border rounded overflow-hidden">
-              <button
-                onClick={() => setCurrentPage((p) => Math.max(p - 1, 1))}
-                disabled={currentPage === 1}
-                className="px-3 py-1 hover:bg-white disabled:opacity-50"
-              >
-                &lt;
-              </button>
-              <button
-                onClick={() =>
-                  setCurrentPage((p) => Math.min(p + 1, totalPages))
-                }
-                disabled={currentPage === totalPages}
-                className="px-3 py-1 hover:bg-white disabled:opacity-50"
-              >
-                &gt;
-              </button>
-            </div>
+      <div className="p-4 bg-[#F4F4F4] flex flex-col sm:flex-row justify-between items-center text-sm text-[#333] gap-2 border-t">
+        <p>
+          {selectedProducts.length > 0
+            ? `${selectedProducts.length} of ${filteredProducts.length} selected`
+            : "No selection"}
+        </p>
+        <div className="flex items-center gap-3">
+          <span>
+            Page {currentPage} of {totalPages}
+          </span>
+          <div className="flex items-center border rounded overflow-hidden">
+            <button
+              onClick={() => setCurrentPage((p) => Math.max(p - 1, 1))}
+              disabled={currentPage === 1}
+              className="px-3 py-1 hover:bg-white disabled:opacity-50"
+            >
+              &lt;
+            </button>
+            <button
+              onClick={() => setCurrentPage((p) => Math.min(p + 1, totalPages))}
+              disabled={currentPage === totalPages}
+              className="px-3 py-1 hover:bg-white disabled:opacity-50"
+            >
+              &gt;
+            </button>
           </div>
         </div>
       </div>
