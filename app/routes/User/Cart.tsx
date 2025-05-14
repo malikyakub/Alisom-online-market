@@ -26,7 +26,7 @@ export default function Cart() {
   );
 
   return (
-    <div p-4 sm:p-6 lg:p-8 h-full>
+    <div>
       <div className="">
         <div className="text-sm text-gray-500 mb-6">
           Home / User / <span className="text-black font-semibold">Cart</span>

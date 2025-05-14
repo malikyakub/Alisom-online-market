@@ -133,12 +133,13 @@ const Header = () => {
           </div>
 
           <div className="flex items-center gap-4">
-            <button
+            <a
+              href="./wishlist"
               className="text-gray-600 hover:text-[#007BFF]"
               aria-label="Wishlist"
             >
               <CiHeart size={24} />
-            </button>
+            </a>
 
             <button
               className="text-gray-600 hover:text-[#007BFF] relative"
