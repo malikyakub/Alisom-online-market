@@ -1,5 +1,8 @@
 import React, { useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
+import { FaPlusCircle } from "react-icons/fa";
+import AddCategoryModal from "components/AddCategoryModal";
+
 
 type Category = {
   id: number;
@@ -8,7 +11,6 @@ type Category = {
   dateAdded: string;
 };
 
-// Sample category data
 const initialCategories: Category[] = Array.from({ length: 14 }).map(
   (_, i) => ({
     id: i + 1,
@@ -25,6 +27,8 @@ const CategoryTable: React.FC = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const rowsPerPage = 12;
   const totalPages = Math.ceil(initialCategories.length / rowsPerPage);
+
+  const [isModalOpen, setIsModalOpen] = useState(false); // State for modal visibility
 
   const handleAction = (action: string, id: number) => {
     if (action === "delete") alert(`Delete category ${id}`);
@@ -74,9 +78,16 @@ const CategoryTable: React.FC = () => {
     else selectAll();
   };
 
+  const handleAddCategory = () => {
+    setIsModalOpen(true); // Open modal
+  };
+
+  const closeModal = () => {
+    setIsModalOpen(false); // Close modal
+  };
+
   return (
-    <div className="p-6">
-      {/* Header */}
+    <div className="">
       <div className="flex flex-wrap flex-row justify-between items-start sm:items-center mb-6 gap-2">
         <div>
           <h1 className="text-3xl font-bold text-[#1A2238]">
@@ -86,9 +97,15 @@ const CategoryTable: React.FC = () => {
             Manage your product categories.
           </p>
         </div>
+        <button
+          onClick={handleAddCategory}
+          className="inline-flex items-center gap-2 text-white bg-[#007BFF] hover:bg-[#0056b3] px-4 py-2 rounded text-sm font-medium"
+        >
+          <FaPlusCircle className="text-lg" />
+          <span>Add Category</span>
+        </button>
       </div>
 
-      {/* Search */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
         <input
           type="text"
@@ -99,12 +116,11 @@ const CategoryTable: React.FC = () => {
         />
       </div>
 
-      {/* Table */}
       <div className="overflow-x-auto bg-white rounded">
         <table className="min-w-full text-sm table-fixed">
-          <thead className="bg-[#F4F4F4] text-[#333]">
+          <thead className="bg-[#F4F4F4] text-[#333] py-2">
             <tr>
-              <th className="px-4 py-3 text-left w-10">
+              <th className="px-4 py-3 text-left w-fit whitespace-nowrap">
                 <input
                   type="checkbox"
                   className="accent-[#007BFF]"
@@ -112,10 +128,16 @@ const CategoryTable: React.FC = () => {
                   onChange={toggleSelectAll}
                 />
               </th>
-              <th className="px-4 py-3 text-left w-1/3">Name</th>
-              <th className="px-4 py-3 text-left w-1/6">Products</th>
-              <th className="px-4 py-3 text-left w-1/4">Date Added</th>
-              <th className="px-4 py-3 text-right w-10"></th>
+              <th className="px-4 py-3 text-left w-fit whitespace-nowrap">
+                Name
+              </th>
+              <th className="px-4 py-3 text-left w-fit whitespace-nowrap">
+                Products
+              </th>
+              <th className="px-4 py-3 text-left w-fit whitespace-nowrap">
+                Date Added
+              </th>
+              <th className="px-4 py-3 text-right w-fit whitespace-nowrap"></th>
             </tr>
           </thead>
           <tbody>
@@ -128,7 +150,7 @@ const CategoryTable: React.FC = () => {
                     : "hover:bg-[#F9FAFB]"
                 }`}
               >
-                <td className="px-4 py-3 w-10">
+                <td className="px-4 py-3 w-fit whitespace-nowrap">
                   <input
                     type="checkbox"
                     className="accent-[#007BFF]"
@@ -136,12 +158,16 @@ const CategoryTable: React.FC = () => {
                     onChange={() => toggleSelect(category.id)}
                   />
                 </td>
-                <td className="px-4 py-3 font-semibold text-[#333]">
+                <td className="px-4 py-3 font-semibold text-[#333] w-fit whitespace-nowrap">
                   {category.name}
                 </td>
-                <td className="px-4 py-3 text-[#333]">{category.products}</td>
-                <td className="px-4 py-3 text-[#333]">{category.dateAdded}</td>
-                <td className="px-4 py-3 text-right relative w-10">
+                <td className="px-4 py-3 text-[#333] w-fit text-center whitespace-nowrap">
+                  {category.products}
+                </td>
+                <td className="px-4 py-3 text-[#333] w-fit text-right whitespace-nowrap">
+                  {category.dateAdded}
+                </td>
+                <td className="px-4 py-3 text-right relative w-fit whitespace-nowrap">
                   <button
                     onClick={() =>
                       setDropdownOpenId((prev) =>
@@ -188,8 +214,6 @@ const CategoryTable: React.FC = () => {
             ))}
           </tbody>
         </table>
-
-        {/* Footer */}
         <div className="p-4 bg-[#F4F4F4] flex flex-col sm:flex-row justify-between items-center text-sm text-[#333] gap-2 border-t">
           <p>
             {selectedIds.size > 0
@@ -221,6 +245,11 @@ const CategoryTable: React.FC = () => {
           </div>
         </div>
       </div>
+      <AnimatePresence>
+        {isModalOpen && (
+          <AddCategoryModal isOpen={isModalOpen} onClose={closeModal} />
+        )}
+      </AnimatePresence>
     </div>
   );
 };
