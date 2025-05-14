@@ -3,6 +3,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import { FaPlusCircle } from "react-icons/fa";
 import AddCategoryModal from "components/AddCategoryModal";
 
+
 type Category = {
   id: number;
   name: string;
@@ -213,7 +214,6 @@ const CategoryTable: React.FC = () => {
             ))}
           </tbody>
         </table>
-
         <div className="p-4 bg-[#F4F4F4] flex flex-col sm:flex-row justify-between items-center text-sm text-[#333] gap-2 border-t">
           <p>
             {selectedIds.size > 0
@@ -245,7 +245,6 @@ const CategoryTable: React.FC = () => {
           </div>
         </div>
       </div>
-
       <AnimatePresence>
         {isModalOpen && (
           <AddCategoryModal isOpen={isModalOpen} onClose={closeModal} />
