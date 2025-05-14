@@ -16,7 +16,8 @@ export default [
     route("Dashboard", "routes/Admin/Dashboard.tsx"),
     route("AddProduct", "routes/Admin/AddProduct.tsx"),
     route("products", "routes/Admin/products.tsx"),
-    
+    route("customers", "routes/Admin/customers.tsx"),
+    route("Categories", "routes/Admin/Categories.tsx"),
   ]),
   route("*", "routes/NotFound.tsx"),
 ] satisfies RouteConfig;
