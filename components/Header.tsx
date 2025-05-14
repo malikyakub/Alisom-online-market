@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef } from "react";
-import { BiSearch } from "react-icons/bi";
+import { BiHeart, BiSearch } from "react-icons/bi";
 import { CiHeart } from "react-icons/ci";
 import { LuShoppingCart } from "react-icons/lu";
 import { CgProfile } from "react-icons/cg";
@@ -133,12 +133,13 @@ const Header = () => {
           </div>
 
           <div className="flex items-center gap-4">
-            <button
+            <a
+              href="./wishlist"
               className="text-gray-600 hover:text-[#007BFF]"
               aria-label="Wishlist"
             >
-              <CiHeart size={24} />
-            </button>
+              <BiHeart size={24} />
+            </a>
 
             <button
               className="text-gray-600 hover:text-[#007BFF] relative"
