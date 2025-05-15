@@ -134,14 +134,15 @@ const Header = () => {
 
           <div className="flex items-center gap-4">
             <a
-              href="./wishlist"
+              href="/user/wishlist"
               className="text-gray-600 hover:text-[#007BFF]"
               aria-label="Wishlist"
             >
               <BiHeart size={24} />
             </a>
 
-            <button
+            <a
+              href="/user/cart"
               className="text-gray-600 hover:text-[#007BFF] relative"
               aria-label="Cart"
             >
@@ -151,7 +152,7 @@ const Header = () => {
                   {cartCount}
                 </span>
               )}
-            </button>
+            </a>
 
             <div className="relative" ref={profileRef}>
               <button

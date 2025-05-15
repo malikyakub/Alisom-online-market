@@ -1,11 +1,42 @@
-import React from "react";
+import React, { useState } from "react";
+import PlaceOrderSummary from "components/PlaceOrderSummary";
+import OrderPlacedModal from "components/OrderPlacedModal";
 
-export default function Checkout() {
+type Product = {
+  title: string;
+  price: number;
+  image?: string;
+};
+
+const Checkout: React.FC = () => {
+  const [showModal, setShowModal] = useState(false);
+
+  const purchasedProducts: Product[] = [
+    {
+      title: "LCD Monitor",
+      price: 650,
+    },
+    {
+      title: "H1 Gamepad",
+      price: 1100,
+      image:
+        "https://i.pinimg.com/736x/7a/b5/0b/7ab50bee9fb17378f428d8dc5c9bb530.jpg",
+    },
+    {
+      title: "Wireless Keyboard",
+      price: 200,
+      image:
+        "https://m.media-amazon.com/images/I/71V--WZVUIL._AC_UF1000,1000_QL80_.jpg",
+    },
+  ];
+
   return (
-    <div className="min-h-screen bg-white p-4 md:p-12">
+    <div className="relative">
+      {showModal && <OrderPlacedModal onClose={() => setShowModal(false)} />}
+
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 space-y-2 sm:space-y-0">
         <div className="text-sm text-gray-500">
-          Home / User /
+          Home / Shop /{" "}
           <span className="text-black font-semibold">Checkout</span>
         </div>
       </div>
@@ -52,83 +83,14 @@ export default function Checkout() {
         </div>
 
         <div className="w-full self-start mt-10 flex justify-center lg:justify-end font-bold">
-          <div className="w-full max-w-sm space-y-5 p-0">
-            <div className="flex items-start justify-between">
-              <h3 className="text-xl text-gray-800 font-semibold">
-                LCD Monitor
-              </h3>
-              <p className="text-sm text-gray-800 font-semibold">$650</p>
-            </div>
-
-            <div className="flex items-center justify-between">
-              <div className="flex items-center space-x-4">
-                <img
-                  src="https://i.pinimg.com/736x/7a/b5/0b/7ab50bee9fb17378f428d8dc5c9bb530.jpg"
-                  alt=""
-                  className="w-14 h-14 object-cover rounded"
-                />
-                <div>
-                  <h3 className="text-sm text-gray-800 font-semibold">
-                    H1 Gamepad
-                  </h3>
-                </div>
-              </div>
-              <p className="text-sm text-gray-800 font-semibold">$1100</p>
-            </div>
-
-            <hr className="border-gray-300" />
-
-            <div className="text-sm space-y-2">
-              <div className="flex justify-between">
-                <span className="text-gray-600">Subtotal:</span>
-                <span className="text-gray-900 font-semibold">$1750</span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-gray-600">Shipping:</span>
-                <span className="text-green-500 font-medium">Free</span>
-              </div>
-              <div className="flex justify-between text-base font-bold pt-2 border-t border-gray-200">
-                <span>Total:</span>
-                <span>$1750</span>
-              </div>
-            </div>
-
-            <div className="space-y-3 text-sm pt-2">
-              {["EVC Plus", "E-dahab", "Cash on Delivery"].map(
-                (method, idx) => (
-                  <label
-                    key={idx}
-                    className="accent-green-300 flex items-center space-x-2"
-                  >
-                    <input
-                      type="radio"
-                      name="payment"
-                      defaultChecked={method === "Cash on Delivery"}
-                      className="scale-125 accent-green-500"
-                    />
-                    <span className="text-gray-700">{method}</span>
-                  </label>
-                )
-              )}
-            </div>
-
-            <div className="flex items-center space-x-2 pt-2">
-              <input
-                type="text"
-                placeholder="Coupon Code"
-                className="flex-1 border border-gray-300 p-2 rounded text-sm"
-              />
-              <button className="bg-blue-600 text-white px-4 py-2 text-sm rounded hover:bg-blue-700">
-                Apply Coupon
-              </button>
-            </div>
-
-            <button className="w-full bg-blue-600 text-white py-2 text-sm font-semibold rounded hover:bg-blue-700 mt-2">
-              Place Order
-            </button>
-          </div>
+          <PlaceOrderSummary
+            products={purchasedProducts}
+            onPlaceOrder={() => setShowModal(true)}
+          />
         </div>
       </div>
     </div>
   );
-}
+};
+
+export default Checkout;

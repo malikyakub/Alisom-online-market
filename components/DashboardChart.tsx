@@ -139,7 +139,7 @@ const DashboardChart: React.FC = () => {
               valueFormatter: (value) => `$${value}`,
             },
           ]}
-          height={400}
+          height={380}
         />
       </div>
     </div>
