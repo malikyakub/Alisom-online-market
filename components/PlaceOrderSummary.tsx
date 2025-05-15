@@ -18,7 +18,7 @@ const PlaceOrderSummary: React.FC<PlaceOrderSummaryProps> = ({
   const total = products.reduce((sum, product) => sum + product.price, 0);
 
   return (
-    <div className="w-full max-w-sm space-y-5 p-0">
+    <div className="w-full md:max-w-sm space-y-5 p-0">
       <div className="max-h-64 overflow-y-auto space-y-4 pr-2">
         {products.map((product, idx) => (
           <div

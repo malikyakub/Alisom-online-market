@@ -8,7 +8,7 @@ type TotalCardProps = {
 
 const TotalCard: React.FC<TotalCardProps> = ({ subtotal, shipping, total }) => {
   return (
-    <div className="bg-white p-6 rounded-lg shadow-md w-full max-w-md mx-auto">
+    <div className="bg-white p-6 rounded-lg shadow-md w-full md:max-w-md mx-auto">
       <h2 className="text-lg font-bold mb-4">Cart Total</h2>
 
       <div className="flex justify-between mb-2">

@@ -64,10 +64,13 @@ const recommendations = [
   },
 ];
 
+const moveToBag = () => {
+  window.location.href = "/user/cart";
+};
+
 const WishlistPage = () => {
   return (
     <div className="">
-      {/* Wishlist Header */}
       <div className="text-sm text-gray-500 mb-6">
         Home / User / <span className="text-black font-semibold">Wishlist</span>
       </div>
@@ -75,19 +78,22 @@ const WishlistPage = () => {
         <h2 className="text-xl font-bold text-[#1A2238]">
           Wishlist ({products.length})
         </h2>
-        <button className="border px-4 py-2 font-bold rounded text-[#333333] border-[#A3A3A3] hover:text-white hover:border-[#007BFF] hover:bg-[#007BFF] transition w-[200px]">
+        <button
+          onClick={() => moveToBag()}
+          className="border px-4 py-2 font-bold rounded text-[#333333] border-[#A3A3A3] hover:text-white hover:border-[#007BFF] hover:bg-[#007BFF] transition w-[200px]"
+        >
           Move All To Bag
         </button>
       </div>
 
-      {/* Wishlist Items */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 mb-10">
+      <div className="flex flex-wrap justify-start gap-4 mb-10">
         {products.map((product) => (
-          <WishlistProductCard
+          <div
             key={product.id}
-            product={product}
-            isWishlist={true}
-          />
+            className="flex-shrink-0 w-full sm:w-[48%] md:w-[31%] lg:w-[23%]"
+          >
+            <WishlistProductCard product={product} isWishlist={true} />
+          </div>
         ))}
       </div>
 
@@ -101,13 +107,14 @@ const WishlistPage = () => {
         </button>
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+      <div className="flex flex-wrap justify-start gap-4">
         {recommendations.map((product) => (
-          <WishlistProductCard
+          <div
             key={product.id}
-            product={product}
-            isWishlist={false}
-          />
+            className="flex-shrink-0 w-full sm:w-[48%] md:w-[31%] lg:w-[23%]"
+          >
+            <WishlistProductCard product={product} isWishlist={false} />
+          </div>
         ))}
       </div>
     </div>
