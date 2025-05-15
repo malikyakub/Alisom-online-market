@@ -1,6 +1,5 @@
 import React, { useEffect, useState, useRef } from "react";
 import { BiHeart, BiSearch } from "react-icons/bi";
-import { CiHeart } from "react-icons/ci";
 import { LuShoppingCart } from "react-icons/lu";
 import { CgProfile } from "react-icons/cg";
 import { HiOutlineMenuAlt3, HiOutlineX } from "react-icons/hi";
@@ -134,14 +133,15 @@ const Header = () => {
 
           <div className="flex items-center gap-4">
             <a
-              href="./wishlist"
+              href="/user/wishlist"
               className="text-gray-600 hover:text-[#007BFF]"
               aria-label="Wishlist"
             >
               <BiHeart size={24} />
             </a>
 
-            <button
+            <a
+              href="/user/cart"
               className="text-gray-600 hover:text-[#007BFF] relative"
               aria-label="Cart"
             >
@@ -151,7 +151,7 @@ const Header = () => {
                   {cartCount}
                 </span>
               )}
-            </button>
+            </a>
 
             <div className="relative" ref={profileRef}>
               <button
@@ -183,34 +183,75 @@ const Header = () => {
           </button>
         </div>
       </div>
-
       {mobileMenuOpen && (
-        <div className="md:hidden px-6 pb-4">
-          <ul className="flex flex-col gap-4 text-gray-700 text-sm font-medium">
-            {navItems.map((item) => (
-              <li key={item.tab}>
-                <a
-                  href={item.link}
-                  onClick={(e) => {
-                    if (item.action) {
-                      e.preventDefault();
-                      item.action();
-                    }
-                    setMobileMenuOpen(false);
-                  }}
-                  className={`cursor-pointer hover:text-[#007BFF] transition-colors ${
-                    currentPath === item.link
-                      ? "text-[#007BFF] underline underline-offset-4"
-                      : ""
-                  }`}
-                >
-                  {item.tab}
-                </a>
-              </li>
-            ))}
-          </ul>
-        </div>
+        <>
+          <div className="md:hidden px-6 pb-4">
+            <ul className="flex flex-col gap-4 text-gray-700 text-sm font-medium">
+              {navItems.map((item) => (
+                <li key={item.tab}>
+                  <a
+                    href={item.link}
+                    onClick={(e) => {
+                      if (item.action) {
+                        e.preventDefault();
+                        item.action();
+                      }
+                      setMobileMenuOpen(false);
+                    }}
+                    className={`cursor-pointer hover:text-[#007BFF] transition-colors ${
+                      currentPath === item.link
+                        ? "text-[#007BFF] underline underline-offset-4"
+                        : ""
+                    }`}
+                  >
+                    {item.tab}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </div>
+          <div className="sm:hidden px-6 my-4 flex flex-col gap-4">
+            <div className="bg-white/20 hover:shadow-md transition-shadow duration-200 p-2 px-4 rounded flex border items-center gap-3">
+              <input
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                type="text"
+                placeholder="Search product"
+                className="flex-1 bg-transparent focus:outline-none text-sm"
+                aria-label="Search products"
+              />
+              <button
+                onClick={handleSearch}
+                className="text-gray-600 hover:text-[#007BFF] transition-colors"
+                aria-label="Search"
+              >
+                <BiSearch size={25} />
+              </button>
+            </div>
+
+            <div className="flex items-center justify-around text-gray-600">
+              <a href="/user/wishlist" aria-label="Wishlist">
+                <BiHeart size={24} />
+              </a>
+              <a href="/user/cart" className="relative" aria-label="Cart">
+                <LuShoppingCart size={24} />
+                {cartCount > 0 && (
+                  <span className="absolute -top-2 -right-2 bg-[#DC3545] text-white text-[10px] rounded-full w-4 h-4 flex items-center justify-center">
+                    {cartCount}
+                  </span>
+                )}
+              </a>
+              <button
+                onClick={() => setShowProfilePopup(!showProfilePopup)}
+                aria-label="Profile"
+              >
+                <CgProfile size={24} />
+              </button>
+            </div>
+          </div>
+        </>
       )}
+      {/* ✅ Mobile Search & Icons */}
     </header>
   );
 };

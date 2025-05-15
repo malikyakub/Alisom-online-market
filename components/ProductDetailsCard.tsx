@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 
 interface Product {
   name: string;
@@ -6,16 +6,39 @@ interface Product {
   image: string;
 }
 
-const ProductDetailsCard: React.FC<{ product: Product }> = ({ product }) => {
-  const [quantity, setQuantity] = useState(1);
+interface Props {
+  product: Product;
+  quantity: number;
+  onQuantityChange: (quantity: number) => void;
+}
 
-  const increment = () => setQuantity((prev) => prev + 1);
-  const decrement = () => setQuantity((prev) => (prev > 1 ? prev - 1 : prev));
-  const totalPrice = product.price * quantity;
+const ProductDetailsCard: React.FC<Props> = ({
+  product,
+  quantity,
+  onQuantityChange,
+}) => {
+  const [localQty, setLocalQty] = useState(quantity);
+
+  useEffect(() => {
+    setLocalQty(quantity);
+  }, [quantity]);
+
+  const increment = () => {
+    const newQty = localQty + 1;
+    setLocalQty(newQty);
+    onQuantityChange(newQty);
+  };
+
+  const decrement = () => {
+    const newQty = localQty > 1 ? localQty - 1 : 1;
+    setLocalQty(newQty);
+    onQuantityChange(newQty);
+  };
+
+  const totalPrice = product.price * localQty;
 
   return (
     <div className="bg-white p-4 rounded-md shadow-sm w-full grid grid-cols-1 sm:grid-cols-2 gap-4">
-      {/* Row 1: Product info and unit price */}
       <div className="flex items-center gap-4">
         <img
           src={product.image}
@@ -30,7 +53,6 @@ const ProductDetailsCard: React.FC<{ product: Product }> = ({ product }) => {
         </div>
       </div>
 
-      {/* Row 2: Quantity and total */}
       <div className="flex items-center justify-between sm:justify-end sm:gap-6">
         <div className="flex items-center border border-gray-300 rounded">
           <button
@@ -39,7 +61,7 @@ const ProductDetailsCard: React.FC<{ product: Product }> = ({ product }) => {
           >
             −
           </button>
-          <span className="px-3 text-sm">{quantity}</span>
+          <span className="px-3 text-sm">{localQty}</span>
           <button
             onClick={increment}
             className="px-2 py-1 bg-gray-100 hover:bg-gray-200 font-bold"

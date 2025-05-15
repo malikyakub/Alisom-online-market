@@ -114,7 +114,7 @@ const ProductTable: React.FC = () => {
         </div>
 
         <a
-          href="./AddProduct"
+          href="/admin/AddProduct"
           className="inline-flex items-center gap-2 text-white bg-[#007BFF] hover:bg-[#0056b3] px-4 py-2 rounded text-sm font-medium"
         >
           <FaPlusCircle className="text-lg" />

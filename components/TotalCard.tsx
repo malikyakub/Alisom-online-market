@@ -8,7 +8,7 @@ type TotalCardProps = {
 
 const TotalCard: React.FC<TotalCardProps> = ({ subtotal, shipping, total }) => {
   return (
-    <div className="bg-white p-6 rounded-lg shadow-md w-full max-w-md mx-auto">
+    <div className="bg-white p-6 rounded-lg shadow-md w-full md:max-w-md mx-auto">
       <h2 className="text-lg font-bold mb-4">Cart Total</h2>
 
       <div className="flex justify-between mb-2">
@@ -30,9 +30,12 @@ const TotalCard: React.FC<TotalCardProps> = ({ subtotal, shipping, total }) => {
         <span className="font-semibold">${total.toFixed(2)}</span>
       </div>
 
-      <button className="bg-[#007BFF]/80 text-white w-full py-2 rounded-md hover:bg-[#007BFF] transition">
-        Proceed to checkout
-      </button>
+      <a
+        href="/user/checkout"
+        className="block w-full text-center bg-[#007BFF] text-white font-semibold py-2 rounded hover:bg-blue-700 transition duration-300 shadow-md hover:shadow-lg"
+      >
+        Proceed to Checkout
+      </a>
     </div>
   );
 };

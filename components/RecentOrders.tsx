@@ -21,10 +21,10 @@ const RecentOrders = () => {
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  const displayedOrders = isMobile ? orders : orders.slice(0, 3);
+  const displayedOrders = isMobile ? orders : orders.slice(0, 2);
 
   return (
-    <div className="w-full rounded-lg shadow-md p-4 border border-blue-500">
+    <div className="w-full rounded-lg shadow-md p-4 flex-1 border border-blue-500">
       <h2 className="font-semibold text-xl text-gray-800">Recent Orders</h2>
       <p className="text-gray-500 text-sm mb-4">
         You have {orders.length} orders today

@@ -20,10 +20,10 @@ const ServiceBookCard = () => {
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  const displayedBookings = isMobile ? bookings : bookings.slice(0, 3);
+  const displayedBookings = isMobile ? bookings : bookings.slice(0, 2);
 
   return (
-    <div className="w-full rounded-lg shadow-md p-4 border border-blue-500">
+    <div className="w-full rounded-lg shadow-md p-4 flex-1 border border-blue-500">
       <h2 className="text-xl font-semibold text-gray-800 mb-2">
         Services Booked
       </h2>
