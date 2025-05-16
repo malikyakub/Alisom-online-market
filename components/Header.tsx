@@ -62,6 +62,7 @@ const Header = () => {
     { tab: "Home", link: "/" },
     { tab: "Contact", link: "/contact" },
     { tab: "About", link: "/about" },
+    { tab: "Shop", link: "/user/products" },
     user
       ? { tab: "Signout", link: "#", action: handleSignOut }
       : { tab: "Signup", link: "/signup" },

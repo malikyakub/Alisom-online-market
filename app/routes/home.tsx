@@ -77,21 +77,21 @@ const HeroProducts = [
     offer: "Up to $120 off on iPhone 14",
     image: iPhoneImage,
     logo: "/assets/images/apple-logo.png",
-    link: "/products/iphone-14",
+    link: "/user/products",
   },
   {
     title: "AirPods Pro (2nd Gen)",
     offer: "Now starting at $199 — limited time!",
     image: Airpods,
     logo: "/assets/images/apple-logo.png",
-    link: "/products/airpods-pro-2",
+    link: "/user/products",
   },
   {
     title: "Apple Watch Series 9",
     offer: "Up to 15% off Apple Watch Series 9",
     image: appleWatch,
     logo: "/assets/images/apple-logo.png",
-    link: "/products/apple-watch-series-9",
+    link: "/user/products",
   },
 ];
 
