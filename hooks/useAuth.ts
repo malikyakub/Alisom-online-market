@@ -1,24 +1,31 @@
 import { useState, useEffect } from "react";
-import type { Session, User, AuthError } from "@supabase/supabase-js";
+import type { User } from "@supabase/supabase-js";
 import supabase from "utils/supabase";
+import useUsers from "./useUsers"; // adjust path as needed
 
 interface UseAuthReturn {
   user: User | null;
   loading: boolean;
   login: (email: string, password: string) => Promise<{ user: User | null }>;
-  signup: (email: string, password: string) => Promise<{ user: User | null }>;
+  signup: (userData: {
+    email: string;
+    password: string;
+    fullname: string;
+    phone: string;
+    address: string;
+  }) => Promise<{ user: User | null }>;
   logout: () => Promise<void>;
 }
 
 const useAuth = (): UseAuthReturn => {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
+  const { NewUser } = useUsers();
 
   useEffect(() => {
     const getSession = async () => {
       const { data, error } = await supabase.auth.getSession();
       if (error) {
-        console.error("Error fetching session:", error.message);
         setUser(null);
       } else {
         setUser(data.session?.user ?? null);
@@ -52,17 +59,42 @@ const useAuth = (): UseAuthReturn => {
     return { user: data.user };
   };
 
-  const signup = async (
-    email: string,
-    password: string
-  ): Promise<{ user: User | null }> => {
+  const signup = async (userData: {
+    email: string;
+    password: string;
+    fullname: string;
+    phone: string;
+    address: string;
+  }): Promise<{ user: User | null }> => {
+    // Signup user with Supabase auth
     const { data, error } = await supabase.auth.signUp({
-      email,
-      password,
+      email: userData.email,
+      password: userData.password,
     });
     if (error) throw error;
-    setUser(data.user);
-    return { user: data.user };
+
+    const authUser = data.user;
+    if (!authUser) {
+      throw new Error("User not created after signup.");
+    }
+
+    // Create profile and auth record using NewUser from useUsers
+    const { err: newUserError } = await NewUser({
+      user_id: authUser.id,
+      fullname: userData.fullname,
+      email: userData.email,
+      phone: userData.phone,
+      address: userData.address,
+    });
+
+    if (newUserError) {
+      // Optionally delete auth user here to avoid orphan account
+      // await supabase.auth.admin.deleteUser(authUser.id);
+      throw new Error(newUserError);
+    }
+
+    setUser(authUser);
+    return { user: authUser };
   };
 
   const logout = async (): Promise<void> => {

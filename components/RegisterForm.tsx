@@ -4,6 +4,7 @@ type RegisterFormProps = {
   isLogin?: boolean;
   isLoading?: boolean;
   onSubmit?: (formData: FormData) => void;
+  onGoogleSignIn?: () => Promise<void>;
 };
 
 type FormData = {
@@ -19,6 +20,7 @@ const RegisterForm: React.FC<RegisterFormProps> = ({
   isLogin = false,
   isLoading = false,
   onSubmit,
+  onGoogleSignIn,
 }) => {
   const [formData, setFormData] = useState<FormData>({
     name: "",
@@ -135,7 +137,13 @@ const RegisterForm: React.FC<RegisterFormProps> = ({
           <div className="flex-grow border-t border-gray-300"></div>
         </div>
 
-        <button className="w-full border border-gray-300 rounded px-4 py-2 flex items-center justify-center gap-2">
+        <button
+          type="button"
+          onClick={async () => {
+            if (onGoogleSignIn) await onGoogleSignIn();
+          }}
+          className="w-full border border-gray-300 rounded px-4 py-2 flex items-center justify-center gap-2"
+        >
           <img
             src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg"
             alt="Google icon"

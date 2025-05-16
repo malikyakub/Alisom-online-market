@@ -35,13 +35,7 @@ const useUsers = () => {
 
       if (supabaseError) throw new Error(supabaseError.message);
 
-      const { error: authError } = await supabase
-        .from("auth")
-        .update({ active: false }) 
-        .eq("user_id", id);
-
-      if (authError) throw new Error(authError.message);
-
+      // Removed auth update part as per your instruction
       return { data: supabaseData, err: null };
     } catch (error: unknown) {
       return { data: null, err: String(error) };
@@ -61,15 +55,9 @@ const useUsers = () => {
 
       if (userError) throw new Error(userError.message);
 
-      const { data: authData, error: authError } = await supabase
-        .from("auth")
-        .update(newData)
-        .eq("user_id", id)
-        .select();
+      // Removed auth update part as per your instruction
 
-      if (authError) throw new Error(authError.message);
-
-      return { data: { userData, authData }, err: null };
+      return { data: { userData }, err: null };
     } catch (error: unknown) {
       return { data: null, err: String(error) };
     } finally {
@@ -84,24 +72,17 @@ const useUsers = () => {
         .from("users")
         .insert(newUserData)
         .select();
-  
+
       if (userError) throw new Error(userError.message);
-  
-      const { data: authData, error: authError } = await supabase
-        .from("auth")
-        .insert({ user_id: userData[0].id, active: true })
-        .select();
-  
-      if (authError) throw new Error(authError.message);
-  
-      return { data: { userData, authData }, err: null };
+
+      return { data: { userData }, err: null };
     } catch (error: unknown) {
       return { data: null, err: String(error) };
     } finally {
       setIsLoading(false);
     }
   }
-  
+
   return {
     AllUsers,
     DeleteUser,
