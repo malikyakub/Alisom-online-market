@@ -45,10 +45,13 @@ const Signup: React.FC = () => {
     setIsLoading(true);
 
     try {
-      const { user: authUser } = await signup(
-        formData.email,
-        formData.password
-      );
+      const { user: authUser } = await signup({
+        email: formData.email,
+        password: formData.password,
+        fullname: formData.name,
+        phone: formData.phone,
+        address: formData.address,
+      });
 
       if (!authUser) {
         triggerAlert(
@@ -59,34 +62,13 @@ const Signup: React.FC = () => {
         return;
       }
 
-      const newUser = {
-        fullname: formData.name,
-        email: formData.email,
-        phone: formData.phone,
-        address: formData.address,
-      };
-
-      const { data: userData, err: userError } = await NewUser(newUser);
-      console.log("NewUser response:", { userData, userError });
-
-      // if (userError) {
-      //   triggerAlert(
-      //     "Signup Failed",
-      //     typeof userError === "string"
-      //       ? userError
-      //       : "An error occurred while creating your profile.",
-      //     "danger"
-      //   );
-      //   return;
-      // }
-
       triggerAlert("Signup Successful", "Welcome aboard!", "success");
-      console.log("Signup successful!", userData);
-      window.location.href = "/user/account";
+      setTimeout(() => {
+        window.location.href = "/";
+      }, 3000);
     } catch (error: any) {
       const errorMsg =
         error?.message || error?.toString() || "Unexpected error occurred.";
-      console.error("Signup failed:", error);
       triggerAlert("Signup Error", errorMsg, "danger");
     } finally {
       setIsLoading(false);
