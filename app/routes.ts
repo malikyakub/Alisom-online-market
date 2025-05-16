@@ -9,6 +9,7 @@ export default [
     route("Account", "routes/User/Account.tsx"),
     route("Checkout", "routes/User/Checkout.tsx"),
     route("Cart", "routes/User/Cart.tsx"),
+    route("Products", "routes/User/Products.tsx"),
     route("Wishlist", "routes/User/Wishlist.tsx"),
   ]),
 
