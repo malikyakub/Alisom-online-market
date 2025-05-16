@@ -6,6 +6,7 @@ interface InformationCardProps {
   title?: string;
   iconBgColor?: string;
   textColor?: string;
+  isGreenFull?: boolean; // ✅ NEW PROP
 }
 
 const InformationCard: React.FC<InformationCardProps> = ({
@@ -14,28 +15,55 @@ const InformationCard: React.FC<InformationCardProps> = ({
   title = "Label goes here",
   iconBgColor = "#1A2238",
   textColor = "#1A2238",
+  isGreenFull = false, // ✅ default false
 }) => {
+  const cardBg = isGreenFull ? "#17C3B2" : "white";
+  const iconCircleBg = isGreenFull ? "white" : iconBgColor;
+  const iconColor = isGreenFull ? "#17C3B2" : "white";
+  const textColorFinal = isGreenFull ? "white" : textColor;
+
   return (
-    <div className="bg-white w-[270px] h-[230px] rounded-lg shadow-md flex flex-col justify-center items-center p-4 gap-4 transition-colors duration-300 hover:bg-[#17C3B2] hover:text-white group">
+    <div
+      className={`w-[270px] h-[230px] rounded-lg shadow-md flex flex-col justify-center items-center p-4 gap-4 transition-colors duration-300 ${
+        isGreenFull ? "" : "hover:bg-[#17C3B2] hover:text-white group"
+      }`}
+      style={{ backgroundColor: cardBg }}
+    >
       <div className="relative w-20 h-20 flex justify-center items-center">
+        {!isGreenFull && (
+          <div
+            className="absolute w-28 h-28 rounded-full opacity-0 scale-75 transition-all duration-300 group-hover:opacity-20 group-hover:scale-100"
+            style={{ backgroundColor: iconBgColor }}
+          />
+        )}
         <div
-          className="absolute w-28 h-28 rounded-full opacity-0 scale-75 transition-all duration-300 group-hover:opacity-20 group-hover:scale-100"
-          style={{ backgroundColor: iconBgColor }}
-        />
-        <div
-          className="w-20 h-20 rounded-full flex justify-center items-center z-10 transition-colors duration-300 group-hover:bg-white"
-          style={{ backgroundColor: iconBgColor }}
+          className="w-20 h-20 rounded-full flex justify-center items-center z-10 transition-colors duration-300"
+          style={{
+            backgroundColor: iconCircleBg,
+          }}
         >
-          <Icon className="text-white text-3xl group-hover:text-[#17C3B2] transition-colors duration-300" />
+          <Icon
+            className={`text-3xl transition-colors duration-300 ${
+              isGreenFull ? "" : "group-hover:text-[#17C3B2]"
+            }`}
+            style={{ color: iconColor }}
+          />
         </div>
       </div>
       <div className="text-center">
-        <h2 className="text-2xl font-bold transition-colors duration-300 group-hover:text-white">
+        <h2
+          className={`text-2xl font-bold transition-colors duration-300 ${
+            isGreenFull ? "" : "group-hover:text-white"
+          }`}
+          style={{ color: isGreenFull ? "white" : undefined }}
+        >
           {title}
         </h2>
         <p
-          className="text-sm mt-1 font-bold transition-colors duration-300 group-hover:text-white"
-          style={{ color: textColor }}
+          className={`text-sm mt-1 font-bold transition-colors duration-300 ${
+            isGreenFull ? "" : "group-hover:text-white"
+          }`}
+          style={{ color: textColorFinal }}
         >
           {value}
         </p>
