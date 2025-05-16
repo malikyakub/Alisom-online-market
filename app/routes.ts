@@ -10,6 +10,7 @@ export default [
     route("Checkout", "routes/User/Checkout.tsx"),
     route("Cart", "routes/User/Cart.tsx"),
     route("Products", "routes/User/Products.tsx"),
+    route("Wishlist", "routes/User/Wishlist.tsx"),
   ]),
 
   route("Admin", "routes/Admin/_layout.tsx", {}, [
@@ -18,6 +19,7 @@ export default [
     route("products", "routes/Admin/products.tsx"),
     route("customers", "routes/Admin/customers.tsx"),
     route("Categories", "routes/Admin/Categories.tsx"),
+    route("settings", "routes/Admin/settings.tsx"),
   ]),
   route("*", "routes/NotFound.tsx"),
 ] satisfies RouteConfig;

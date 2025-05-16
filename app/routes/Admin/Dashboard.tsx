@@ -42,7 +42,7 @@ const Dashboard = () => {
         </p>
       </div>
 
-      <div className="flex flex-wrap justify-between gap-3 p-6">
+      <div className="flex flex-wrap justify-between gap-2 p-6">
         {cardsData.map((card, index) => (
           <div key={index} className="w-full sm:w-[48%] lg:w-[24%]">
             <DashboardCard
@@ -55,7 +55,7 @@ const Dashboard = () => {
         ))}
       </div>
 
-      <div className="flex flex-col lg:flex-row gap-3 p-6">
+      <div className="flex flex-col lg:flex-row gap-2 p-6">
         <div
           className="lg:w-2/3 rounded-lg border"
           style={{ borderColor: "#007BFF" }}
@@ -63,7 +63,7 @@ const Dashboard = () => {
           <DashboardChart />
         </div>
 
-        <div className="lg:w-1/3 w-full flex flex-col gap-3">
+        <div className="lg:w-1/3 w-full flex flex-col gap-2">
           <RecentOrders />
           <ServiceBookCard />
         </div>
