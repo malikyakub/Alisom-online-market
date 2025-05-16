@@ -4,7 +4,6 @@ const ProductsHero = () => {
   return (
     <section className="bg-gradient-to-r from-gray-900 via-gray-800 to-gray-900 text-white px-4 py-6 h-[200px]">
       <div className="mx-auto h-full flex flex-row items-center justify-between gap-4 md:gap-6">
-        {/* Text Content */}
         <div className="flex flex-col justify-center space-y-2 text-left">
           <h1 className="text-xl sm:text-lg md:text-xl lg:text-2xl font-bold leading-snug">
             Discover Our Premium Products

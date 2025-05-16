@@ -4,7 +4,7 @@ import { LuShoppingCart } from "react-icons/lu";
 import { CgProfile } from "react-icons/cg";
 import { HiOutlineMenuAlt3, HiOutlineX } from "react-icons/hi";
 import ProfilePopup from "./ProfilePopup";
-import Alert from "./Alert"; // Adjust path if needed
+import Alert from "./Alert";
 import useAuth from "hooks/useAuth";
 
 const Header = () => {
@@ -251,7 +251,6 @@ const Header = () => {
           </div>
         </>
       )}
-      {/* ✅ Mobile Search & Icons */}
     </header>
   );
 };

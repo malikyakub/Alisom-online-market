@@ -19,7 +19,6 @@ const ProductCard: React.FC<ProductCardProps> = ({
 }) => {
   return (
     <div className="relative w-64 bg-white shadow-md rounded-xl overflow-hidden group transition duration-300">
-      {/* Product Image */}
       <div className="overflow-hidden w-full h-48 relative">
         <img src={image} alt={name} className="w-full h-full object-cover" />
         <div className="absolute bottom-0 w-full opacity-0 group-hover:opacity-100 transition">
@@ -29,7 +28,6 @@ const ProductCard: React.FC<ProductCardProps> = ({
         </div>
       </div>
 
-      {/* Icons Top Right */}
       <div className="absolute top-2 right-2 flex flex-col gap-2 opacity-0 group-hover:opacity-100 transition">
         <button className="bg-white p-2 rounded-full shadow hover:bg-gray-100">
           <FaHeart className="text-gray-600" />
@@ -39,9 +37,6 @@ const ProductCard: React.FC<ProductCardProps> = ({
         </button>
       </div>
 
-      {/* Add to Cart Button */}
-
-      {/* Info Section */}
       <div className="p-4">
         <h3 className="font-bold text-sm mb-1">{name}</h3>
         <p className="text-teal-600 font-semibold mb-1">${price}</p>

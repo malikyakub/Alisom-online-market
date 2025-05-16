@@ -152,7 +152,7 @@ const informations = [
 const staffData = [
   {
     image:
-      "https://i.pinimg.com/236x/5b/72/cc/5b72ccd75cd3a72e6d3e90c2b1bcdc19.jpg",
+      "https://i.pinimg.com/736x/dc/10/aa/dc10aafc68d384622f59edb3919a924d.jpg",
     name: "Emily Carter",
     title: "Marketing Lead",
     socials: {

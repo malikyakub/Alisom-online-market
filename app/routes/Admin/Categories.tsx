@@ -28,8 +28,7 @@ const CategoryTable: React.FC = () => {
   const rowsPerPage = 12;
   const totalPages = Math.ceil(initialCategories.length / rowsPerPage);
 
-  const [isModalOpen, setIsModalOpen] = useState(false); // State for modal visibility
-
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const handleAction = (action: string, id: number) => {
     if (action === "delete") alert(`Delete category ${id}`);
     if (action === "copy-id") navigator.clipboard.writeText(id.toString());
@@ -79,11 +78,11 @@ const CategoryTable: React.FC = () => {
   };
 
   const handleAddCategory = () => {
-    setIsModalOpen(true); // Open modal
+    setIsModalOpen(true);
   };
 
   const closeModal = () => {
-    setIsModalOpen(false); // Close modal
+    setIsModalOpen(false);
   };
 
   return (

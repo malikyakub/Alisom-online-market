@@ -21,7 +21,6 @@ const WishlistProductCard: React.FC<WishlistProductCardProps> = ({
   isWishlist,
 }) => (
   <div className="relative bg-white rounded-lg p-3 w-full max-w-[15rem] shadow hover:shadow-lg transition">
-    {/* Discount or Tag */}
     {product.discount && (
       <span className="absolute top-2 left-2 bg-red-500 text-white text-xs px-2 py-1 rounded">
         {product.discount}
@@ -33,7 +32,6 @@ const WishlistProductCard: React.FC<WishlistProductCardProps> = ({
       </span>
     )}
 
-    {/* Wishlist or View Icon */}
     <button
       className={`absolute top-2 right-2 text-gray-500 ${
         isWishlist ? "hover:text-red-500" : "hover:text-teal-500"
@@ -49,17 +47,14 @@ const WishlistProductCard: React.FC<WishlistProductCardProps> = ({
       className="w-full h-36 object-contain mb-2"
     />
 
-    {/* Title */}
     <h3 className="text-sm font-semibold mb-1">
       {product.title ?? "Untitled Product"}
     </h3>
 
-    {/* Add to Cart */}
     <button className="mt-2 w-full bg-teal-500 text-white text-sm py-1 rounded hover:bg-teal-600 transition">
       Add To Cart
     </button>
 
-    {/* Price Section */}
     <div className="text-sm font-bold text-teal-600 mt-2">${product.price}</div>
     {product.oldPrice && (
       <div className="text-xs line-through text-gray-500">
@@ -67,7 +62,6 @@ const WishlistProductCard: React.FC<WishlistProductCardProps> = ({
       </div>
     )}
 
-    {/* Rating */}
     {product.rating && (
       <div className="flex text-yellow-400 text-sm mt-1">
         {"★★★★★".slice(0, product.rating)}

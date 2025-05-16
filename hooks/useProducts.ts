@@ -10,7 +10,6 @@ interface ReturnType<T = any> {
 const useProducts = () => {
   const [isLoading, setIsLoading] = useState(false);
 
-  // Fetch all products
   async function AllProducts(): Promise<ReturnType<any[]>> {
     setIsLoading(true);
     try {
@@ -31,7 +30,6 @@ const useProducts = () => {
     }
   }
 
-  // Delete a product
   async function DeleteProduct(id: string): Promise<ReturnType> {
     setIsLoading(true);
     try {
@@ -50,7 +48,6 @@ const useProducts = () => {
     }
   }
 
-  // Update a product
   async function UpdateProduct(
     id: string,
     newData: object
@@ -72,7 +69,6 @@ const useProducts = () => {
     }
   }
 
-  // Add a new product
   async function NewProduct(newProductData: object): Promise<ReturnType> {
     setIsLoading(true);
     try {

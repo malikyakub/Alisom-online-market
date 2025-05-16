@@ -19,22 +19,27 @@ const StaffCard: React.FC<StaffCardProps> = ({
   socials,
 }) => {
   return (
-    <div className="w-[370px] h-[564px] bg-white rounded-lg overflow-hidden shadow-md shadow-black/30">
-      <div className="w-full h-[430px] bg-[#f5f5f5] flex items-center justify-center">
-        <img src={image} alt={name} className="w-full h-full object-center" />
+    <div className="w-[300px] bg-white rounded-xl overflow-hidden shadow-lg cursor-pointer">
+      <div className="relative w-full h-72 bg-gray-100 flex overflow-hidden">
+        <img
+          src={image}
+          alt={name}
+          className="object-cover object-top w-full h-full rounded-t-xl"
+        />
       </div>
-      <div className="px-4 pt-4 pb-2">
-        <h2 className="text-xl font-bold text-black mb-1">{name}</h2>
-        <p className="text-sm font-semibold text-gray-800 mb-4">{title}</p>
-        <div className="flex gap-4 text-black text-[18px]">
+      <div className="p-4">
+        <h2 className="text-2xl font-semibold text-gray-900 mb-1">{name}</h2>
+        <p className="text-sm text-gray-600 mb-5">{title}</p>
+        <div className="flex gap-4 text-gray-700">
           {socials.twitter && (
             <a
               href={socials.twitter}
               target="_blank"
               rel="noopener noreferrer"
-              className="text-2xl hover:text-[#007BFF]"
+              className="w-10 h-10 flex items-center justify-center rounded bg-blue-50 text-blue-600 hover:bg-blue-600 hover:text-white transition-colors"
+              aria-label={`${name} Twitter`}
             >
-              <FaTwitter />
+              <FaTwitter size={20} />
             </a>
           )}
           {socials.instagram && (
@@ -42,9 +47,10 @@ const StaffCard: React.FC<StaffCardProps> = ({
               href={socials.instagram}
               target="_blank"
               rel="noopener noreferrer"
-              className="text-2xl hover:text-[#007BFF]"
+              className="w-10 h-10 flex items-center justify-center rounded bg-pink-50 text-pink-500 hover:bg-pink-500 hover:text-white transition-colors"
+              aria-label={`${name} Instagram`}
             >
-              <FaInstagram />
+              <FaInstagram size={20} />
             </a>
           )}
           {socials.linkedin && (
@@ -52,9 +58,10 @@ const StaffCard: React.FC<StaffCardProps> = ({
               href={socials.linkedin}
               target="_blank"
               rel="noopener noreferrer"
-              className="text-2xl hover:text-[#007BFF]"
+              className="w-10 h-10 flex items-center justify-center rounded bg-blue-100 text-blue-700 hover:bg-blue-700 hover:text-white transition-colors"
+              aria-label={`${name} LinkedIn`}
             >
-              <FaLinkedin />
+              <FaLinkedin size={20} />
             </a>
           )}
         </div>

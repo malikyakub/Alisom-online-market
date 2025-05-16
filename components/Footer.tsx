@@ -1,16 +1,61 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   FaFacebookF,
   FaTwitter,
   FaInstagram,
   FaLinkedinIn,
 } from "react-icons/fa";
+import Alert from "./Alert"; // Adjust the import path if needed
 
 const Footer = () => {
+  const [email, setEmail] = useState("");
+  const [alertInfo, setAlertInfo] = useState<{
+    isOpen: boolean;
+    title: string;
+    description: string;
+    type: "success" | "warning" | "danger" | "info";
+  }>({ isOpen: false, title: "", description: "", type: "info" });
+
+  const handleSubscribe = () => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      setAlertInfo({
+        isOpen: true,
+        title: "Invalid Email",
+        description: "Please enter a valid email address.",
+        type: "danger",
+      });
+      return;
+    }
+
+    // Simulate API call or subscription logic here
+    console.log("Subscribed email:", email);
+
+    setAlertInfo({
+      isOpen: true,
+      title: "Subscribed!",
+      description: "Thank you for subscribing to our newsletter.",
+      type: "success",
+    });
+    setEmail("");
+  };
+
   return (
     <div className="bg-[#1A2238] text-white p-8">
+      <Alert
+        isOpen={alertInfo.isOpen}
+        type={alertInfo.type}
+        title={alertInfo.title}
+        description={alertInfo.description}
+        onClose={() =>
+          setAlertInfo((prev) => ({
+            ...prev,
+            isOpen: false,
+          }))
+        }
+      />
+
       <div className="max-w-[1170px] mx-auto grid grid-cols-1 md:grid-cols-4 gap-8">
-        {/* Exclusive */}
         <div>
           <h2 className="text-xl font-bold mb-4">Exclusive</h2>
           <p className="font-semibold mb-2">Subscribe</p>
@@ -20,8 +65,15 @@ const Footer = () => {
               type="email"
               placeholder="Enter your email"
               className="bg-transparent outline-none text-white placeholder-white flex-grow"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") {
+                  handleSubscribe();
+                }
+              }}
             />
-            <button>
+            <button onClick={handleSubscribe} aria-label="Subscribe">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 fill="none"
@@ -40,7 +92,6 @@ const Footer = () => {
           </div>
         </div>
 
-        {/* Support */}
         <div>
           <h2 className="text-xl font-bold mb-4">Support</h2>
           <p className="text-sm">
@@ -50,7 +101,6 @@ const Footer = () => {
           <p className="mt-1">+252-610-000000</p>
         </div>
 
-        {/* Account */}
         <div>
           <h2 className="text-xl font-bold mb-4">Account</h2>
           <ul className="space-y-2 text-sm">
@@ -62,7 +112,6 @@ const Footer = () => {
           </ul>
         </div>
 
-        {/* Quick Link */}
         <div>
           <h2 className="text-xl font-bold mb-4">Quick Link</h2>
           <ul className="space-y-2 text-sm">

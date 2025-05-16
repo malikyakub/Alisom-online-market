@@ -4,7 +4,6 @@ import { FiMenu, FiX } from "react-icons/fi";
 import { BsMoon } from "react-icons/bs";
 
 type AdminHeaderProps = {
-  // Optional callback (not used yet)
   onToggleTheme?: () => void;
 };
 
@@ -41,7 +40,6 @@ const AdminHeader: React.FC<AdminHeaderProps> = ({ onToggleTheme }) => {
             </a>
           </div>
 
-          {/* Desktop nav */}
           <ul className="hidden md:flex gap-6 text-sm font-medium">
             {navLinks.map((item) => (
               <li key={item.name}>
@@ -61,7 +59,6 @@ const AdminHeader: React.FC<AdminHeaderProps> = ({ onToggleTheme }) => {
         </div>
 
         <div className="flex items-center gap-4">
-          {/* Search */}
           <div className="hidden sm:flex bg-white border border-gray-200 hover:shadow-md transition-shadow duration-200 p-2 px-4 rounded-lg items-center gap-3">
             <input
               value={searchQuery}
@@ -79,7 +76,6 @@ const AdminHeader: React.FC<AdminHeaderProps> = ({ onToggleTheme }) => {
             </button>
           </div>
 
-          {/* Theme toggle (non-functional for now) */}
           <button
             onClick={onToggleTheme}
             className="text-gray-600 hover:text-[#007BFF] transition-colors"
@@ -88,7 +84,6 @@ const AdminHeader: React.FC<AdminHeaderProps> = ({ onToggleTheme }) => {
             <BsMoon size={20} />
           </button>
 
-          {/* Mobile menu toggle */}
           <button
             className="md:hidden text-gray-600"
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}

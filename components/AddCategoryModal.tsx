@@ -27,10 +27,10 @@ const AddCategoryModal = ({
           value={name}
           onChange={(e) => setName(e.target.value)}
           className="w-full p-2 border border-gray-300 rounded 
-             focus:outline-none focus:ring-2 focus:ring-blue-400  // Stronger blue ring
-             focus:bg-blue-100                 // More intense blue background (100 instead of 50)
-             hover:bg-blue-50                  // Optional: subtle hover (unchanged)
-             transition-colors duration-200" // Smoother transition"
+             focus:outline-none focus:ring-2 focus:ring-blue-400  
+             focus:bg-blue-100                 
+             hover:bg-blue-50                  
+             transition-colors duration-200"
         />
         <div className="flex justify-end mt-4">
           <button className="bg-blue-600 text-white px-4 py-2 rounded-md">
