@@ -98,8 +98,8 @@ const WishlistPage = () => {
       </div>
 
       <div className="flex justify-between items-center mb-4">
-        <h2 className="text-lg font-bold flex items-center gap-2">
-          <span className="w-2 h-4 bg-[#17C3B2] inline-block rounded-sm"></span>
+        <h2 className="text-xl font-bold flex items-center gap-2">
+          <span className="w-8 h-14 bg-[#17C3B2] inline-block rounded-sm"></span>
           <span className="text-[#1A2238]">Just For You</span>
         </h2>
         <button className="border px-4 py-2 font-bold rounded text-[#333333] border-[#A3A3A3] hover:text-white hover:border-[#007BFF] hover:bg-[#007BFF] transition w-[200px]">

@@ -13,6 +13,8 @@ export default [
     route("Cart", "routes/User/Cart.tsx"),
     route("Products", "routes/User/Products.tsx"),
     route("Wishlist", "routes/User/Wishlist.tsx"),
+    route("ProductDetails", "routes/User/ProductDetails.tsx"),
+    
   ]),
 
   route("Admin", "routes/Admin/_layout.tsx", {}, [
