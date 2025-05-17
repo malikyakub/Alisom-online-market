@@ -1,10 +1,26 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+import { useParams } from "react-router-dom";
 import ProductFullDetails from "components/Productfulldetails";
 import FeaturedProductCard from "components/FeaturedProductCard";
+import productData from "../../../public/assets/products.json";
+
+interface Product {
+  product_id: string;
+  name: string;
+  description: string;
+  price: number;
+  stock_quantity: number;
+  category_id: string;
+  brand_id: string;
+  created_at: string;
+  featured: boolean;
+  Specifications?: string[];
+  images: string[];
+}
 
 interface RelatedItem {
   title: string;
-  price: string | number;
+  price: number;
   oldPrice: string;
   discount: string;
   image: string;
@@ -12,64 +28,50 @@ interface RelatedItem {
 }
 
 const ProductDetails: React.FC = () => {
+  const { productId } = useParams<{ productId: string }>();
+  const [product, setProduct] = useState<Product | undefined>(undefined);
   const [quantity, setQuantity] = useState<number>(1);
+  const [selectedImage, setSelectedImage] = useState<string>("");
+
+  useEffect(() => {
+    const allProducts = productData as Product[];
+    const foundProduct = allProducts.find((p) => p.product_id === productId);
+    setProduct(foundProduct);
+    if (foundProduct?.images?.length) {
+      setSelectedImage(foundProduct.images[0]);
+    }
+  }, [productId]);
 
   const handleQuantityChange = (type: "inc" | "dec") => {
-    setQuantity((prev) =>
-      type === "inc" ? prev + 1 : prev > 1 ? prev - 1 : 1
-    );
+    setQuantity((prev) => (type === "inc" ? prev + 1 : Math.max(1, prev - 1)));
   };
 
-  const imageList = [
-    "https://i.pinimg.com/736x/92/ae/9c/92ae9c10f44fb1f11fc4c49616470ef5.jpg",
-    "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRiU2vaHGs-t25knHbRwVd_iD6157AYwubL8w&s",
-    "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRrzlJReoUi5hzGmqYLsFhJRTVR6QtkmM6vfg&s",
-    "https://i.pinimg.com/736x/92/ae/9c/92ae9c10f44fb1f11fc4c49616470ef5.jpg",
-  ];
+  if (!product) {
+    return <div className="p-4">Product not found.</div>;
+  }
 
-  const [selectedImage, setSelectedImage] = useState<string>(imageList[0]);
-
-  const relatedItems: RelatedItem[] = [
-    {
-      title: "HAVIT HV-G92 Gamepad",
-      price: 120,
-      oldPrice: "$160",
-      discount: "40%",
-      image: imageList[2],
-      reviews: 4,
-    },
-    {
-      title: "AK-900 Wired Keyboard",
-      price: 960,
-      oldPrice: "$1110",
-      discount: "35%",
-      image: imageList[0],
-      reviews: 4,
-    },
-    {
-      title: "IPS LCD Gaming Monitor",
-      price: 370,
-      oldPrice: "$480",
-      discount: "30%",
-      image: imageList[0],
-      reviews: 5,
-    },
-    {
-      title: "RGB liquid CPU Cooler",
-      price: 160,
-      oldPrice: "$170",
-      discount: "",
-      image: imageList[0],
-      reviews: 4,
-    },
-  ];
+  const relatedItems: RelatedItem[] = (productData as Product[])
+    .filter(
+      (p) =>
+        p.category_id === product.category_id &&
+        p.product_id !== product.product_id
+    )
+    .slice(0, 4)
+    .map((p) => ({
+      title: p.name,
+      price: p.price,
+      oldPrice: `$${(p.price * 1.2).toFixed(2)}`,
+      discount: "20%",
+      image: p.images[0] || "",
+      reviews: Math.floor(Math.random() * 5) + 1,
+    }));
 
   return (
     <div className="p-4 md:p-6">
       {/* Breadcrumb */}
       <div className="text-sm text-gray-500 mb-4">
-        Home / Shop / Products /{" "}
-        <span className="text-black font-semibold">HAVIT HV-G92 Gamepad</span>
+        Home / Shop /{" "}
+        <span className="text-black font-semibold">{product.name}</span>
       </div>
 
       <div className="flex flex-col lg:flex-row gap-10">
@@ -78,7 +80,7 @@ const ProductDetails: React.FC = () => {
           <div className="grid grid-cols-1 sm:grid-cols-[100px_1fr] gap-6">
             {/* Thumbnails */}
             <div className="flex sm:flex-col sm:space-y-4 space-x-4 sm:space-x-0 overflow-x-auto sm:overflow-visible pr-2">
-              {imageList.map((img, index) => (
+              {product.images.map((img, index) => (
                 <img
                   key={index}
                   src={img}
@@ -104,11 +106,15 @@ const ProductDetails: React.FC = () => {
 
         {/* Product Info */}
         <div className="w-full lg:w-1/2">
-          <ProductFullDetails />
+          <ProductFullDetails
+            product={product}
+            quantity={quantity}
+            onQuantityChange={handleQuantityChange}
+          />
         </div>
       </div>
 
-      {/* Related Items Section */}
+      {/* Related Items */}
       <div className="mt-12">
         <h2 className="text-xl font-bold flex items-center gap-2 mb-4">
           <span className="w-8 h-14 bg-[#17C3B2] inline-block rounded-sm"></span>

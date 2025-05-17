@@ -1,0 +1,144 @@
+[
+  {
+    "product_id": "e8f81e6a-b6b0-4a1f-b7f0-d9c1df5c4111",
+    "name": "Wireless Headphones",
+    "description": "High-quality noise-cancelling over-ear headphones.",
+    "price": 199.99,
+    "stock_quantity": 25,
+    "category_id": "1b3787a0-4532-4b70-9d15-ec58ecbda2ea",
+    "brand_id": "fbdcfba9-5f16-49a2-90b1-4c4aa389f62d",
+    "created_at": "2025-05-01T10:30:00Z",
+    "featured": true,
+    "Specifications": ["Bluetooth 5.2", "30hr Battery Life", "Noise Cancellation"],
+    "images": [
+      "https://images.unsplash.com/photo-1580894894514-7fdb9dd7f520",
+      "https://images.unsplash.com/photo-1606813902776-21ec9ef4ec6c",
+      "https://images.unsplash.com/photo-1580894732444-0ef9a0c1e9d2"
+    ]
+  },
+  {
+    "product_id": "a72c2c88-f5a5-4018-9c5e-9b4768aabbaf",
+    "name": "Smartphone XL",
+    "description": "6.7-inch display with powerful processor and long battery life.",
+    "price": 899.5,
+    "stock_quantity": 12,
+    "category_id": "a3787b40-2732-41b0-8f66-aa72cbba0df5",
+    "brand_id": "b3f4d54e-3219-43b1-89cd-b2a8dede88d9",
+    "created_at": "2025-04-15T08:15:00Z",
+    "featured": true,
+    "Specifications": ["128GB Storage", "5G Support", "Triple Camera System"],
+    "images": [
+      "https://i.pinimg.com/736x/f6/06/8d/f6068d676eb3bb9d192e62681197b429.jpg",
+      "https://i.pinimg.com/736x/73/60/cb/7360cbb86aa7fbf52cf36cf42a9608a0.jpg",
+      "https://i.pinimg.com/736x/73/60/cb/7360cbb86aa7fbf52cf36cf42a9608a0.jpg"
+    ]
+  },
+  {
+    "product_id": "5a95eabe-671e-47b6-8498-5e8bb12ea589",
+    "name": "4K Ultra HD TV",
+    "description": "65-inch Smart TV with vibrant colors and streaming support.",
+    "price": 1299.0,
+    "stock_quantity": 8,
+    "category_id": "c6127b90-8370-4e5a-8105-bfcedbb5b251",
+    "brand_id": "832f8a0b-32c2-49f7-8426-23f88c4182f1",
+    "created_at": "2025-03-20T13:50:00Z",
+    "featured": false,
+    "Specifications": ["HDR10+", "HDMI 2.1", "Voice Control"],
+    "images": [
+      "https://i.pinimg.com/736x/73/60/cb/7360cbb86aa7fbf52cf36cf42a9608a0.jpg",
+      "https://i.pinimg.com/736x/73/60/cb/7360cbb86aa7fbf52cf36cf42a9608a0.jpg",
+      "https://i.pinimg.com/736x/73/60/cb/7360cbb86aa7fbf52cf36cf42a9608a0.jpg"
+    ]
+  },
+  {
+    "product_id": "dfc238d1-17d4-4d7c-b0a6-c238e5f5cf67",
+    "name": "Gaming Laptop Pro",
+    "description": "High-performance laptop with RTX graphics for gaming and work.",
+    "price": 1599.99,
+    "stock_quantity": 10,
+    "category_id": "d3fa8b70-7b2e-42e6-bc17-f38ecb3f4fa0",
+    "brand_id": "a24fda22-9984-467f-b0e6-4bb27a1dcb40",
+    "created_at": "2025-05-10T09:20:00Z",
+    "featured": true,
+    "Specifications": ["Intel i7", "RTX 4060", "16GB RAM", "1TB SSD"],
+    "images": ["https://i.pinimg.com/736x/73/60/cb/7360cbb86aa7fbf52cf36cf42a9608a0.jpg"]
+  },
+  {
+    "product_id": "12a5c6d1-20b9-4bd9-8d8e-d02fce23719f",
+    "name": "Smartwatch Fit",
+    "description": "Track fitness, heart rate, and sleep with this compact smartwatch.",
+    "price": 149.0,
+    "stock_quantity": 30,
+    "category_id": "f682bb1d-d98f-4c26-b0e3-83edb0e1b0ff",
+    "brand_id": "e12ab223-50fa-4aef-a5aa-08b8db4a4a52",
+    "created_at": "2025-05-12T11:45:00Z",
+    "featured": false,
+    "Specifications": ["Heart Rate Monitor", "Sleep Tracking", "Waterproof"],
+    "images": ["https://i.pinimg.com/736x/73/60/cb/7360cbb86aa7fbf52cf36cf42a9608a0.jpg"]
+  },
+  {
+    "product_id": "c8339c67-dac6-4c8c-b13c-05f4d47a3f42",
+    "name": "Bluetooth Speaker Boom",
+    "description": "Portable speaker with deep bass and long-lasting battery.",
+    "price": 89.99,
+    "stock_quantity": 50,
+    "category_id": "9cfa7f04-4d5b-4f01-b0e3-38feaf237bad",
+    "brand_id": "93a324fa-6e56-44f9-83a3-8021aa9f9ac4",
+    "created_at": "2025-05-05T15:00:00Z",
+    "featured": true,
+    "Specifications": ["Bluetooth 5.0", "20hr Battery", "Water-Resistant"],
+    "images": ["https://i.pinimg.com/736x/73/60/cb/7360cbb86aa7fbf52cf36cf42a9608a0.jpg"]
+  },
+  {
+    "product_id": "e91738a9-3f2b-4c57-8a01-104c78fd9477",
+    "name": "Tablet Air 10",
+    "description": "Lightweight tablet with vivid display and multitasking features.",
+    "price": 499.99,
+    "stock_quantity": 18,
+    "category_id": "0a9f4c9c-5593-4f11-a0dc-c0201b3e6a5b",
+    "brand_id": "4c48fd2c-8c45-4122-9333-7d22603f0ef7",
+    "created_at": "2025-04-28T17:00:00Z",
+    "featured": false,
+    "Specifications": ["10.5-inch Display", "256GB Storage", "Stylus Support"],
+    "images": ["https://i.pinimg.com/736x/73/60/cb/7360cbb86aa7fbf52cf36cf42a9608a0.jpg"]
+  },
+  {
+    "product_id": "a4d83c31-6469-4e5a-9774-b1e4eb8fa111",
+    "name": "Home Security Camera",
+    "description": "Keep your home safe with this night vision-enabled security camera.",
+    "price": 89.0,
+    "stock_quantity": 40,
+    "category_id": "2392e0e4-65c5-4b04-81fd-727d49dcb351",
+    "brand_id": "0adccb97-bdc9-437f-a54f-6f7cbe4a645a",
+    "created_at": "2025-05-02T12:00:00Z",
+    "featured": false,
+    "Specifications": ["1080p", "Night Vision", "WiFi Enabled"],
+    "images": ["https://i.pinimg.com/736x/73/60/cb/7360cbb86aa7fbf52cf36cf42a9608a0.jpg"]
+  },
+  {
+    "product_id": "beab1c57-b54a-4a4c-8cd1-b3d2236a2e75",
+    "name": "Wireless Charger Stand",
+    "description": "Fast wireless charging stand for phones and earbuds.",
+    "price": 39.95,
+    "stock_quantity": 60,
+    "category_id": "4c2de11f-64b5-44cd-8238-6e58029f3cfa",
+    "brand_id": "619fb8e9-6a25-4d6a-bba0-b5464fd8b2fb",
+    "created_at": "2025-05-03T09:30:00Z",
+    "featured": false,
+    "Specifications": ["15W Fast Charge", "Qi Compatible", "Compact Design"],
+    "images": ["https://i.pinimg.com/736x/73/60/cb/7360cbb86aa7fbf52cf36cf42a9608a0.jpg"]
+  },
+  {
+    "product_id": "45fe7324-dbb0-4f83-9ec6-05d4f72940c3",
+    "name": "Mechanical Keyboard RGB",
+    "description": "Tactile mechanical keyboard with customizable RGB lighting.",
+    "price": 129.99,
+    "stock_quantity": 22,
+    "category_id": "f1bfe662-1ae2-4e21-85c6-9f9d0b3a3cc1",
+    "brand_id": "3ad4cbd2-f6a6-4f02-987f-b7b6ad7015b1",
+    "created_at": "2025-05-04T18:10:00Z",
+    "featured": true,
+    "Specifications": ["Cherry MX Switches", "RGB Lighting", "USB-C Connectivity"],
+    "images": ["https://i.pinimg.com/736x/73/60/cb/7360cbb86aa7fbf52cf36cf42a9608a0.jpg"]
+  }
+]
