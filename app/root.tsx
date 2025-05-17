@@ -48,7 +48,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
 
         <main
           className={`flex-1 w-full mx-auto ${
-            !isAdmin ? "max-w-[1170px] px-4 sm:px-6 py-6" : "p-0"
+            !isAdmin ? "max-w-[1170px]" : "p-0"
           }`}
         >
           {children}

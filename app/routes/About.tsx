@@ -35,6 +35,7 @@ const About: React.FC = () => {
       icon: FaDollarSign,
       title: "25k",
       value: "Annual gross sale on our site",
+      isGreenFull: true,
     },
   ];
 
@@ -94,7 +95,6 @@ const About: React.FC = () => {
 
   return (
     <main className="w-full px-4 md:px-16 py-10 space-y-20">
-      {/* Our Story Section */}
       <section
         aria-labelledby="our-story-title"
         className="flex flex-col lg:flex-row gap-10 items-center"
@@ -128,7 +128,6 @@ const About: React.FC = () => {
         </div>
       </section>
 
-      {/* Statistics Section with infinite horizontal scroll */}
       <section aria-labelledby="statistics-title" className="overflow-hidden">
         <h3 id="statistics-title" className="sr-only">
           Statistics
@@ -144,19 +143,16 @@ const About: React.FC = () => {
             ease: "linear",
           }}
         >
-          {/* First set */}
           {stats.map((item, index) => (
             <InformationCard key={`first-${index}`} {...item} />
           ))}
 
-          {/* Duplicate set for seamless loop */}
           {stats.map((item, index) => (
             <InformationCard key={`second-${index}`} {...item} />
           ))}
         </motion.div>
       </section>
 
-      {/* Staff Section */}
       <section aria-labelledby="staff-title">
         <h2
           id="staff-title"
@@ -171,7 +167,6 @@ const About: React.FC = () => {
         </div>
       </section>
 
-      {/* Features Section */}
       <section aria-labelledby="features-title">
         <h2
           id="features-title"
@@ -179,7 +174,7 @@ const About: React.FC = () => {
         >
           Why Choose Us
         </h2>
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-8">
+        <div className="flex flex-col sm:flex-row flex-wrap gap-8 justify-center">
           {features.map((feature, index) => (
             <FeatureCard key={index} {...feature} />
           ))}

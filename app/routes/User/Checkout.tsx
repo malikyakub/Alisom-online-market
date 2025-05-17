@@ -13,10 +13,6 @@ const Checkout: React.FC = () => {
 
   const purchasedProducts: Product[] = [
     {
-      title: "LCD Monitor",
-      price: 650,
-    },
-    {
       title: "H1 Gamepad",
       price: 1100,
       image:
