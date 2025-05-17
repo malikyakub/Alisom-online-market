@@ -23,6 +23,7 @@ export default [
     route("customers", "routes/Admin/customers.tsx"),
     route("Categories", "routes/Admin/Categories.tsx"),
     route("settings", "routes/Admin/settings.tsx"),
+    route("orders", "routes/Admin/orders.tsx"),
   ]),
   route("*", "routes/NotFound.tsx"),
 ] satisfies RouteConfig;

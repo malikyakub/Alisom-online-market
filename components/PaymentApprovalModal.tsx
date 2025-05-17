@@ -1,10 +1,25 @@
 import React from "react";
 
-function PaymentApprovalModal() {
+type PaymentApprovalModalProps = {
+  onApprove: () => void;
+  onCancel: () => void;
+  customerName: string;
+  amount: string;
+  phone: string;
+};
+
+const PaymentApprovalModal: React.FC<PaymentApprovalModalProps> = ({
+  onApprove,
+  onCancel,
+  customerName,
+  amount,
+  phone,
+}) => {
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-white/30 backdrop-blur">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-white/30 backdrop-blur-sm">
       <div className="relative bg-white rounded-lg shadow-xl p-6 w-full max-w-md">
         <button
+          onClick={onCancel}
           className="absolute top-4 right-4 text-gray-500 hover:text-gray-700 focus:outline-none"
           aria-label="Close"
         >
@@ -24,24 +39,28 @@ function PaymentApprovalModal() {
         </button>
 
         <h2 className="text-xl font-semibold text-gray-800 mb-6 text-center">
-          Approve payment for Malik's order
+          Approve payment for {customerName}'s order
         </h2>
 
         <div className="text-center mb-6">
-          <p className="text-sm text-gray-500 mb-2">Did you receive $13 at</p>
-          <p className="text-xl font-bold text-green-500">+252 610000000</p>
+          <p className="text-sm text-gray-500 mb-2">
+            Did you receive {amount} at
+          </p>
+          <p className="text-xl font-bold text-green-500">{phone}</p>
         </div>
 
         <div className="flex space-x-2">
           <button
             type="button"
-            className="flex-grow min-w-[140px] bg-blue-500 text-white font-bold py-2 px-4 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 hover:bg-blue-700 hover:shadow-md active:bg-blue-800"
+            onClick={onApprove}
+            className="flex-grow min-w-[140px] bg-blue-500 text-white font-bold py-2 px-4 rounded hover:bg-blue-700"
           >
             Approve payment
           </button>
           <button
             type="button"
-            className="flex-grow min-w-[140px] bg-red-500 text-white font-bold py-2 px-4 rounded focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 hover:bg-red-700 hover:shadow-md active:bg-red-800"
+            onClick={onCancel}
+            className="flex-grow min-w-[140px] bg-red-500 text-white font-bold py-2 px-4 rounded hover:bg-red-700"
           >
             Deny payment
           </button>
@@ -49,6 +68,6 @@ function PaymentApprovalModal() {
       </div>
     </div>
   );
-}
+};
 
 export default PaymentApprovalModal;
