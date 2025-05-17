@@ -1,54 +1,64 @@
 import React from "react";
-import { FaHeart, FaEye, FaStar } from "react-icons/fa";
+import { ShoppingCart, Heart, Star } from "lucide-react";
 
 type ProductCardProps = {
-  image: string;
-  name: string;
-  price: number;
-  oldPrice?: number;
-  rating: number;
-  reviews: number;
+  product: {
+    name: string;
+    price: number;
+    image: string;
+    rating?: number;
+  };
 };
 
-const ProductCard: React.FC<ProductCardProps> = ({
-  image,
-  name,
-  price,
-  rating,
-  reviews,
-}) => {
+const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
+  const rating = product.rating ?? 4.5;
+  const fullStars = Math.floor(rating);
+  const halfStar = rating % 1 >= 0.5;
+
   return (
-    <div className="relative w-64 bg-white shadow-md rounded-xl overflow-hidden group transition duration-300">
-      <div className="overflow-hidden w-full h-48 relative">
-        <img src={image} alt={name} className="w-full h-full object-cover" />
-        <div className="absolute bottom-0 w-full opacity-0 group-hover:opacity-100 transition">
-          <button className="bg-teal-500 text-white py-2 w-full font-semibold">
-            Add To Cart
-          </button>
+    <div className="relative w-full max-w-sm h-96 rounded-2xl shadow-lg overflow-hidden bg-white">
+      <div className="absolute top-2 right-2 flex gap-2 z-10">
+        <button className="p-2 rounded-full bg-[#17C3B2] text-white hover:opacity-90">
+          <ShoppingCart size={18} />
+        </button>
+        <button className="p-2 rounded-full bg-[#DC3545] text-white hover:opacity-90">
+          <Heart size={18} />
+        </button>
+      </div>
+
+      <div className="h-[70%] w-full">
+        <img
+          src={product.image}
+          alt={product.name}
+          className="w-full h-full object-cover"
+        />
+      </div>
+
+      <div className="h-[30%] p-4 flex flex-col justify-between">
+        <div>
+          <h2 className="text-lg font-semibold text-gray-800 truncate">
+            {product.name}
+          </h2>
+          <p className="text-gray-600 mt-1">${product.price.toFixed(2)}</p>
         </div>
-      </div>
 
-      <div className="absolute top-2 right-2 flex flex-col gap-2 opacity-0 group-hover:opacity-100 transition">
-        <button className="bg-white p-2 rounded-full shadow hover:bg-gray-100">
-          <FaHeart className="text-gray-600" />
-        </button>
-        <button className="bg-white p-2 rounded-full shadow hover:bg-gray-100">
-          <FaEye className="text-gray-600" />
-        </button>
-      </div>
-
-      <div className="p-4">
-        <h3 className="font-bold text-sm mb-1">{name}</h3>
-        <p className="text-teal-600 font-semibold mb-1">${price}</p>
-
-        <div className="flex items-center text-sm">
-          {Array.from({ length: 5 }).map((_, i) => (
-            <FaStar
+        <div className="flex items-center gap-1 mt-2">
+          {[...Array(fullStars)].map((_, i) => (
+            <Star
               key={i}
-              className={i < rating ? "text-yellow-400" : "text-gray-300"}
+              size={16}
+              className="text-yellow-500 fill-yellow-500"
             />
           ))}
-          <span className="text-gray-500 ml-2 text-xs">({reviews})</span>
+          {halfStar && (
+            <Star
+              size={16}
+              className="text-yellow-500 fill-yellow-500 opacity-50"
+            />
+          )}
+          <span className="text-sm text-gray-500 ml-1">
+            ({rating.toFixed(1)})
+          </span>
         </div>
       </div>
     </div>

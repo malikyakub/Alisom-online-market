@@ -1,8 +1,65 @@
-import React, { useRef } from "react";
-import { FiUpload } from "react-icons/fi";
+import React, { useRef, useState, useEffect } from "react";
+import { FiUpload, FiX } from "react-icons/fi";
+import useProducts from "hooks/useProducts";
+import useCategories from "hooks/useCategories";
+import Alert from "components/Alert";
+import useBrands from "hooks/useBrands";
+import ClipLoader from "react-spinners/ClipLoader";
 
 const AddProduct: React.FC = () => {
   const fileInputRef = useRef<HTMLInputElement | null>(null);
+  const { NewProduct, UploadProductImages, isLoading } = useProducts();
+  const { Allcategory } = useCategories();
+  const { getAllBrands } = useBrands();
+
+  const [form, setForm] = useState({
+    name: "",
+    category_id: "",
+    brand_id: "",
+    specification: "",
+    sale_price: "",
+    purchase_price: "",
+    description: "",
+    stock: "",
+  });
+
+  const [categories, setCategories] = useState<any[]>([]);
+  const [brands, setBrands] = useState<any[]>([]);
+  const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
+  const [profit, setProfit] = useState<number>(0);
+  const [alert, setAlert] = useState<{
+    isOpen: boolean;
+    title: string;
+    description: string;
+    type?: "success" | "warning" | "danger" | "info";
+  }>({
+    isOpen: false,
+    title: "",
+    description: "",
+    type: "info",
+  });
+
+  useEffect(() => {
+    const fetchCategories = async () => {
+      const { data, err } = await Allcategory();
+      if (data) setCategories(data);
+    };
+    fetchCategories();
+  }, []);
+
+  useEffect(() => {
+    const fetchBrands = async () => {
+      const { data, err } = await getAllBrands();
+      if (data) setBrands(data);
+    };
+    fetchBrands();
+  }, []);
+
+  useEffect(() => {
+    const sale = parseFloat(form.sale_price) || 0;
+    const purchase = parseFloat(form.purchase_price) || 0;
+    setProfit(sale - purchase);
+  }, [form.sale_price, form.purchase_price]);
 
   const handleUploadClick = () => {
     fileInputRef.current?.click();
@@ -11,77 +68,255 @@ const AddProduct: React.FC = () => {
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
     if (files && files.length > 0) {
-      console.log("Selected file:", files[0]);
+      setSelectedFiles(Array.from(files));
+    }
+  };
+
+  const handleChange = (
+    e: React.ChangeEvent<
+      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
+    >
+  ) => {
+    const { name, value } = e.target;
+    setForm((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    const product = {
+      name: form.name,
+      description: form.description || null,
+      price: parseFloat(form.sale_price),
+      stock_quantity: parseInt(form.stock) || 0,
+      category_id: form.category_id || null,
+      brand_id: form.brand_id || null,
+      featured: false,
+      Specifications: form.specification
+        ? form.specification.split(",").map((s) => s.trim())
+        : [],
+    };
+
+    const { data: newProduct, err } = await NewProduct(product);
+
+    if (err || !newProduct?.[0]?.product_id) {
+      setAlert({
+        isOpen: true,
+        title: "Error",
+        description: err || "Failed to create product.",
+        type: "danger",
+      });
+      return;
+    }
+
+    const productId = newProduct[0].product_id;
+
+    if (selectedFiles.length > 0) {
+      const { data: urls, err: uploadErr } = await UploadProductImages(
+        form.name,
+        selectedFiles,
+        productId
+      );
+
+      if (uploadErr) {
+        setAlert({
+          isOpen: true,
+          title: "Warning",
+          description: "Product created, but failed to upload images.",
+          type: "warning",
+        });
+        return;
+      }
+
+      setAlert({
+        isOpen: true,
+        title: "Success",
+        description: "Product and all images added successfully!",
+        type: "success",
+      });
+    } else {
+      setAlert({
+        isOpen: true,
+        title: "Success",
+        description: "Product added successfully!",
+        type: "success",
+      });
     }
   };
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+      <Alert
+        isOpen={alert.isOpen}
+        title={alert.title}
+        description={alert.description}
+        type={alert.type}
+        onClose={() => setAlert((prev) => ({ ...prev, isOpen: false }))}
+      />
+
       <div className="mb-4">
         <h1 className="text-xl font-semibold text-[#333333]">Add Product</h1>
         <p className="text-[#A3A3A3] text-sm mb-6">Add a new product here.</p>
 
         <div className="mb-8">
-          <label className="block font-semibold mb-2 text-[#333333]">Images</label>
+          <label className="block font-semibold mb-2 text-[#333333]">
+            Images
+          </label>
           <input
             type="file"
             ref={fileInputRef}
             onChange={handleFileChange}
             className="hidden"
+            multiple
+            accept="image/*"
           />
-          <button
-            type="button"
-            onClick={handleUploadClick}
-            className="border border-[#A3A3A3] px-4 py-2 rounded text-sm bg-[#FFFFFF] hover:opacity-90 flex items-center gap-2"
-          >
-            <FiUpload />
-            Upload an Image
-          </button>
+          <div className="flex flex-col sm:flex-row sm:items-start gap-4">
+            <button
+              type="button"
+              onClick={handleUploadClick}
+              className="border border-[#A3A3A3] h-[50px] px-4 py-2 rounded text-sm bg-[#FFFFFF] hover:opacity-90 flex items-center gap-2"
+            >
+              <FiUpload />
+              Upload Images
+            </button>
+
+            {selectedFiles.length > 0 && (
+              <div className="flex flex-wrap gap-4 mt-2 sm:mt-0">
+                {selectedFiles.map((file, index) => {
+                  const imageUrl = URL.createObjectURL(file);
+                  return (
+                    <div
+                      key={index}
+                      className="relative group w-[50px] h-[50px] border border-gray-300 rounded overflow-hidden"
+                    >
+                      <img
+                        src={imageUrl}
+                        alt={`preview-${index}`}
+                        className="w-full h-full object-cover"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setSelectedFiles((prev) =>
+                            prev.filter((_, i) => i !== index)
+                          );
+                        }}
+                        className="absolute inset-0 bg-black/50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
+                      >
+                        <FiX className="text-white text-xl" />
+                      </button>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+          </div>
         </div>
       </div>
 
-      <div className="bg-[#FFFFFF] p-6 rounded-md shadow">
-        <form className="space-y-5">
+      <div>
+        <form className="space-y-5" onSubmit={handleSubmit}>
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
-            {[
-              { label: "Name", placeholder: "Product name" },
-              { label: "Category", placeholder: "Product category" },
-              { label: "Brand", placeholder: "Logitech" },
-              { label: "Specification", placeholder: "Product specification" },
-            ].map((field, i) => (
-              <div key={i}>
-                <label className="block text-sm font-medium text-[#666666]">
-                  {field.label}
-                </label>
-                <input
-                  type="text"
-                  placeholder={field.placeholder}
-                  className="mt-1 block w-full border border-[#666666] rounded-md shadow-sm text-sm px-3 py-2 focus:ring-[#007BFF] focus:border-[#007BFF]"
-                />
-              </div>
-            ))}
+            <div>
+              <label className="block text-sm font-medium text-[#666666]">
+                Name
+              </label>
+              <input
+                type="text"
+                name="name"
+                value={form.name}
+                onChange={handleChange}
+                placeholder="Product name"
+                className="mt-1 block w-full border border-[#666666] rounded-md shadow-sm text-sm px-3 py-2 focus:ring-[#007BFF] focus:border-[#007BFF]"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-[#666666]">
+                Category
+              </label>
+              <select
+                name="category_id"
+                value={form.category_id}
+                onChange={handleChange}
+                className="mt-1 block w-full border border-[#666666] rounded-md shadow-sm text-sm px-3 py-2 focus:ring-[#007BFF] focus:border-[#007BFF]"
+              >
+                <option value="">Select Category</option>
+                {categories.map((cat) => (
+                  <option key={cat.category_id} value={cat.category_id}>
+                    {cat.name}
+                  </option>
+                ))}
+              </select>
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-[#666666]">
+                Brand
+              </label>
+              <select
+                name="brand_id"
+                value={form.brand_id}
+                onChange={handleChange}
+                className="mt-1 block w-full border border-[#666666] rounded-md shadow-sm text-sm px-3 py-2 focus:ring-[#007BFF] focus:border-[#007BFF]"
+              >
+                <option value="">Select Brand</option>
+                {brands.map((brand) => (
+                  <option key={brand.brand_id} value={brand.brand_id}>
+                    {brand.name}
+                  </option>
+                ))}
+              </select>
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-[#666666]">
+                Specification
+              </label>
+              <input
+                type="text"
+                name="specification"
+                value={form.specification}
+                onChange={handleChange}
+                placeholder="Product specification"
+                className="mt-1 block w-full border border-[#666666] rounded-md shadow-sm text-sm px-3 py-2 focus:ring-[#007BFF] focus:border-[#007BFF]"
+              />
+            </div>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-            {[
-              { label: "Sale Price", type: "number", placeholder: "$0.00" },
-              { label: "Purchase Price", type: "number", placeholder: "$0.00" },
-            ].map((field, i) => (
-              <div key={i}>
-                <label className="block text-sm font-medium text-[#666666]">
-                  {field.label}
-                </label>
-                <input
-                  type={field.type}
-                  placeholder={field.placeholder}
-                  className="mt-1 block w-full border border-[#666666] rounded-md shadow-sm text-sm px-3 py-2 focus:ring-[#007BFF] focus:border-[#007BFF]"
-                />
-              </div>
-            ))}
+            <div>
+              <label className="block text-sm font-medium text-[#666666]">
+                Sale Price
+              </label>
+              <input
+                type="number"
+                name="sale_price"
+                value={form.sale_price}
+                onChange={handleChange}
+                placeholder="$0.00"
+                className="mt-1 block w-full border border-[#666666] rounded-md shadow-sm text-sm px-3 py-2 focus:ring-[#007BFF] focus:border-[#007BFF]"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-[#666666]">
+                Purchase Price
+              </label>
+              <input
+                type="number"
+                name="purchase_price"
+                value={form.purchase_price}
+                onChange={handleChange}
+                placeholder="$0.00"
+                className="mt-1 block w-full border border-[#666666] rounded-md shadow-sm text-sm px-3 py-2 focus:ring-[#007BFF] focus:border-[#007BFF]"
+              />
+            </div>
             <div className="md:row-span-2">
-              <label className="block text-sm font-medium text-[#666666]">Description</label>
+              <label className="block text-sm font-medium text-[#666666]">
+                Description
+              </label>
               <textarea
+                name="description"
                 rows={5}
+                value={form.description}
+                onChange={handleChange}
                 placeholder="Product description..."
                 className="mt-1 block w-full border border-[#666666] rounded-md shadow-sm text-sm px-3 py-2 focus:ring-[#007BFF] focus:border-[#007BFF]"
               ></textarea>
@@ -89,21 +324,30 @@ const AddProduct: React.FC = () => {
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            {[
-              { label: "Profit", placeholder: "$0.00" },
-              { label: "Available in Stock", placeholder: "0" },
-            ].map((field, i) => (
-              <div key={i}>
-                <label className="block text-sm font-medium text-[#666666]">
-                  {field.label}
-                </label>
-                <input
-                  type="number"
-                  placeholder={field.placeholder}
-                  className="mt-1 block w-full border border-[#666666] rounded-md shadow-sm text-sm px-3 py-2 focus:ring-[#007BFF] focus:border-[#007BFF]"
-                />
-              </div>
-            ))}
+            <div>
+              <label className="block text-sm font-medium text-[#666666]">
+                Profit
+              </label>
+              <input
+                type="number"
+                value={profit.toFixed(2)}
+                readOnly
+                className="mt-1 block w-full border border-[#666666] bg-gray-100 rounded-md shadow-sm text-sm px-3 py-2"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-[#666666]">
+                Available in Stock
+              </label>
+              <input
+                type="number"
+                name="stock"
+                value={form.stock}
+                onChange={handleChange}
+                placeholder="0"
+                className="mt-1 block w-full border border-[#666666] rounded-md shadow-sm text-sm px-3 py-2 focus:ring-[#007BFF] focus:border-[#007BFF]"
+              />
+            </div>
           </div>
 
           <div className="flex flex-col sm:flex-row sm:justify-end sm:space-x-4 space-y-2 sm:space-y-0">
@@ -121,9 +365,11 @@ const AddProduct: React.FC = () => {
             </button>
             <button
               type="submit"
-              className="px-4 py-2 bg-[#007BFF] text-[#FFFFFF] rounded-md hover:brightness-90"
+              disabled={isLoading}
+              className="flex items-center gap-2 px-4 py-2 bg-[#007BFF] text-white rounded-md hover:brightness-90 disabled:opacity-70"
             >
-              Add Product
+              {isLoading && <ClipLoader color="#fff" size={16} />}
+              {isLoading ? "Adding..." : "Add Product"}
             </button>
           </div>
         </form>

@@ -1,5 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { ArrowRight, ArrowLeft } from "lucide-react";
+import iPhoneImage from "/assets/images/iphone.png"; // Update these paths as needed
+import Airpods from "/assets/images/airpods.png";
+import appleWatch from "/assets/images/apple-watch.png";
 
 interface Product {
   logo: string;
@@ -9,16 +12,44 @@ interface Product {
   image: string;
 }
 
-const HerCard: React.FC<{ products: Product[] }> = ({ products }) => {
+const HerCard: React.FC = () => {
+  const HeroProducts: Product[] = [
+    {
+      title: "Apple iPhone 14",
+      offer: "Up to $120 off on iPhone 14",
+      image: iPhoneImage,
+      logo: "/assets/images/apple-logo.png",
+      link: "/user/products",
+    },
+    {
+      title: "AirPods Pro (2nd Gen)",
+      offer: "Now starting at $199 — limited time!",
+      image: Airpods,
+      logo: "/assets/images/apple-logo.png",
+      link: "/user/products",
+    },
+    {
+      title: "Apple Watch Series 9",
+      offer: "Up to 15% off Apple Watch Series 9",
+      image: appleWatch,
+      logo: "/assets/images/apple-logo.png",
+      link: "/user/products",
+    },
+  ];
+
   const [currentIndex, setCurrentIndex] = useState(0);
-  const currentProduct = products[currentIndex];
+  const currentProduct = HeroProducts[currentIndex];
 
   const prevSlide = () => {
-    setCurrentIndex((prev) => (prev === 0 ? products.length - 1 : prev - 1));
+    setCurrentIndex((prev) =>
+      prev === 0 ? HeroProducts.length - 1 : prev - 1
+    );
   };
 
   const nextSlide = () => {
-    setCurrentIndex((prev) => (prev === products.length - 1 ? 0 : prev + 1));
+    setCurrentIndex((prev) =>
+      prev === HeroProducts.length - 1 ? 0 : prev + 1
+    );
   };
 
   useEffect(() => {
@@ -30,7 +61,7 @@ const HerCard: React.FC<{ products: Product[] }> = ({ products }) => {
 
   return (
     <div className="w-full bg-black text-white p-8 py-10 flex flex-col md:flex-row items-center justify-between transition-all duration-500 ease-in-out md:h-[344px] overflow-hidden">
-      {/* Content Section - Fixed Width */}
+      {/* Content Section */}
       <div className="w-[400px] flex-shrink-0 space-y-4">
         <div className="flex items-center space-x-2">
           <img
@@ -51,7 +82,7 @@ const HerCard: React.FC<{ products: Product[] }> = ({ products }) => {
         </a>
 
         <div className="flex space-x-2 pt-6">
-          {products.map((_, index) => (
+          {HeroProducts.map((_, index) => (
             <span
               key={index}
               onClick={() => setCurrentIndex(index)}
@@ -78,7 +109,7 @@ const HerCard: React.FC<{ products: Product[] }> = ({ products }) => {
         </div>
       </div>
 
-      {/* Image Section - Flexible */}
+      {/* Image Section */}
       <div className="flex-1 flex items-center justify-center mt-8 md:mt-0 transition-all duration-500 ease-in-out">
         <img
           src={currentProduct.image}

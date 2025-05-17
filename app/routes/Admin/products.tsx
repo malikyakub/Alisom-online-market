@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { FaPlusCircle } from "react-icons/fa";
 import useProducts from "hooks/useProducts";
+import useCategories from "hooks/useCategories";
 
 type Product = {
   product_id: string;
@@ -16,31 +17,68 @@ type Product = {
   Specifications?: string[] | null;
 };
 
+type Category = {
+  id: string;
+  name: string;
+};
+
 const ProductTable: React.FC = () => {
   const [selectedProducts, setSelectedProducts] = useState<string[]>([]);
   const [dropdownOpenId, setDropdownOpenId] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
-  const [statusFilter, setStatusFilter] = useState("");
+  const [featuredFilter, setFeaturedFilter] = useState("");
   const [categoryFilter, setCategoryFilter] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
+  const { Allcategory } = useCategories();
+  const [categories, setCategories] = useState<Category[]>([]);
 
   const { AllProducts, DeleteProduct } = useProducts();
   const rowsPerPage = 12;
   const [products, setProducts] = useState<Product[] | null>(null);
 
   useEffect(() => {
-    const fetchProducts = async () => {
-      const { data, err } = await AllProducts();
-      if (err) {
-        console.error("Error fetching products:", err);
+    const fetchData = async () => {
+      const { data: productData, err: productErr } = await AllProducts();
+      const { data: categoryData, err: categoryErr } = await Allcategory();
+
+      if (productErr) {
+        console.error("Error fetching products:", productErr);
       } else {
-        setProducts(data);
+        setProducts(productData || []);
+      }
+
+      if (categoryErr) {
+        console.error("Error fetching categories:", categoryErr);
+      } else {
+        setCategories(categoryData || []);
       }
     };
-    fetchProducts();
-  }, [AllProducts]);
 
-  console.log(products);
+    fetchData();
+  }, []);
+
+  const formatDate = (dateString?: string) => {
+    if (!dateString) return "—";
+
+    const date = new Date(dateString);
+    const today = new Date();
+    const yesterday = new Date();
+    yesterday.setDate(today.getDate() - 1);
+
+    const isSameDay = (d1: Date, d2: Date) =>
+      d1.getDate() === d2.getDate() &&
+      d1.getMonth() === d2.getMonth() &&
+      d1.getFullYear() === d2.getFullYear();
+
+    if (isSameDay(date, today)) return "Today";
+    if (isSameDay(date, yesterday)) return "Yesterday";
+
+    return `${date.getDate().toString().padStart(2, "0")}/${(
+      date.getMonth() + 1
+    )
+      .toString()
+      .padStart(2, "0")}/${date.getFullYear()}`;
+  };
 
   if (!products) return null;
 
@@ -49,19 +87,18 @@ const ProductTable: React.FC = () => {
       .toLowerCase()
       .includes(searchQuery.toLowerCase());
 
-    // Calculate age of the product
-    const createdAt = new Date(product.created_at ?? "");
-    const ageInDays =
-      (new Date().getTime() - createdAt.getTime()) / (1000 * 60 * 60 * 24);
-    const status = ageInDays <= 7 ? "Brand New" : "Used";
-
-    const matchesStatus = statusFilter ? status === statusFilter : true;
+    const matchesFeatured =
+      featuredFilter === "Yes"
+        ? product.featured === true
+        : featuredFilter === "No"
+        ? product.featured === false || product.featured === null
+        : true;
 
     const matchesCategory = categoryFilter
       ? product.category?.name === categoryFilter
       : true;
 
-    return matchesSearch && matchesStatus && matchesCategory;
+    return matchesSearch && matchesFeatured && matchesCategory;
   });
 
   const paginatedProducts = filteredProducts.slice(
@@ -133,21 +170,24 @@ const ProductTable: React.FC = () => {
           />
           <select
             className="border border-[#A3A3A3] rounded-md px-3 py-2 text-sm focus:outline-none text-[#333333]"
-            value={statusFilter}
-            onChange={(e) => setStatusFilter(e.target.value)}
+            value={featuredFilter}
+            onChange={(e) => setFeaturedFilter(e.target.value)}
           >
-            <option value="">Status</option>
-            <option value="Brand New">Brand New</option>
-            <option value="Used">Used</option>
+            <option value="">Featured</option>
+            <option value="Yes">Yes</option>
+            <option value="No">No</option>
           </select>
           <select
-            className="border border-[#A3A3A3] rounded-md px-3 py-2 text-sm focus:outline-none text-[#333333]"
+            className="border border-[#A3A3A3] rounded px-3 py-2 text-sm text-[#333333]"
             value={categoryFilter}
             onChange={(e) => setCategoryFilter(e.target.value)}
           >
-            <option value="">Category</option>
-            <option value="Computers">Computers</option>
-            <option value="Phones">Phones</option>
+            <option value="">All Categories</option>
+            {categories.map((cat) => (
+              <option key={cat.id} value={cat.name}>
+                {cat.name}
+              </option>
+            ))}
           </select>
         </div>
       </div>
@@ -220,7 +260,7 @@ const ProductTable: React.FC = () => {
                   {product.featured ? "Yes" : "No"}
                 </td>
                 <td className="px-4 py-3 whitespace-nowrap">
-                  {product.created_at || "—"}
+                  {formatDate(product.created_at)}
                 </td>
                 <td className="px-4 py-3 whitespace-nowrap relative">
                   <button
