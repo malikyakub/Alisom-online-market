@@ -45,32 +45,6 @@ export function meta({}: Route.MetaArgs) {
   ];
 }
 
-const categories = [
-  {
-    icon: RiComputerFill,
-    text: "Computers",
-  },
-  {
-    icon: CgSmartphone,
-    text: "Smart phones",
-  },
-];
-
-const productsInCart = [
-  {
-    name: "Laoptop",
-    price: 200,
-    image:
-      "https://i.pinimg.com/236x/98/6f/00/986f0030e53505927d45fde3c2115af3.jpg",
-  },
-  {
-    name: "gaming console",
-    price: 1200,
-    image:
-      "https://i.pinimg.com/236x/dd/17/5a/dd175a0d5c42312003026b4e4cad2a44.jpg",
-  },
-];
-
 const HeroProducts = [
   {
     title: "Apple iPhone 14",
@@ -95,159 +69,12 @@ const HeroProducts = [
   },
 ];
 
-const featuredProducts = [
-  {
-    image:
-      "https://i.pinimg.com/736x/8c/db/e1/8cdbe123010c380e20f264a8fdd57938.jpg",
-    title: "JBL Headphones",
-    price: 200,
-    rating: 5,
-  },
-  {
-    image:
-      "https://i.pinimg.com/736x/62/46/c7/6246c74e3d7d9f2a4d298f911aad9dcf.jpg",
-    title: "Oculus",
-    price: 20,
-    rating: 4,
-  },
-];
-
-const Products = [
-  {
-    image:
-      "https://i.pinimg.com/736x/8c/db/e1/8cdbe123010c380e20f264a8fdd57938.jpg",
-    name: "JBL Headphones",
-    price: 200,
-    rating: 5,
-    reviews: 100,
-  },
-  {
-    image:
-      "https://i.pinimg.com/736x/62/46/c7/6246c74e3d7d9f2a4d298f911aad9dcf.jpg",
-    name: "Oculus",
-    price: 20,
-    rating: 4,
-    reviews: 56,
-  },
-];
-
-const informations = [
-  {
-    icon: TbTruckDelivery,
-    title: "Fast Delivery",
-    value: "Real-time tracking updates",
-  },
-  {
-    icon: PiResizeFill,
-    title: "Mobile Optimization",
-    value: "Responsive design for all devices",
-  },
-  {
-    icon: MdPayment,
-    title: "Secure Payments",
-    value: "Multiple trusted payment methods",
-  },
-];
-
-const staffData = [
-  {
-    image:
-      "https://i.pinimg.com/736x/dc/10/aa/dc10aafc68d384622f59edb3919a924d.jpg",
-    name: "Emily Carter",
-    title: "Marketing Lead",
-    socials: {
-      twitter: "https://twitter.com/emilycarter",
-      instagram: "https://instagram.com/emilycarter",
-      linkedin: "https://linkedin.com/in/emilycarter",
-    },
-  },
-  {
-    image:
-      "https://i.pinimg.com/236x/a2/98/a7/a298a7a052ff391205d94e65ee130b81.jpg",
-    name: "Jake Thompson",
-    title: "Senior Developer",
-    socials: {
-      twitter: "https://twitter.com/jakethompson",
-      linkedin: "https://linkedin.com/in/jakethompson",
-    },
-  },
-];
-
 export default function Home() {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   return (
     <div className="p-5 flex flex-col gap-10">
       <HerCard products={HeroProducts} />
-
-      <div className="flex flex-row flex-wrap gap-4 items-center">
-        {categories.map((cat, index) => (
-          <CategoryCard key={index} icon={cat.icon} text={cat.text} />
-        ))}
-      </div>
-      <div className="flex flex-row flex-wrap gap-4 items-center">
-        {featuredProducts.map((prod, index) => (
-          <FeaturedProductCard
-            key={index}
-            image={prod.image}
-            price={prod.price}
-            rating={prod.rating}
-            title={prod.title}
-          />
-        ))}
-      </div>
-      <div className="flex flex-row flex-wrap gap-4 items-center">
-        {Products.map((prod, index) => (
-          <ProductCard
-            key={index}
-            image={prod.image}
-            price={prod.price}
-            rating={prod.rating}
-            name={prod.name}
-            reviews={prod.reviews}
-          />
-        ))}
-      </div>
-      <div className="flex flex-row flex-wrap gap-4 items-center">
-        {informations.map((info, index) => (
-          <InformationCard
-            key={index}
-            icon={info.icon}
-            title={info.title}
-            value={info.value}
-          />
-        ))}
-      </div>
-      <div className="flex flex-row flex-wrap gap-4 items-center">
-        <div className="flex flex-row flex-wrap gap-4 items-center">
-          {staffData.map((staff, index) => (
-            <StaffCard
-              key={index}
-              image={staff.image}
-              name={staff.name}
-              title={staff.title}
-              socials={staff.socials}
-            />
-          ))}
-        </div>
-      </div>
-      <div className="flex flex-row flex-wrap gap-4 items-center">
-        <ServiceBookCard />
-      </div>
-      <div className="flex flex-row flex-wrap gap-4 items-center">
-        <ProductFullDetails />
-      </div>
-      <button
-        className="p-4 rounded-xl w-52 bg-[#17C3B2] justify-center items-center text-white font-bold"
-        onClick={() => setIsModalOpen(true)}
-      >
-        open
-      </button>
-      <AddCategoryModal
-        isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
-      />
-      <RecentOrders />
     </div>
   );
 }

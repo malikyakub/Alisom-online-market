@@ -30,7 +30,8 @@ const HerCard: React.FC<{ products: Product[] }> = ({ products }) => {
 
   return (
     <div className="w-full bg-black text-white p-8 py-10 flex flex-col md:flex-row items-center justify-between transition-all duration-500 ease-in-out md:h-[344px] overflow-hidden">
-      <div className="space-y-4 max-w-lg">
+      {/* Content Section - Fixed Width */}
+      <div className="w-[400px] flex-shrink-0 space-y-4">
         <div className="flex items-center space-x-2">
           <img
             src={currentProduct.logo}
@@ -39,12 +40,12 @@ const HerCard: React.FC<{ products: Product[] }> = ({ products }) => {
           />
           <span className="text-sm font-medium">{currentProduct.title}</span>
         </div>
-        <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold leading-tight transition-all duration-500 ease-in-out">
+        <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold leading-tight transition-all duration-500 ease-in-out">
           {currentProduct.offer}
         </h1>
         <a
           href={currentProduct.link || "#"}
-          className="inline-flex items-center text-white text-lg font-semibold border-b border-white w-fit hover:opacity-80"
+          className="inline-flex items-center px-4 py-2 bg-blue-600 text-white font-semibold rounded hover:bg-blue-700 transition-colors"
         >
           Shop Now <ArrowRight className="ml-2 w-5 h-5" />
         </a>
@@ -77,11 +78,12 @@ const HerCard: React.FC<{ products: Product[] }> = ({ products }) => {
         </div>
       </div>
 
-      <div className="w-[250px] h-[250px] md:w-[300px] md:h-[300px] mt-8 md:mt-0 flex items-center justify-center transition-all duration-500 ease-in-out">
+      {/* Image Section - Flexible */}
+      <div className="flex-1 flex items-center justify-center mt-8 md:mt-0 transition-all duration-500 ease-in-out">
         <img
           src={currentProduct.image}
           alt={currentProduct.title}
-          className="object-contain w-full h-full transition-opacity duration-500"
+          className="object-contain w-full h-full max-h-[300px]"
         />
       </div>
     </div>
