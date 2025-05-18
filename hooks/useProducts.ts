@@ -23,26 +23,15 @@ const useProducts = () => {
       let query = supabase.from("products").select(
         `
         *,
-        category:category_id (
-          name
-        ),
-        brand:brand_id (
-          name
-        )
+        category:category_id ( name ),
+        brand:brand_id ( name )
       `
       );
 
-      if (search) {
-        query = query.ilike("name", `%${search}%`);
-      }
-
-      if (typeof featured === "boolean") {
+      if (search) query = query.ilike("name", `%${search}%`);
+      if (typeof featured === "boolean")
         query = query.eq("is_featured", featured);
-      }
-
-      if (brand) {
-        query = query.eq("brand.name", brand);
-      }
+      if (brand) query = query.eq("brand.name", brand);
 
       const { data, error } = await query;
 
@@ -61,9 +50,81 @@ const useProducts = () => {
     }
   }
 
+  async function GetProductById(id: string): Promise<ReturnType> {
+    setIsLoading(true);
+    try {
+      const { data, error } = await supabase
+        .from("products")
+        .select(
+          `
+          *,
+          category:category_id ( name ),
+          brand:brand_id ( name ),
+          images:product_images ( image_url )
+        `
+        )
+        .eq("product_id", id)
+        .single();
+
+      if (error) throw error;
+
+      const formatted = {
+        ...data,
+        image: data.images?.[0]?.image_url ?? null,
+      };
+
+      return { data: formatted, err: null };
+    } catch (error: unknown) {
+      return { data: null, err: String(error) };
+    } finally {
+      setIsLoading(false);
+    }
+  }
+
   async function DeleteProduct(id: string): Promise<ReturnType> {
     setIsLoading(true);
     try {
+      const { data: images, error: fetchError } = await supabase
+        .from("product_images")
+        .select("image_url")
+        .eq("product_id", id);
+
+      if (fetchError) throw new Error(fetchError.message);
+
+      const filePaths = images
+        ?.map((img) => {
+          try {
+            const url = new URL(img.image_url);
+            const pathParts = decodeURIComponent(url.pathname).split("/");
+            const fileIndex = pathParts.findIndex(
+              (part) => part === "product-images"
+            );
+            return pathParts.slice(fileIndex + 1).join("/");
+          } catch {
+            return null;
+          }
+        })
+        .filter(Boolean) as string[];
+
+      if (filePaths.length) {
+        const { error: storageError } = await supabase.storage
+          .from("product-images")
+          .remove(filePaths);
+
+        if (storageError) {
+          console.warn("Storage deletion error:", storageError.message);
+        }
+      }
+
+      const { error: deleteImagesError } = await supabase
+        .from("product_images")
+        .delete()
+        .eq("product_id", id);
+
+      if (deleteImagesError) {
+        console.warn("Image row deletion error:", deleteImagesError.message);
+      }
+
       const { data, error } = await supabase
         .from("products")
         .delete()
@@ -71,6 +132,7 @@ const useProducts = () => {
         .select();
 
       if (error) throw new Error(error.message);
+
       return { data, err: null };
     } catch (error: unknown) {
       return { data: null, err: String(error) };
@@ -116,6 +178,7 @@ const useProducts = () => {
       setIsLoading(false);
     }
   }
+
   async function UploadProductImages(
     productName: string,
     files: File[],
@@ -175,12 +238,14 @@ const useProducts = () => {
     if (uploadedUrls.length === 0) {
       return { data: null, err: "All uploads failed" };
     }
+
     setIsLoading(false);
     return { data: uploadedUrls, err: null };
   }
 
   return {
     AllProducts,
+    GetProductById,
     DeleteProduct,
     UpdateProduct,
     NewProduct,

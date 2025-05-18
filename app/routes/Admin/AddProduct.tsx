@@ -5,13 +5,25 @@ import useCategories from "hooks/useCategories";
 import Alert from "components/Alert";
 import useBrands from "hooks/useBrands";
 import ClipLoader from "react-spinners/ClipLoader";
+import { useSearchParams } from "react-router";
+import type { Product, CategoriesWithBrands } from "./products";
 
 const AddProduct: React.FC = () => {
+  const [searchParams] = useSearchParams();
+  const id = searchParams.get("id");
+
   const fileInputRef = useRef<HTMLInputElement | null>(null);
-  const { NewProduct, UploadProductImages, isLoading } = useProducts();
+  const {
+    NewProduct,
+    UploadProductImages,
+    GetProductById,
+    UpdateProduct,
+    isLoading,
+  } = useProducts();
   const { Allcategory } = useCategories();
   const { getAllBrands } = useBrands();
 
+  const [productToEdit, setProductToEdit] = useState<Product | null>(null);
   const [form, setForm] = useState({
     name: "",
     category_id: "",
@@ -21,6 +33,7 @@ const AddProduct: React.FC = () => {
     purchase_price: "",
     description: "",
     stock: "",
+    isFeatured: false,
   });
 
   const [categories, setCategories] = useState<any[]>([]);
@@ -38,6 +51,41 @@ const AddProduct: React.FC = () => {
     description: "",
     type: "info",
   });
+  useEffect(() => {
+    const getProductToEdit = async () => {
+      if (!id) {
+        console.log("No ID provided.");
+        return;
+      }
+
+      const { data, err } = await GetProductById(id);
+
+      if (err) {
+        setAlert({
+          isOpen: true,
+          title: "Error",
+          description: err || "Failed to fetch product.",
+          type: "danger",
+        });
+      } else if (data) {
+        setProductToEdit(data);
+
+        setForm({
+          name: data.name || "",
+          category_id: data.category_id || "",
+          brand_id: data.brand_id || "",
+          specification: data.Specifications?.join(", ") || "",
+          sale_price: data.price?.toString() || "",
+          purchase_price: data.purchase_price?.toString() || "",
+          description: data.description || "",
+          stock: data.stock_quantity?.toString() || "",
+          isFeatured: data.featured,
+        });
+      }
+    };
+
+    getProductToEdit();
+  }, [id]);
 
   useEffect(() => {
     const fetchCategories = async () => {
@@ -78,7 +126,11 @@ const AddProduct: React.FC = () => {
     >
   ) => {
     const { name, value } = e.target;
-    setForm((prev) => ({ ...prev, [name]: value }));
+
+    setForm((prev) => ({
+      ...prev,
+      [name]: name === "isFeatured" ? value === "true" : value,
+    }));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -91,25 +143,37 @@ const AddProduct: React.FC = () => {
       stock_quantity: parseInt(form.stock) || 0,
       category_id: form.category_id || null,
       brand_id: form.brand_id || null,
-      featured: false,
+      featured: form.isFeatured,
+      purchase_price: form.purchase_price,
       Specifications: form.specification
         ? form.specification.split(",").map((s) => s.trim())
         : [],
     };
 
-    const { data: newProduct, err } = await NewProduct(product);
+    let productId = id;
+    let response;
 
-    if (err || !newProduct?.[0]?.product_id) {
+    if (id) {
+      response = await UpdateProduct(id, product);
+    } else {
+      try {
+        response = await NewProduct(product);
+        productId = response.data?.[0]?.product_id;
+      } catch (err) {
+        response = { data: null, err: String(err) };
+      } finally {
+      }
+    }
+
+    if (response.err || !productId) {
       setAlert({
         isOpen: true,
         title: "Error",
-        description: err || "Failed to create product.",
+        description: response.err || "Failed to save product.",
         type: "danger",
       });
       return;
     }
-
-    const productId = newProduct[0].product_id;
 
     if (selectedFiles.length > 0) {
       const { data: urls, err: uploadErr } = await UploadProductImages(
@@ -122,26 +186,26 @@ const AddProduct: React.FC = () => {
         setAlert({
           isOpen: true,
           title: "Warning",
-          description: "Product created, but failed to upload images.",
+          description: id
+            ? "Product updated, but failed to upload new images."
+            : "Product created, but failed to upload images.",
           type: "warning",
         });
         return;
       }
-
-      setAlert({
-        isOpen: true,
-        title: "Success",
-        description: "Product and all images added successfully!",
-        type: "success",
-      });
-    } else {
-      setAlert({
-        isOpen: true,
-        title: "Success",
-        description: "Product added successfully!",
-        type: "success",
-      });
     }
+    setAlert({
+      isOpen: true,
+      title: "Success",
+      description: id
+        ? "Product updated successfully!"
+        : "Product and all images added successfully!",
+      type: "success",
+    });
+
+    setTimeout(() => {
+      window.location.href = "/admin/products";
+    }, 3000);
   };
 
   return (
@@ -325,6 +389,19 @@ const AddProduct: React.FC = () => {
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
+              <label className="text-sm font-medium">Featured</label>
+              <select
+                name="isFeatured"
+                value={form.isFeatured ? "true" : "false"}
+                onChange={handleChange}
+                className="w-full p-2 border rounded mt-1"
+              >
+                <option value="false">No</option>
+                <option value="true">Yes</option>
+              </select>
+            </div>
+
+            <div>
               <label className="block text-sm font-medium text-[#666666]">
                 Profit
               </label>
@@ -369,7 +446,13 @@ const AddProduct: React.FC = () => {
               className="flex items-center gap-2 px-4 py-2 bg-[#007BFF] text-white rounded-md hover:brightness-90 disabled:opacity-70"
             >
               {isLoading && <ClipLoader color="#fff" size={16} />}
-              {isLoading ? "Adding..." : "Add Product"}
+              {isLoading
+                ? id
+                  ? "Updating..."
+                  : "Adding..."
+                : id
+                ? "Update Product"
+                : "Add Product"}
             </button>
           </div>
         </form>
