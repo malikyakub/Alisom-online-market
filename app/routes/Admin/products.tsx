@@ -2,8 +2,10 @@ import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { FaPlusCircle } from "react-icons/fa";
 import useProducts from "hooks/useProducts";
-
-type Product = {
+import useCategories from "hooks/useCategories";
+import useBrands from "hooks/useBrands";
+import Alert from "components/Alert";
+export type Product = {
   product_id: string;
   name: string;
   description?: string | null;
@@ -16,31 +18,92 @@ type Product = {
   Specifications?: string[] | null;
 };
 
+export type CategoriesWithBrands = {
+  id: string;
+  name: string;
+};
+
 const ProductTable: React.FC = () => {
   const [selectedProducts, setSelectedProducts] = useState<string[]>([]);
   const [dropdownOpenId, setDropdownOpenId] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
-  const [statusFilter, setStatusFilter] = useState("");
+  const [featuredFilter, setFeaturedFilter] = useState("");
   const [categoryFilter, setCategoryFilter] = useState("");
+  const [brandFilter, setBrandFilter] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
+  const { Allcategory } = useCategories();
+  const { getAllBrands } = useBrands();
+  const [categories, setCategories] = useState<CategoriesWithBrands[]>([]);
+  const [brands, setBrands] = useState<CategoriesWithBrands[]>([]);
+  const [alert, setAlert] = useState<{
+    isOpen: boolean;
+    title: string;
+    description: string;
+    type: "success" | "warning" | "danger" | "info";
+  }>({
+    isOpen: false,
+    title: "",
+    description: "",
+    type: "info",
+  });
 
   const { AllProducts, DeleteProduct } = useProducts();
   const rowsPerPage = 12;
   const [products, setProducts] = useState<Product[] | null>(null);
 
   useEffect(() => {
-    const fetchProducts = async () => {
-      const { data, err } = await AllProducts();
-      if (err) {
-        console.error("Error fetching products:", err);
+    const fetchData = async () => {
+      const { data: productData, err: productErr } = await AllProducts();
+      const { data: categoryData, err: categoryErr } = await Allcategory();
+      const { data: brandsData, err: brandsErr } = await getAllBrands();
+
+      if (productErr) {
+        console.error("Error fetching products:", productErr);
+        showAlert("Fetch Error", "Unable to load products.", "danger");
       } else {
-        setProducts(data);
+        setProducts(productData || []);
+      }
+
+      if (categoryErr) {
+        console.error("Error fetching categories:", categoryErr);
+        showAlert("Fetch Error", "Unable to load categories.", "danger");
+      } else {
+        setCategories(categoryData || []);
+      }
+
+      if (brandsErr) {
+        console.error("Error fetching brands:", brandsErr);
+        showAlert("Fetch Error", "Unable to load brands.", "danger");
+      } else {
+        setBrands(brandsData || []);
       }
     };
-    fetchProducts();
-  }, [AllProducts]);
 
-  console.log(products);
+    fetchData();
+  }, []);
+
+  const formatDate = (dateString?: string) => {
+    if (!dateString) return "—";
+
+    const date = new Date(dateString);
+    const today = new Date();
+    const yesterday = new Date();
+    yesterday.setDate(today.getDate() - 1);
+
+    const isSameDay = (d1: Date, d2: Date) =>
+      d1.getDate() === d2.getDate() &&
+      d1.getMonth() === d2.getMonth() &&
+      d1.getFullYear() === d2.getFullYear();
+
+    if (isSameDay(date, today)) return "Today";
+    if (isSameDay(date, yesterday)) return "Yesterday";
+
+    return `${date.getDate().toString().padStart(2, "0")}/${(
+      date.getMonth() + 1
+    )
+      .toString()
+      .padStart(2, "0")}/${date.getFullYear()}`;
+  };
 
   if (!products) return null;
 
@@ -49,19 +112,22 @@ const ProductTable: React.FC = () => {
       .toLowerCase()
       .includes(searchQuery.toLowerCase());
 
-    // Calculate age of the product
-    const createdAt = new Date(product.created_at ?? "");
-    const ageInDays =
-      (new Date().getTime() - createdAt.getTime()) / (1000 * 60 * 60 * 24);
-    const status = ageInDays <= 7 ? "Brand New" : "Used";
-
-    const matchesStatus = statusFilter ? status === statusFilter : true;
+    const matchesFeatured =
+      featuredFilter === "Yes"
+        ? product.featured === true
+        : featuredFilter === "No"
+        ? product.featured === false || product.featured === null
+        : true;
 
     const matchesCategory = categoryFilter
       ? product.category?.name === categoryFilter
       : true;
 
-    return matchesSearch && matchesStatus && matchesCategory;
+    const matchesBrand = brandFilter
+      ? product.brand?.name === brandFilter
+      : true;
+
+    return matchesSearch && matchesFeatured && matchesCategory && matchesBrand;
   });
 
   const paginatedProducts = filteredProducts.slice(
@@ -91,18 +157,47 @@ const ProductTable: React.FC = () => {
     if (action === "delete") {
       const { err } = await DeleteProduct(id);
       if (err) {
-        console.error("Error deleting product:", err);
+        showAlert("Error", "Failed to delete the product.", "danger");
       } else {
         setProducts(products.filter((product) => product.product_id !== id));
+        showAlert(
+          "Deleted",
+          "Product has been removed successfully.",
+          "success"
+        );
       }
     }
-    if (action === "copy-id") navigator.clipboard.writeText(id);
-    if (action === "edit") alert(`Edit product ${id}`);
+
+    if (action === "copy-id") {
+      navigator.clipboard.writeText(id);
+      showAlert("Copied", "Product ID copied to clipboard.", "info");
+    }
+
+    if (action === "edit") {
+      window.location.href = `/admin/AddProduct?id=${id}`;
+    }
+
     setDropdownOpenId(null);
+  };
+
+  const showAlert = (
+    title: string,
+    description: string,
+    type: "success" | "warning" | "danger" | "info" = "info"
+  ) => {
+    setAlert({ isOpen: true, title, description, type });
   };
 
   return (
     <div>
+      <Alert
+        title={alert.title}
+        description={alert.description}
+        type={alert.type}
+        isOpen={alert.isOpen}
+        onClose={() => setAlert({ ...alert, isOpen: false })}
+      />
+
       <div className="flex flex-wrap flex-row justify-between items-start sm:items-center mb-6 gap-2">
         <div>
           <h1 className="text-2xl sm:text-3xl font-bold text-[#1A2238]">
@@ -122,32 +217,54 @@ const ProductTable: React.FC = () => {
         </a>
       </div>
 
-      <div className="flex flex-col sm:flex-row justify-between gap-4">
-        <div className="flex flex-wrap gap-3">
+      <div className="flex flex-col lg:flex-row lg:items-center gap-4 w-full">
+        {/* Search Input */}
+        <div className="w-full lg:max-w-[350px]">
           <input
             type="text"
             placeholder="Search by name..."
-            className="border border-[#A3A3A3] rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#007BFF] text-[#333333]"
+            className="w-full border border-[#A3A3A3] rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#007BFF] text-[#333333]"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
           />
+        </div>
+
+        {/* Select Inputs */}
+        <div className="flex flex-wrap lg:flex-nowrap gap-3 flex-1">
           <select
-            className="border border-[#A3A3A3] rounded-md px-3 py-2 text-sm focus:outline-none text-[#333333]"
-            value={statusFilter}
-            onChange={(e) => setStatusFilter(e.target.value)}
+            className="flex-grow min-w-[8rem] border border-[#A3A3A3] rounded-md px-3 py-2 text-sm focus:outline-none text-[#333333]"
+            value={featuredFilter}
+            onChange={(e) => setFeaturedFilter(e.target.value)}
           >
-            <option value="">Status</option>
-            <option value="Brand New">Brand New</option>
-            <option value="Used">Used</option>
+            <option value="">Featured</option>
+            <option value="Yes">Yes</option>
+            <option value="No">No</option>
           </select>
+
           <select
-            className="border border-[#A3A3A3] rounded-md px-3 py-2 text-sm focus:outline-none text-[#333333]"
+            className="flex-grow min-w-[8rem] border border-[#A3A3A3] rounded px-3 py-2 text-sm text-[#333333]"
             value={categoryFilter}
             onChange={(e) => setCategoryFilter(e.target.value)}
           >
-            <option value="">Category</option>
-            <option value="Computers">Computers</option>
-            <option value="Phones">Phones</option>
+            <option value="">All Categories</option>
+            {categories.map((cat) => (
+              <option key={cat.id} value={cat.name}>
+                {cat.name}
+              </option>
+            ))}
+          </select>
+
+          <select
+            className="flex-grow min-w-[8rem] border border-[#A3A3A3] rounded px-3 py-2 text-sm text-[#333333]"
+            value={brandFilter}
+            onChange={(e) => setBrandFilter(e.target.value)}
+          >
+            <option value="">All Brands</option>
+            {brands.map((brand) => (
+              <option key={brand.id} value={brand.name}>
+                {brand.name}
+              </option>
+            ))}
           </select>
         </div>
       </div>
@@ -220,7 +337,7 @@ const ProductTable: React.FC = () => {
                   {product.featured ? "Yes" : "No"}
                 </td>
                 <td className="px-4 py-3 whitespace-nowrap">
-                  {product.created_at || "—"}
+                  {formatDate(product.created_at)}
                 </td>
                 <td className="px-4 py-3 whitespace-nowrap relative">
                   <button
