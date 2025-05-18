@@ -17,23 +17,53 @@ const useProducts = () => {
     search?: string;
     featured?: boolean;
     brand?: string;
-  } = {}) {
+  } = {}): Promise<ReturnType<any[]>> {
     setIsLoading(true);
     try {
       let query = supabase.from("products").select(
         `
         *,
         category:category_id ( name ),
-        brand:brand_id ( name )
+        brand:brand_id ( name ),
+        images:product_images ( image_url )
       `
       );
 
       if (search) query = query.ilike("name", `%${search}%`);
-      if (typeof featured === "boolean")
-        query = query.eq("is_featured", featured);
-      if (brand) query = query.eq("brand.name", brand);
+      if (typeof featured === "boolean") query = query.eq("featured", featured);
+      if (brand) query = query.eq("brand.name", brand); // May require RPC or client-side filter
 
       const { data, error } = await query;
+
+      if (error) throw error;
+
+      const formatted = data?.map((product) => ({
+        ...product,
+        image: product.images?.[0]?.image_url ?? null,
+      }));
+
+      return { data: formatted ?? [], err: null };
+    } catch (error: unknown) {
+      return { data: null, err: String(error) };
+    } finally {
+      setIsLoading(false);
+    }
+  }
+
+  async function GetFeaturedProducts(): Promise<ReturnType<any[]>> {
+    setIsLoading(true);
+    try {
+      const { data, error } = await supabase
+        .from("products")
+        .select(
+          `
+          *,
+          category:category_id ( name ),
+          brand:brand_id ( name ),
+          images:product_images ( image_url )
+        `
+        )
+        .eq("featured", true);
 
       if (error) throw error;
 
@@ -201,10 +231,7 @@ const useProducts = () => {
           });
 
         if (uploadError) {
-          console.error(
-            `Upload failed for file ${file.name}:`,
-            uploadError.message
-          );
+          console.error(`Upload failed for ${file.name}:`, uploadError.message);
           continue;
         }
 
@@ -230,7 +257,7 @@ const useProducts = () => {
           continue;
         }
       } catch (error) {
-        console.error("Unexpected error during upload loop:", error);
+        console.error("Unexpected error during upload:", error);
         continue;
       }
     }
@@ -243,13 +270,64 @@ const useProducts = () => {
     return { data: uploadedUrls, err: null };
   }
 
+  async function getFirstTen(): Promise<ReturnType<any[]>> {
+    setIsLoading(true);
+    try {
+      const { data, error } = await supabase
+        .from("products")
+        .select(
+          `
+        *,
+        category:category_id ( name ),
+        brand:brand_id ( name ),
+        images:product_images ( image_url )
+      `
+        )
+        .limit(10);
+
+      if (error) throw error;
+
+      const formatted = data?.map((product) => ({
+        ...product,
+        image: product.images?.[0]?.image_url ?? null,
+      }));
+
+      return { data: formatted ?? [], err: null };
+    } catch (error: unknown) {
+      return { data: null, err: String(error) };
+    } finally {
+      setIsLoading(false);
+    }
+  }
+
+  async function GetProductImages(
+    productId: string
+  ): Promise<ReturnType<string[]>> {
+    try {
+      const { data, error } = await supabase
+        .from("product_images")
+        .select("image_url")
+        .eq("product_id", productId);
+
+      if (error) throw error;
+
+      const imageUrls = data.map((img) => img.image_url);
+      return { data: imageUrls, err: null };
+    } catch (error: unknown) {
+      return { data: null, err: String(error) };
+    }
+  }
+
   return {
     AllProducts,
+    GetFeaturedProducts,
     GetProductById,
     DeleteProduct,
     UpdateProduct,
     NewProduct,
     UploadProductImages,
+    getFirstTen,
+    GetProductImages,
     isLoading,
   };
 };

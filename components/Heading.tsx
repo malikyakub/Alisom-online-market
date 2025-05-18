@@ -18,7 +18,7 @@ const Heading: React.FC<HeadingProps> = ({
   onPrev,
 }) => {
   return (
-    <div className="flex items-end justify-between py-4">
+    <div className="flex items-end justify-between py-2">
       <div className="flex flex-row gap-2 items-end">
         <span className="w-8 h-16 bg-[#17C3B2] rounded"></span>
         <div className="flex flex-col gap-1">
@@ -61,7 +61,10 @@ const Heading: React.FC<HeadingProps> = ({
       )}
 
       {variant === "button" && (
-        <a href="/user/products" className="bg-[#007BFF] text-white text-sm px-5 py-2 rounded hover:bg-blue-700">
+        <a
+          href="/user/products"
+          className="bg-[#007BFF] text-white text-sm px-5 py-2 rounded hover:bg-blue-700"
+        >
           View All
         </a>
       )}

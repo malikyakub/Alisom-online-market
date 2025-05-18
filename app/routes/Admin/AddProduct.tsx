@@ -22,7 +22,7 @@ const AddProduct: React.FC = () => {
   } = useProducts();
   const { Allcategory } = useCategories();
   const { getAllBrands } = useBrands();
-
+  const [discount, setDiscount] = useState("");
   const [productToEdit, setProductToEdit] = useState<Product | null>(null);
   const [form, setForm] = useState({
     name: "",
@@ -34,8 +34,8 @@ const AddProduct: React.FC = () => {
     description: "",
     stock: "",
     isFeatured: false,
+    discount: "",
   });
-
   const [categories, setCategories] = useState<any[]>([]);
   const [brands, setBrands] = useState<any[]>([]);
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
@@ -80,6 +80,7 @@ const AddProduct: React.FC = () => {
           description: data.description || "",
           stock: data.stock_quantity?.toString() || "",
           isFeatured: data.featured,
+          discount: data.discount?.toString() || "",
         });
       }
     };
@@ -148,6 +149,7 @@ const AddProduct: React.FC = () => {
       Specifications: form.specification
         ? form.specification.split(",").map((s) => s.trim())
         : [],
+      discount: form.isFeatured ? parseFloat(form.discount) || 0 : 0,
     };
 
     let productId = id;
@@ -280,8 +282,8 @@ const AddProduct: React.FC = () => {
 
       <div>
         <form className="space-y-5" onSubmit={handleSubmit}>
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
-            <div>
+          <div className="flex flex-wrap gap-4">
+            <div className="flex-1 min-w-[220px]">
               <label className="block text-sm font-medium text-[#666666]">
                 Name
               </label>
@@ -291,10 +293,11 @@ const AddProduct: React.FC = () => {
                 value={form.name}
                 onChange={handleChange}
                 placeholder="Product name"
-                className="mt-1 block w-full border border-[#666666] rounded-md shadow-sm text-sm px-3 py-2 focus:ring-[#007BFF] focus:border-[#007BFF]"
+                className="mt-1 w-full border border-[#666666] rounded-md shadow-sm text-sm px-3 py-2 focus:ring-[#007BFF] focus:border-[#007BFF]"
               />
             </div>
-            <div>
+
+            <div className="flex-1 min-w-[220px]">
               <label className="block text-sm font-medium text-[#666666]">
                 Category
               </label>
@@ -302,7 +305,7 @@ const AddProduct: React.FC = () => {
                 name="category_id"
                 value={form.category_id}
                 onChange={handleChange}
-                className="mt-1 block w-full border border-[#666666] rounded-md shadow-sm text-sm px-3 py-2 focus:ring-[#007BFF] focus:border-[#007BFF]"
+                className="mt-1 w-full border border-[#666666] rounded-md shadow-sm text-sm px-3 py-2 focus:ring-[#007BFF] focus:border-[#007BFF]"
               >
                 <option value="">Select Category</option>
                 {categories.map((cat) => (
@@ -312,7 +315,8 @@ const AddProduct: React.FC = () => {
                 ))}
               </select>
             </div>
-            <div>
+
+            <div className="flex-1 min-w-[220px]">
               <label className="block text-sm font-medium text-[#666666]">
                 Brand
               </label>
@@ -320,7 +324,7 @@ const AddProduct: React.FC = () => {
                 name="brand_id"
                 value={form.brand_id}
                 onChange={handleChange}
-                className="mt-1 block w-full border border-[#666666] rounded-md shadow-sm text-sm px-3 py-2 focus:ring-[#007BFF] focus:border-[#007BFF]"
+                className="mt-1 w-full border border-[#666666] rounded-md shadow-sm text-sm px-3 py-2 focus:ring-[#007BFF] focus:border-[#007BFF]"
               >
                 <option value="">Select Brand</option>
                 {brands.map((brand) => (
@@ -330,7 +334,8 @@ const AddProduct: React.FC = () => {
                 ))}
               </select>
             </div>
-            <div>
+
+            <div className="w-full">
               <label className="block text-sm font-medium text-[#666666]">
                 Specification
               </label>
@@ -340,13 +345,11 @@ const AddProduct: React.FC = () => {
                 value={form.specification}
                 onChange={handleChange}
                 placeholder="Product specification"
-                className="mt-1 block w-full border border-[#666666] rounded-md shadow-sm text-sm px-3 py-2 focus:ring-[#007BFF] focus:border-[#007BFF]"
+                className="mt-1 w-full border border-[#666666] rounded-md shadow-sm text-sm px-3 py-2 focus:ring-[#007BFF] focus:border-[#007BFF]"
               />
             </div>
-          </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-            <div>
+            <div className="flex-1 min-w-[220px]">
               <label className="block text-sm font-medium text-[#666666]">
                 Sale Price
               </label>
@@ -356,10 +359,11 @@ const AddProduct: React.FC = () => {
                 value={form.sale_price}
                 onChange={handleChange}
                 placeholder="$0.00"
-                className="mt-1 block w-full border border-[#666666] rounded-md shadow-sm text-sm px-3 py-2 focus:ring-[#007BFF] focus:border-[#007BFF]"
+                className="mt-1 w-full border border-[#666666] rounded-md shadow-sm text-sm px-3 py-2 focus:ring-[#007BFF] focus:border-[#007BFF]"
               />
             </div>
-            <div>
+
+            <div className="flex-1 min-w-[220px]">
               <label className="block text-sm font-medium text-[#666666]">
                 Purchase Price
               </label>
@@ -369,10 +373,11 @@ const AddProduct: React.FC = () => {
                 value={form.purchase_price}
                 onChange={handleChange}
                 placeholder="$0.00"
-                className="mt-1 block w-full border border-[#666666] rounded-md shadow-sm text-sm px-3 py-2 focus:ring-[#007BFF] focus:border-[#007BFF]"
+                className="mt-1 w-full border border-[#666666] rounded-md shadow-sm text-sm px-3 py-2 focus:ring-[#007BFF] focus:border-[#007BFF]"
               />
             </div>
-            <div className="md:row-span-2">
+
+            <div className="w-full">
               <label className="block text-sm font-medium text-[#666666]">
                 Description
               </label>
@@ -382,13 +387,13 @@ const AddProduct: React.FC = () => {
                 value={form.description}
                 onChange={handleChange}
                 placeholder="Product description..."
-                className="mt-1 block w-full border border-[#666666] rounded-md shadow-sm text-sm px-3 py-2 focus:ring-[#007BFF] focus:border-[#007BFF]"
+                className="mt-1 w-full border border-[#666666] rounded-md shadow-sm text-sm px-3 py-2 focus:ring-[#007BFF] focus:border-[#007BFF]"
               ></textarea>
             </div>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div>
+          <div className="flex flex-wrap gap-4">
+            <div className="flex-1 min-w-[200px]">
               <label className="text-sm font-medium">Featured</label>
               <select
                 name="isFeatured"
@@ -401,7 +406,23 @@ const AddProduct: React.FC = () => {
               </select>
             </div>
 
-            <div>
+            {form.isFeatured && (
+              <div className="flex-1 min-w-[200px]">
+                <label className="block text-sm font-medium text-[#666666]">
+                  Discount %
+                </label>
+                <input
+                  type="number"
+                  name="discount"
+                  value={form.discount}
+                  onChange={handleChange}
+                  placeholder="e.g. 15"
+                  className="mt-1 block w-full border border-[#666666] rounded-md shadow-sm text-sm px-3 py-2 focus:ring-[#007BFF] focus:border-[#007BFF]"
+                />
+              </div>
+            )}
+
+            <div className="flex-1 min-w-[200px]">
               <label className="block text-sm font-medium text-[#666666]">
                 Profit
               </label>
@@ -412,7 +433,8 @@ const AddProduct: React.FC = () => {
                 className="mt-1 block w-full border border-[#666666] bg-gray-100 rounded-md shadow-sm text-sm px-3 py-2"
               />
             </div>
-            <div>
+
+            <div className="flex-1 min-w-[200px]">
               <label className="block text-sm font-medium text-[#666666]">
                 Available in Stock
               </label>
