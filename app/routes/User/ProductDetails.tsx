@@ -14,7 +14,7 @@ const ProductDetails: React.FC = () => {
   const [images, setImages] = useState<string[]>([]);
   const [quantity, setQuantity] = useState<number>(1);
   const [selectedImage, setSelectedImage] = useState<string>("");
-  const [relatedItems, setRelatedItems] = useState<any[]>([]); // ✅ moved outside condition
+  const [relatedItems, setRelatedItems] = useState<any[]>([]);
 
   useEffect(() => {
     const fetchProduct = async () => {
@@ -75,7 +75,7 @@ const ProductDetails: React.FC = () => {
       </div>
 
       <div className="flex flex-col lg:flex-row gap-10">
-        <div className="w-full lg:w-1/2">
+        <div className="w-full lg:w-[60%]">
           <div className="grid grid-cols-1 sm:grid-cols-[100px_1fr] gap-6">
             <div className="flex sm:flex-col sm:space-y-4 space-x-4 sm:space-x-0 overflow-x-auto sm:overflow-visible pr-2">
               {images.map((img, index) => (
@@ -90,7 +90,7 @@ const ProductDetails: React.FC = () => {
                 />
               ))}
             </div>
-            <div className="bg-gray-100 rounded-md flex items-center justify-center w-full h-[300px] sm:h-[500px]">
+            <div className="bg-gray-100 rounded overflow-hidden flex items-center justify-center w-full h-[300px] sm:h-[500px]">
               <img
                 src={selectedImage}
                 alt="Selected Product"
@@ -100,7 +100,7 @@ const ProductDetails: React.FC = () => {
           </div>
         </div>
 
-        <div className="w-full lg:w-1/2">
+        <div className="w-full lg:w-[40%]">
           <ProductFullDetails
             product={product}
             quantity={quantity}
@@ -109,26 +109,25 @@ const ProductDetails: React.FC = () => {
         </div>
       </div>
 
-      {/* Related Items */}
       <div className="mt-12">
         <Heading
           title="Related Items"
           subtitle="You may also like"
-          variant="none" // or "button" / "arrows" if needed
+          variant="none"
         />
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 mt-8 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
           {relatedItems.map((item) => (
             <ProductCard
-              key={item.id} // assuming item has a unique `id`
+              key={item.id}
               image={item.image}
               price={item.price}
               rating={item.reviews}
               name={item.title}
               oldPrice={item.oldPrice}
-              productId={item.product_id} // assuming item has a `product_id`
+              productId={item.product_id}
               badge={item.discount}
-              featured={true} // or true based on your logic
+              featured={true}
             />
           ))}
         </div>

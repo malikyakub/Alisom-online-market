@@ -7,6 +7,7 @@ import ProfilePopup from "./ProfilePopup";
 import Alert from "./Alert";
 import useAuth from "hooks/useAuth";
 import useCart from "hooks/useCart";
+import supabase from "utils/supabase";
 
 const Header = () => {
   const { user, logout } = useAuth();
@@ -33,7 +34,37 @@ const Header = () => {
         setCartCount(data.length);
       }
     };
-    loadCart();
+
+    if (user?.id) {
+      loadCart();
+
+      const subscription = supabase
+        .channel("public:cart")
+        .on(
+          "postgres_changes",
+          {
+            event: "*",
+            schema: "public",
+            table: "cart",
+            filter: `user_id=eq.${user.id}`,
+          },
+          async () => {
+            const { data, err } = await getCart(user.id);
+            if (!err && data) {
+              setCartCount(data.length);
+            }
+          }
+        )
+        .subscribe();
+
+      return () => {
+        supabase.removeChannel(subscription);
+      };
+    } else {
+      const cart = localStorage.getItem("guest_cart");
+      const items = cart ? JSON.parse(cart) : [];
+      setCartCount(items.length);
+    }
   }, [user]);
 
   useEffect(() => {

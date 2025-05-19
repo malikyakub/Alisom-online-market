@@ -17,7 +17,6 @@ interface ReturnType<T = any> {
 const LOCAL_KEY = "guest_cart";
 
 const useCart = () => {
-  const [cartCount, setCartCount] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
   const { GetProductById } = useProducts();
   const getLocalCart = (): CartItem[] => {
@@ -27,33 +26,6 @@ const useCart = () => {
 
   const setLocalCart = (items: CartItem[]) => {
     localStorage.setItem(LOCAL_KEY, JSON.stringify(items));
-  };
-
-  useEffect(() => {
-    const channel = supabase
-      .channel("public:cart")
-      .on(
-        "postgres_changes",
-        { event: "*", schema: "public", table: "cart" },
-        (payload) => {
-          fetchCartCount();
-        }
-      )
-      .subscribe();
-
-    return () => {
-      supabase.removeChannel(channel);
-    };
-  }, []);
-
-  const fetchCartCount = async () => {
-    const { data, error } = await supabase
-      .from("cart")
-      .select("quantity", { count: "exact" });
-
-    if (data) {
-      setCartCount(data.length);
-    }
   };
 
   async function getCart(user_id?: string): Promise<ReturnType<CartItem[]>> {
@@ -210,7 +182,6 @@ const useCart = () => {
     addToCart,
     updateCartItem,
     removeFromCart,
-    cartCount, 
     isLoading,
   };
 };

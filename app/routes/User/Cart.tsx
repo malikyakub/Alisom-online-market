@@ -6,6 +6,7 @@ import useCart from "hooks/useCart";
 import useProducts from "hooks/useProducts";
 import Alert from "components/Alert";
 import ClipLoader from "react-spinners/ClipLoader";
+import supabase from "utils/supabase";
 
 export default function Cart() {
   const { user } = useAuth();
@@ -29,8 +30,8 @@ export default function Cart() {
   const tempQuantitiesRef = useRef<number[]>([]);
 
   useEffect(() => {
-    const fetchCart = async () => {
-      const { data, err } = await getCart(user?.id);
+    const fetchCart = async (userId: string) => {
+      const { data, err } = await getCart(userId);
       if (err) return;
 
       setCartItems(data || []);
@@ -51,8 +52,47 @@ export default function Cart() {
       setCartProducts(detailedProducts.filter(Boolean));
     };
 
-    fetchCart();
-  }, [user?.id]);
+    if (user?.id) {
+      fetchCart(user.id);
+
+      const subscription = supabase
+        .channel("public:cart")
+        .on(
+          "postgres_changes",
+          {
+            event: "*",
+            schema: "public",
+            table: "cart",
+            filter: `user_id=eq.${user.id}`,
+          },
+          async () => {
+            await fetchCart(user.id);
+          }
+        )
+        .subscribe();
+
+      return () => {
+        supabase.removeChannel(subscription);
+      };
+    } else {
+      const guestCart = localStorage.getItem("guest_cart");
+      const items = guestCart ? JSON.parse(guestCart) : [];
+      setCartItems(items);
+      tempQuantitiesRef.current = items.map((item: any) => item.quantity);
+
+      const detailedProducts = Promise.all(
+        items.map(async (item: any) => {
+          const { data: productDetails, err } = await GetProductById(
+            item.product_id
+          );
+          if (err) return null;
+          return { ...productDetails, quantity: item.quantity };
+        })
+      ).then((results) => {
+        setCartProducts(results.filter(Boolean));
+      });
+    }
+  }, [user]);
 
   const handleQuantityTempChange = (index: number, newQty: number) => {
     tempQuantitiesRef.current[index] = newQty;

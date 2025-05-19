@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import RegisterForm from "components/RegisterForm";
-import LoginIllustrator from "../../public/assets/images/Login-illustrator.png";
+import LoginIllustrator from "/assets/images/Login-illustrator.png";
 import useAuth from "hooks/useAuth";
 import Alert from "components/Alert";
 
