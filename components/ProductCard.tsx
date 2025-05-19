@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { BiCart, BiHeart, BiCheck, BiShow } from "react-icons/bi";
 import { AiFillStar, AiOutlineStar, AiTwotoneStar } from "react-icons/ai";
+import useCart from "hooks/useCart"; // <- adjust path as needed
 
 type ProductCardProps = {
   image: string;
@@ -11,7 +12,7 @@ type ProductCardProps = {
   featured?: boolean;
   badge?: string;
   badgeColor?: string;
-  productId?: string;
+  productId: string;
 };
 
 const ProductCard = ({
@@ -27,9 +28,11 @@ const ProductCard = ({
 }: ProductCardProps) => {
   const [isInCart, setIsInCart] = useState(false);
   const [isInWishlist, setIsInWishlist] = useState(false);
+  const { addToCart } = useCart();
 
-  const handleAddToCart = () => {
+  const handleAddToCart = async () => {
     setIsInCart(true);
+
     setTimeout(() => setIsInCart(false), 2000);
   };
 
@@ -58,11 +61,7 @@ const ProductCard = ({
     return <div className="flex items-center gap-1">{stars}</div>;
   };
 
-  const productLink = productId
-    ? `/user/products/${productId}`
-    : `/user/products/${encodeURIComponent(
-        name.toLowerCase().replace(/\s+/g, "-")
-      )}`;
+  const productLink = `/user/products/${productId}`;
 
   return (
     <div className="relative bg-white w-[230px] h-[360px] rounded shadow hover:shadow-md transition overflow-hidden group flex flex-col">
@@ -73,7 +72,7 @@ const ProductCard = ({
               className="absolute top-4 left-0 text-white text-xs font-semibold px-3 py-2 rounded-r z-10"
               style={{
                 backgroundColor:
-                  badgeColor || badge == "New" ? "#17C3B2" : "#007BFF",
+                  badgeColor || badge === "New" ? "#17C3B2" : "#007BFF",
               }}
             >
               {badge}

@@ -317,6 +317,46 @@ const useProducts = () => {
       return { data: null, err: String(error) };
     }
   }
+  async function GetRelatedProducts(
+    categoryId: string,
+    brandId: string,
+    excludeProductId?: string
+  ): Promise<ReturnType<any[]>> {
+    setIsLoading(true);
+    try {
+      let query = supabase
+        .from("products")
+        .select(
+          `
+        *,
+        category:category_id ( name ),
+        brand:brand_id ( name ),
+        images:product_images ( image_url )
+      `
+        )
+        .or(`category_id.eq.${categoryId},brand_id.eq.${brandId}`)
+        .limit(5);
+
+      if (excludeProductId) {
+        query = query.neq("product_id", excludeProductId);
+      }
+
+      const { data, error } = await query;
+
+      if (error) throw error;
+
+      const formatted = data?.map((product) => ({
+        ...product,
+        image: product.images?.[0]?.image_url ?? null,
+      }));
+
+      return { data: formatted ?? [], err: null };
+    } catch (error) {
+      return { data: null, err: String(error) };
+    } finally {
+      setIsLoading(false);
+    }
+  }
 
   return {
     AllProducts,
@@ -328,6 +368,7 @@ const useProducts = () => {
     UploadProductImages,
     getFirstTen,
     GetProductImages,
+    GetRelatedProducts,
     isLoading,
   };
 };

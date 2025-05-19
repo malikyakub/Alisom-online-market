@@ -173,7 +173,7 @@ export default function Home() {
       />
 
       <div
-        className="overflow-hidden w-full pb-8 border-b border-[#1A2238]"
+        className="overflow-scroll [&::-webkit-scrollbar]:hidden w-full pb-8 border-b border-[#1A2238]"
         ref={categoryRef}
       >
         <motion.div
@@ -200,7 +200,10 @@ export default function Home() {
         onPrev={canProdPrev ? handleProdPrev : undefined}
       />
 
-      <div className="overflow-hidden w-full" ref={productRef}>
+      <div
+        className="overflow-scroll [&::-webkit-scrollbar]:hidden w-full"
+        ref={productRef}
+      >
         {isLoading ? (
           <div className="text-white text-center">Loading products...</div>
         ) : featuredProducts.length ? (
