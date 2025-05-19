@@ -1,17 +1,42 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { FaUser } from "react-icons/fa6";
 import { FaRegStar } from "react-icons/fa";
 import { RiShoppingBagLine } from "react-icons/ri";
 import { MdOutlineCancel } from "react-icons/md";
 import { LuLogOut } from "react-icons/lu";
 import { useNavigate } from "react-router";
+import useAuth from "hooks/useAuth";
+import useUsers from "hooks/useUsers";
 
 const ProfilePopup = () => {
+  const { user } = useAuth();
+  const { GetUserById, isLoading } = useUsers();
   const navigate = useNavigate();
+  const [isAdmin, setIsAdmin] = React.useState(false);
 
   const handleManageAccountClick = () => {
-    navigate("/user/account");
+    if (isAdmin) {
+      navigate("/admin/dashboard");
+    } else {
+      navigate("/user/account");
+    }
   };
+
+  useEffect(() => {
+    if (!user) return;
+
+    const fetchUserData = async () => {
+      console.log("Fetching user data...");
+      try {
+        const userData = await GetUserById(user.id);
+        userData.data.role == "Admin" ? setIsAdmin(true) : setIsAdmin(false);
+      } catch (error) {
+        console.error("Error fetching user data:", error);
+      }
+    };
+
+    fetchUserData();
+  }, [user]);
 
   return (
     <div className="bg-[#1a2238be] flex flex-col gap-3 p-3 backdrop-blur-2xl w-[225px] rounded">
@@ -20,7 +45,7 @@ const ProfilePopup = () => {
         onClick={handleManageAccountClick}
       >
         <FaUser className="text-2xl group-hover:text-[#007BFF]" />
-        <h1>Manage my account</h1>
+        <h1>{isAdmin ? "Dashboard" : "Manage my account"}</h1>
       </div>
 
       <div className="group flex flex-row text-white items-center gap-2 cursor-pointer">

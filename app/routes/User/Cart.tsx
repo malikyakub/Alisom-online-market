@@ -1,78 +1,194 @@
-import React, { useState, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import ProductDetailsCard from "components/ProductDetailsCard";
 import TotalCard from "components/TotalCard";
-
-const initialCartItems = [
-  {
-    name: "LCD Monitor",
-    price: 650,
-    quantity: 1,
-    image:
-      "https://i.pinimg.com/736x/8c/db/e1/8cdbe123010c380e20f264a8fdd57938.jpg",
-  },
-  {
-    name: "H1 Gamepad",
-    price: 550,
-    quantity: 2,
-    image:
-      "https://i.pinimg.com/736x/ff/e8/1c/ffe81ce91a873e2aecb74b25ecaff8bf.jpg",
-  },
-];
+import useAuth from "hooks/useAuth";
+import useCart from "hooks/useCart";
+import useProducts from "hooks/useProducts";
+import Alert from "components/Alert";
+import ClipLoader from "react-spinners/ClipLoader";
+import supabase from "utils/supabase";
 
 export default function Cart() {
-  const [cartItems, setCartItems] = useState(initialCartItems);
-  const tempQuantitiesRef = useRef(cartItems.map((item) => item.quantity));
+  const { user } = useAuth();
+  const { getCart, isLoading, updateCartItem } = useCart();
+  const { GetProductById } = useProducts();
+
+  const [cartItems, setCartItems] = useState<any[]>([]);
+  const [cartProducts, setCartProducts] = useState<any[]>([]);
+  const [updating, setUpdating] = useState(false);
+  const [alertVisible, setAlertVisible] = useState(false);
+  const [alertContent, setAlertContent] = useState<{
+    type: "info" | "success" | "warning" | "danger";
+    title: string;
+    description: string;
+  }>({
+    type: "info",
+    title: "Cart Loaded",
+    description: "Product details have been successfully loaded.",
+  });
+
+  const tempQuantitiesRef = useRef<number[]>([]);
+
+  useEffect(() => {
+    const fetchCart = async (userId: string) => {
+      const { data, err } = await getCart(userId);
+      if (err) return;
+
+      setCartItems(data || []);
+      tempQuantitiesRef.current = (data || []).map(
+        (item: any) => item.quantity
+      );
+
+      const detailedProducts = await Promise.all(
+        (data || []).map(async (item: any) => {
+          const { data: productDetails, err } = await GetProductById(
+            item.product_id
+          );
+          if (err) return null;
+          return { ...productDetails, quantity: item.quantity };
+        })
+      );
+
+      setCartProducts(detailedProducts.filter(Boolean));
+    };
+
+    if (user?.id) {
+      fetchCart(user.id);
+
+      const subscription = supabase
+        .channel("public:cart")
+        .on(
+          "postgres_changes",
+          {
+            event: "*",
+            schema: "public",
+            table: "cart",
+            filter: `user_id=eq.${user.id}`,
+          },
+          async () => {
+            await fetchCart(user.id);
+          }
+        )
+        .subscribe();
+
+      return () => {
+        supabase.removeChannel(subscription);
+      };
+    } else {
+      const guestCart = localStorage.getItem("guest_cart");
+      const items = guestCart ? JSON.parse(guestCart) : [];
+      setCartItems(items);
+      tempQuantitiesRef.current = items.map((item: any) => item.quantity);
+
+      const detailedProducts = Promise.all(
+        items.map(async (item: any) => {
+          const { data: productDetails, err } = await GetProductById(
+            item.product_id
+          );
+          if (err) return null;
+          return { ...productDetails, quantity: item.quantity };
+        })
+      ).then((results) => {
+        setCartProducts(results.filter(Boolean));
+      });
+    }
+  }, [user]);
 
   const handleQuantityTempChange = (index: number, newQty: number) => {
     tempQuantitiesRef.current[index] = newQty;
   };
 
-  const handleUpdateCart = () => {
-    setCartItems((prev) =>
-      prev.map((item, i) => ({
-        ...item,
-        quantity: tempQuantitiesRef.current[i],
-      }))
-    );
+  const handleUpdateCart = async () => {
+    setUpdating(true);
+
+    const updated = cartProducts.map((item, i) => ({
+      ...item,
+      quantity: tempQuantitiesRef.current[i],
+    }));
+
+    setCartProducts(updated);
+
+    for (let i = 0; i < updated.length; i++) {
+      const product = updated[i];
+      const { err } = await updateCartItem(
+        product.product_id,
+        product.quantity,
+        user?.id
+      );
+      if (err) {
+        setAlertContent({
+          type: "danger",
+          title: "Update Failed",
+          description: `Could not update product ${product.name}`,
+        });
+        setAlertVisible(true);
+        setUpdating(false);
+        return;
+      }
+    }
+
+    setAlertContent({
+      type: "success",
+      title: "Cart Updated",
+      description: "Your cart has been successfully updated.",
+    });
+    setAlertVisible(true);
+    setUpdating(false);
   };
 
-  const subtotal = cartItems.reduce(
+  const subtotal = cartProducts.reduce(
     (sum, item) => sum + item.price * item.quantity,
     0
   );
 
   return (
     <div>
+      <Alert
+        isOpen={alertVisible}
+        onClose={() => setAlertVisible(false)}
+        type={alertContent.type}
+        title={alertContent.title}
+        description={alertContent.description}
+      />
+
       <div className="text-sm text-gray-500 mb-6">
         Home / Shop / <span className="text-black font-semibold">Cart</span>
       </div>
 
-      <div className="flex flex-col gap-2">
-        {cartItems.map((item, index) => (
-          <ProductDetailsCard
-            key={index}
-            product={item}
-            quantity={tempQuantitiesRef.current[index]}
-            onQuantityChange={(qty) => handleQuantityTempChange(index, qty)}
-          />
-        ))}
-      </div>
+      {isLoading ? (
+        <p>Loading cart...</p>
+      ) : (
+        <>
+          <div className="flex flex-col gap-2">
+            {cartProducts.map((item, index) => (
+              <ProductDetailsCard
+                key={item.product_id}
+                product={item}
+                quantity={tempQuantitiesRef.current[index]}
+                onQuantityChange={(qty) => handleQuantityTempChange(index, qty)}
+              />
+            ))}
+          </div>
 
-      <div className="flex justify-between my-4">
-        <button className="px-6 py-2 border border-[#1A2238] font-bold rounded text-sm text-[#666666] hover:bg-[#1A2238] transition hover:text-white">
-          Return to Shop
-        </button>
-        <button
-          onClick={handleUpdateCart}
-          className="bg-[#007BFF] hover:bg-blue-700 font-bold transition text-white px-6 py-2 rounded text-sm"
-        >
-          Update Cart
-        </button>
-      </div>
+          <div className="flex justify-between my-4">
+            <button className="px-6 py-2 border border-[#1A2238] font-bold rounded text-sm text-[#666666] hover:bg-[#1A2238] transition hover:text-white">
+              Return to Shop
+            </button>
+            <button
+              onClick={handleUpdateCart}
+              disabled={updating}
+              className="bg-[#007BFF] hover:bg-blue-700 font-bold transition text-white px-6 py-2 rounded text-sm flex items-center gap-2"
+            >
+              {updating ? <ClipLoader size={16} color="#ffffff" /> : null}
+              {updating ? "Updating..." : "Update Cart"}
+            </button>
+          </div>
 
-      <div className="w-full md:w-1/3">
-        <TotalCard subtotal={subtotal} shipping="Free" total={subtotal} />
-      </div>
+          <div className="w-full md:w-1/3">
+            <TotalCard subtotal={subtotal} shipping="Free" total={subtotal} />
+          </div>
+        </>
+      )}
     </div>
   );
 }

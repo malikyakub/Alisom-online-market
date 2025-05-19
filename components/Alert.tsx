@@ -81,7 +81,7 @@ const Alert: React.FC<AlertProps> = ({
           animate={{ y: 0, opacity: 1 }}
           exit={{ y: -100, opacity: 0 }}
           transition={{ duration: 0.4 }}
-          className={`fixed top-5 left-1/2 transform -translate-x-1/2 z-[9999] px-6 py-4 rounded-lg shadow-lg w-[20rem] max-w-full flex items-center gap-4 text-white ${alertColors[type]}`}
+          className={`fixed top-5 lg:w-[400px] left-1/2 transform -translate-x-1/2 z-[9999] px-6 py-4 rounded-lg shadow-lg w-[20rem] max-w-full flex items-center gap-4 text-white ${alertColors[type]}`}
         >
           <div>{alertIcons[type]}</div>
           <div className="flex-1">

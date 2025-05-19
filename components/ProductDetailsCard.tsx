@@ -69,7 +69,7 @@ const ProductDetailsCard: React.FC<Props> = ({
             +
           </button>
         </div>
-        <div className="font-bold text-[#28A745] text-sm">
+        <div className="font-bold text-[#28A745] text-sm w-20 text-right">
           ${totalPrice.toFixed(2)}
         </div>
       </div>
