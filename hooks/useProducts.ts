@@ -31,7 +31,7 @@ const useProducts = () => {
 
       if (search) query = query.ilike("name", `%${search}%`);
       if (typeof featured === "boolean") query = query.eq("featured", featured);
-      if (brand) query = query.eq("brand.name", brand); // May require RPC or client-side filter
+      if (brand) query = query.eq("brand.name", brand);
 
       const { data, error } = await query;
 
@@ -140,7 +140,6 @@ const useProducts = () => {
         const { error: storageError } = await supabase.storage
           .from("product-images")
           .remove(filePaths);
-
         if (storageError) {
           console.warn("Storage deletion error:", storageError.message);
         }
@@ -150,7 +149,6 @@ const useProducts = () => {
         .from("product_images")
         .delete()
         .eq("product_id", id);
-
       if (deleteImagesError) {
         console.warn("Image row deletion error:", deleteImagesError.message);
       }
@@ -317,6 +315,7 @@ const useProducts = () => {
       return { data: null, err: String(error) };
     }
   }
+
   async function GetRelatedProducts(
     categoryId: string,
     brandId: string,
@@ -358,6 +357,32 @@ const useProducts = () => {
     }
   }
 
+  async function GetAverageRating(
+    productId: string
+  ): Promise<ReturnType<{ average: string; count: number }>> {
+    try {
+      const { data, error } = await supabase
+        .from("product_reviews")
+        .select("rating_stars")
+        .eq("product_id", productId);
+
+      if (error) throw error;
+
+      const ratings = data.map((r) => Number(r.rating_stars)).filter(Boolean);
+      const avg =
+        ratings.length > 0
+          ? ratings.reduce((sum, val) => sum + val, 0) / ratings.length
+          : 0;
+
+      return {
+        data: { average: avg.toFixed(1), count: ratings.length },
+        err: null,
+      };
+    } catch (error: unknown) {
+      return { data: null, err: String(error) };
+    }
+  }
+
   return {
     AllProducts,
     GetFeaturedProducts,
@@ -369,6 +394,7 @@ const useProducts = () => {
     getFirstTen,
     GetProductImages,
     GetRelatedProducts,
+    GetAverageRating,
     isLoading,
   };
 };

@@ -2,10 +2,36 @@ import DashboardCard from "components/DashboardCard";
 import DashboardChart from "components/DashboardChart";
 import RecentOrders from "components/RecentOrders";
 import ServiceBookCard from "components/ServiceBookedCard";
-import React from "react";
+import useAuth from "hooks/useAuth";
+import useUsers from "hooks/useUsers";
+import React, { useEffect } from "react";
 import { FaDollarSign, FaCartPlus, FaWarehouse, FaBox } from "react-icons/fa";
 
 const Dashboard = () => {
+  const [isAdmin, setIsAdmin] = React.useState(false);
+  const { user } = useAuth();
+  const { GetUserById } = useUsers();
+
+  useEffect(() => {
+    if (!user) return;
+
+    const fetchUserData = async () => {
+      console.log("Fetching user data...");
+      try {
+        const userData = await GetUserById(user.id);
+        if (userData.data.role === "Admin") {
+          setIsAdmin(true);
+        } else {
+          setIsAdmin(false);
+          window.location.pathname = "/";
+        }
+      } catch (error) {
+        console.error("Error fetching user data:", error);
+      }
+    };
+
+    fetchUserData();
+  }, [user]);
   const cardsData = [
     {
       title: "Total Revenue",

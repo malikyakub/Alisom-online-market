@@ -24,6 +24,20 @@ const useUsers = () => {
     }
   }
 
+  const GetUserById = async (uid: string) => {
+    const { data, error } = await supabase
+      .from("users")
+      .select("*")
+      .eq("user_id", uid)
+      .single();
+
+    if (error) {
+      return { data: null, err: error };
+    }
+
+    return { data, err: null };
+  };
+
   async function DeleteUser(id: string): Promise<ReturnType> {
     setIsLoading(true);
     try {
@@ -35,7 +49,6 @@ const useUsers = () => {
 
       if (supabaseError) throw new Error(supabaseError.message);
 
-      // Removed auth update part as per your instruction
       return { data: supabaseData, err: null };
     } catch (error: unknown) {
       return { data: null, err: String(error) };
@@ -54,8 +67,6 @@ const useUsers = () => {
         .select();
 
       if (userError) throw new Error(userError.message);
-
-      // Removed auth update part as per your instruction
 
       return { data: { userData }, err: null };
     } catch (error: unknown) {
@@ -85,6 +96,7 @@ const useUsers = () => {
 
   return {
     AllUsers,
+    GetUserById,
     DeleteUser,
     UpdateUser,
     NewUser,
