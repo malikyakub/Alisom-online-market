@@ -47,6 +47,7 @@ const ProductDetails: React.FC = () => {
         )
         .slice(0, 4)
         .map((p) => ({
+          id: p.product_id,
           title: p.name,
           price: p.price,
           oldPrice: `$${(p.price * 1.2).toFixed(2)}`,
@@ -125,7 +126,7 @@ const ProductDetails: React.FC = () => {
               rating={item.reviews}
               name={item.title}
               oldPrice={item.oldPrice}
-              productId={item.product_id}
+              productId={item.id}
               badge={item.discount}
               featured={true}
             />
