@@ -6,11 +6,14 @@ import { HiOutlineMenuAlt3, HiOutlineX } from "react-icons/hi";
 import ProfilePopup from "./ProfilePopup";
 import Alert from "./Alert";
 import useAuth from "hooks/useAuth";
+import useCart from "hooks/useCart";
 
 const Header = () => {
   const { user, logout } = useAuth();
   const [searchQuery, setSearchQuery] = useState("");
-  const [cartCount] = useState(3);
+  const [cartCount, setCartCount] = useState(0);
+  const { getCart } = useCart();
+
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [currentPath, setCurrentPath] = useState("/");
   const [showProfilePopup, setShowProfilePopup] = useState(false);
@@ -22,6 +25,16 @@ const Header = () => {
   >("info");
 
   const profileRef = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    const loadCart = async () => {
+      const { data, err } = await getCart(user?.id);
+      if (!err && data) {
+        setCartCount(data.length);
+      }
+    };
+    loadCart();
+  }, [user]);
 
   useEffect(() => {
     setCurrentPath(window.location.pathname);
