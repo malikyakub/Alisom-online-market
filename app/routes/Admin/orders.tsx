@@ -5,6 +5,8 @@ import useOrders from "hooks/useOrders";
 import useAuth from "hooks/useAuth";
 import useUsers from "hooks/useUsers";
 import { useNavigate } from "react-router-dom";
+import useSendEmail from "hooks/useSendEmail";
+import type { EmailMessage } from "hooks/useSendEmail";
 
 const OrdersTable: React.FC = () => {
   const [isAdmin, setIsAdmin] = useState<boolean | null>(null);
@@ -12,7 +14,7 @@ const OrdersTable: React.FC = () => {
   const { GetUserById } = useUsers();
   const { AllOrders, updateOrderStatus } = useOrders();
   const navigate = useNavigate();
-
+  const { isLoading, sendBatchEmails } = useSendEmail();
   type OrderStatus = "Paid" | "Pending" | "Not-paid";
 
   type Order = {
@@ -356,6 +358,24 @@ const OrdersTable: React.FC = () => {
                     : o
                 )
               );
+              const messages: EmailMessage[] = [
+                {
+                  from: "noreply@yourdomain.com", // Must match a verified sender in Resend
+                  to: [selectedOrder.Email], // Use customer's email from selectedOrder
+                  subject: "Your Order has been Approved!",
+                  html: `<p>Hello ${selectedOrder.Full_name},</p>
+           <p>Your order with ID <strong>${selectedOrder.Order_id}</strong> has been approved and marked as paid.</p>
+           <p>Thank you for shopping with us!</p>`,
+                },
+              ];
+
+              const { data, err } = await sendBatchEmails(messages);
+
+              if (err) {
+                console.error("Error sending emails:", err);
+              } else {
+                console.log("Emails sent successfully:", data);
+              }
             }
             setShowPaymentModal(false);
             setSelectedOrder(null);
