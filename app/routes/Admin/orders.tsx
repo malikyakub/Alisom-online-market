@@ -3,6 +3,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import PaymentApprovalModal from "components/PaymentApprovalModal";
 import useOrders from "hooks/useOrders";
 import useSendEmail from "hooks/useSendEmail";
+import Alert from "components/Alert";
 
 type OrderStatus = "Paid" | "Pending" | "Not-paid";
 
@@ -31,15 +32,24 @@ const OrdersTable: React.FC = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [showPaymentModal, setShowPaymentModal] = useState(false);
   const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
+  const [alert, setAlert] = useState<{
+    isOpen: boolean;
+    title: string;
+    description: string;
+    type?: "success" | "warning" | "danger" | "info";
+  }>({
+    isOpen: false,
+    title: "",
+    description: "",
+    type: "info",
+  });
+
   const rowsPerPage = 12;
 
   useEffect(() => {
     const fetchOrders = async () => {
       const { data, err } = await AllOrders();
-      if (err) {
-        console.error("Error fetching orders:", err);
-        return;
-      }
+      if (err) return;
 
       const standardizedOrders = data.map((order: any) => {
         let status = order.Status;
@@ -72,15 +82,37 @@ const OrdersTable: React.FC = () => {
         const { err } = await deleteOrderAndRestockItems(id);
         if (!err) {
           setOrders((prev) => prev.filter((order) => order.Order_id !== id));
+          setAlert({
+            isOpen: true,
+            title: "Order Deleted",
+            description: `Order ${id} was deleted successfully.`,
+            type: "success",
+          });
         } else {
-          alert(`Failed to delete order: ${err}`);
+          setAlert({
+            isOpen: true,
+            title: "Error Deleting Order",
+            description: String(err),
+            type: "danger",
+          });
         }
         break;
       case "copy-id":
         navigator.clipboard.writeText(id);
+        setAlert({
+          isOpen: true,
+          title: "Copied to Clipboard",
+          description: `Order ID ${id} has been copied.`,
+          type: "info",
+        });
         break;
       case "edit":
-        alert(`Edit order ${id}`);
+        setAlert({
+          isOpen: true,
+          title: "Edit Action",
+          description: `Edit order ${id} - (not implemented).`,
+          type: "warning",
+        });
         break;
       case "approve-payment":
         if (order?.Status === "Pending") {
@@ -153,6 +185,19 @@ const OrdersTable: React.FC = () => {
             o.Order_id === selectedOrder.Order_id ? { ...o, Status: "Paid" } : o
           )
         );
+        setAlert({
+          isOpen: true,
+          title: "Payment Approved",
+          description: `Payment for order ${selectedOrder.Order_id} has been approved.`,
+          type: "success",
+        });
+      } else {
+        setAlert({
+          isOpen: true,
+          title: "Approval Failed",
+          description: String(err),
+          type: "danger",
+        });
       }
     }
 
@@ -167,6 +212,14 @@ const OrdersTable: React.FC = () => {
 
   return (
     <div>
+      <Alert
+        isOpen={alert.isOpen}
+        title={alert.title}
+        description={alert.description}
+        type={alert.type}
+        onClose={() => setAlert({ ...alert, isOpen: false })}
+      />
+
       <div className="flex flex-wrap justify-between items-start sm:items-center mb-6 gap-2">
         <div>
           <h1 className="text-3xl font-bold text-[#1A2238]">
@@ -306,6 +359,7 @@ const OrdersTable: React.FC = () => {
           </tbody>
         </table>
       </div>
+
       <div className="p-4 bg-[#F4F4F4] flex flex-col sm:flex-row justify-between items-center text-sm text-[#333] gap-2 border-t">
         <p>
           {selectedOrderIds.size > 0

@@ -1,5 +1,6 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
+import useCustomerInsights from "hooks/useCustomerInsights";
 
 type Customer = {
   id: number;
@@ -12,29 +13,36 @@ type Customer = {
   since: string;
 };
 
-const initialCustomers: Customer[] = Array.from({ length: 14 }).map((_, i) => ({
-  id: i + 1,
-  fullName: `Customer ${i + 1}`,
-  phone: `+1 (555) 010-${1000 + i}`,
-  email: `customer${i + 1}@example.com`,
-  address: `123${i} Main St, City ${i + 1}`,
-  repeat: i % 2 === 0 ? "YES" : "NO",
-  highestOrder: `$${(150 + i * 5).toFixed(2)}`,
-  since: `202${i % 5}-01-01`,
-}));
-
 const CustomerTable: React.FC = () => {
+  const [customers, setCustomers] = useState<Customer[]>([]);
   const [selectedCustomerIds, setSelectedCustomerIds] = useState<Set<number>>(
     new Set()
   );
   const [dropdownOpenId, setDropdownOpenId] = useState<number | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
-
+  const { getCustomerInsights, isLoading } = useCustomerInsights();
   const rowsPerPage = 12;
-  const totalPages = Math.ceil(initialCustomers.length / rowsPerPage);
 
-  const filteredCustomers = initialCustomers.filter((customer) =>
+  useEffect(() => {
+    getCustomerInsights().then(({ data, err }) => {
+      if (data) {
+        const formatted = data.map((c, i) => ({
+          id: i + 1,
+          fullName: c.fullname,
+          phone: c.phone,
+          email: c.email,
+          address: "",
+          repeat: c.is_repeat ? "YES" : "NO",
+          highestOrder: `$${c.highest_order.toFixed(2)}`,
+          since: c.since.split("T")[0],
+        }));
+        setCustomers(formatted);
+      }
+    });
+  }, []);
+
+  const filteredCustomers = customers.filter((customer) =>
     customer.fullName.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
@@ -81,6 +89,8 @@ const CustomerTable: React.FC = () => {
   const toggleSelectAll = () => {
     areAllOnPageSelected ? deselectAllOnPage() : selectAllOnPage();
   };
+
+  const totalPages = Math.ceil(filteredCustomers.length / rowsPerPage);
 
   return (
     <div className="">

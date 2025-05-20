@@ -65,6 +65,26 @@ const usecategory = () => {
     }
   }
 
+  async function getProductCountByCategory(
+    categoryId: string
+  ): Promise<ReturnType<number>> {
+    setIsLoading(true);
+    try {
+      const { count, error } = await supabase
+        .from("products")
+        .select("product_id", { count: "exact", head: true })
+        .eq("category_id", categoryId);
+
+      if (error) throw new Error(error.message);
+
+      return { data: count ?? 0, err: null };
+    } catch (error: unknown) {
+      return { data: null, err: String(error) };
+    } finally {
+      setIsLoading(false);
+    }
+  }
+
   async function DeleteCategory(id: string): Promise<ReturnType> {
     setIsLoading(true);
     try {
@@ -125,6 +145,7 @@ const usecategory = () => {
     Allcategory,
     getCategoryByID,
     getCategoryProducts,
+    getProductCountByCategory,
     DeleteCategory,
     UpdateCategory,
     NewCategory,
