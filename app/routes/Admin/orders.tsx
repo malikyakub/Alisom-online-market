@@ -3,7 +3,6 @@ import { AnimatePresence, motion } from "framer-motion";
 import PaymentApprovalModal from "components/PaymentApprovalModal";
 import useOrders from "hooks/useOrders";
 import useSendEmail from "hooks/useSendEmail";
-import type { EmailMessage } from "hooks/useSendEmail";
 
 type OrderStatus = "Paid" | "Pending" | "Not-paid";
 
@@ -20,8 +19,8 @@ type Order = {
 };
 
 const OrdersTable: React.FC = () => {
-  const { AllOrders, updateOrderStatus } = useOrders();
-  const { isLoading, sendBatchEmails } = useSendEmail();
+  const { AllOrders, approveOrderAndReduceStock, deleteOrderAndRestockItems } =
+    useOrders();
 
   const [orders, setOrders] = useState<Order[]>([]);
   const [selectedOrderIds, setSelectedOrderIds] = useState<Set<string>>(
@@ -66,11 +65,16 @@ const OrdersTable: React.FC = () => {
     currentPage * rowsPerPage
   );
 
-  const handleAction = (action: string, id: string) => {
+  const handleAction = async (action: string, id: string) => {
     const order = orders.find((o) => o.Order_id === id);
     switch (action) {
       case "delete":
-        setOrders((prev) => prev.filter((order) => order.Order_id !== id));
+        const { err } = await deleteOrderAndRestockItems(id);
+        if (!err) {
+          setOrders((prev) => prev.filter((order) => order.Order_id !== id));
+        } else {
+          alert(`Failed to delete order: ${err}`);
+        }
         break;
       case "copy-id":
         navigator.clipboard.writeText(id);
@@ -139,13 +143,19 @@ const OrdersTable: React.FC = () => {
 
   const handleApprovePayment = async () => {
     if (selectedOrder) {
-      await updateOrderStatus(selectedOrder.Order_id, "Approved");
-      setOrders((prev) =>
-        prev.map((o) =>
-          o.Order_id === selectedOrder.Order_id ? { ...o, Status: "Paid" } : o
-        )
+      const { data, err } = await approveOrderAndReduceStock(
+        selectedOrder.Order_id
       );
+
+      if (!err) {
+        setOrders((prev) =>
+          prev.map((o) =>
+            o.Order_id === selectedOrder.Order_id ? { ...o, Status: "Paid" } : o
+          )
+        );
+      }
     }
+
     setShowPaymentModal(false);
     setSelectedOrder(null);
   };
@@ -175,8 +185,155 @@ const OrdersTable: React.FC = () => {
         />
       </div>
 
-      {/* Table rendering logic remains unchanged */}
-      {/* ... */}
+      <div className="overflow-x-auto bg-white rounded-xl shadow-sm">
+        <table className="min-w-full text-sm">
+          <thead className="bg-[#F4F4F4] text-[#333]">
+            <tr>
+              <th className="px-4 py-3 text-left">
+                <input
+                  type="checkbox"
+                  className="accent-blue-600"
+                  checked={areAllOnPageSelected}
+                  onChange={toggleSelectAll}
+                />
+              </th>
+              {[
+                "Customer",
+                "Phone",
+                "Email",
+                "City",
+                "Address",
+                "Total",
+                "Shipping",
+                "Status",
+                "",
+              ].map((header, i) => (
+                <th
+                  key={i}
+                  className="px-4 py-3 text-left font-medium whitespace-nowrap"
+                >
+                  {header}
+                </th>
+              ))}
+            </tr>
+          </thead>
+          <tbody>
+            {paginatedOrders.map((order) => (
+              <tr
+                key={order.Order_id}
+                className={`border-t ${
+                  isSelected(order.Order_id) ? "bg-blue-50" : "hover:bg-gray-50"
+                }`}
+              >
+                <td className="px-4 py-3">
+                  <input
+                    type="checkbox"
+                    className="accent-blue-600"
+                    checked={isSelected(order.Order_id)}
+                    onChange={() => toggleSelect(order.Order_id)}
+                  />
+                </td>
+                <td className="px-4 py-3 font-bold">{order.Full_name}</td>
+                <td className="px-4 py-3">{order.Phone}</td>
+                <td className="px-4 py-3">{order.Email}</td>
+                <td className="px-4 py-3">{order.City}</td>
+                <td className="px-4 py-3 max-w-[200px] truncate">
+                  {order.Address}
+                </td>
+                <td className="px-4 py-3">${order.total_price}</td>
+                <td className="px-4 py-3">{order.Shipping}</td>
+                <td className="px-4 py-3">
+                  {order.Status === "Pending" ? (
+                    <button
+                      onClick={() => {
+                        setSelectedOrder(order);
+                        setShowPaymentModal(true);
+                      }}
+                      className="focus:outline-none hover:opacity-80"
+                    >
+                      <StatusBadge status={order.Status} />
+                    </button>
+                  ) : (
+                    <StatusBadge status={order.Status} />
+                  )}
+                </td>
+                <td className="px-4 py-3 relative">
+                  <button
+                    onClick={() =>
+                      setDropdownOpenId((prev) =>
+                        prev === order.Order_id ? null : order.Order_id
+                      )
+                    }
+                    className="text-xl text-[#666] hover:text-black transition"
+                  >
+                    ⋯
+                  </button>
+                  <AnimatePresence>
+                    {dropdownOpenId === order.Order_id && (
+                      <motion.div
+                        initial={{ opacity: 0, scale: 0.95, y: -5 }}
+                        animate={{ opacity: 1, scale: 1, y: 0 }}
+                        exit={{ opacity: 0, scale: 0.95, y: -5 }}
+                        transition={{ duration: 0.15 }}
+                        className="absolute z-20 right-0 mt-2 w-44 bg-white border border-gray-200 rounded-xl shadow-md p-2"
+                      >
+                        <button
+                          onClick={() => handleAction("edit", order.Order_id)}
+                          className="block w-full text-left px-4 py-2 text-sm hover:bg-gray-100 rounded"
+                        >
+                          Edit
+                        </button>
+                        <button
+                          onClick={() =>
+                            handleAction("copy-id", order.Order_id)
+                          }
+                          className="block w-full text-left px-4 py-2 text-sm hover:bg-gray-100 rounded"
+                        >
+                          Copy ID
+                        </button>
+                        <button
+                          onClick={() => handleAction("delete", order.Order_id)}
+                          className="block w-full text-left px-4 py-2 text-sm text-white bg-red-500 hover:bg-red-600 rounded"
+                        >
+                          Delete
+                        </button>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+      <div className="p-4 bg-[#F4F4F4] flex flex-col sm:flex-row justify-between items-center text-sm text-[#333] gap-2 border-t">
+        <p>
+          {selectedOrderIds.size > 0
+            ? `${selectedOrderIds.size} of ${filteredOrders.length} selected`
+            : "No selection"}
+        </p>
+        <div className="flex items-center gap-3">
+          <span>
+            Page {currentPage} of {totalPages}
+          </span>
+          <div className="flex items-center border rounded-lg overflow-hidden">
+            <button
+              onClick={() => setCurrentPage((p) => Math.max(p - 1, 1))}
+              disabled={currentPage === 1}
+              className="px-3 py-1 hover:bg-white disabled:opacity-50"
+            >
+              &lt;
+            </button>
+            <button
+              onClick={() => setCurrentPage((p) => Math.min(p + 1, totalPages))}
+              disabled={currentPage === totalPages}
+              className="px-3 py-1 hover:bg-white disabled:opacity-50"
+            >
+              &gt;
+            </button>
+          </div>
+        </div>
+      </div>
 
       {showPaymentModal && selectedOrder && (
         <PaymentApprovalModal

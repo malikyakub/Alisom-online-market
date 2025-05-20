@@ -49,10 +49,8 @@ export default function AdminLayout() {
 
   return (
     <div className="min-h-screen flex flex-col">
-      <header className="w-full sticky top-0 z-50 bg-white/80 backdrop-blur-md shadow-sm">
-        <div className="w-full mx-auto max-w-[1170px]">
-          <AdminHeader />
-        </div>
+      <header className="w-full sticky top-0 z-50 bg-[#F4F4F4b3] backdrop-blur-md">
+        <AdminHeader />
       </header>
 
       <main className="flex-1 w-full mx-auto max-w-[1170px] px-4 sm:px-6 py-6">

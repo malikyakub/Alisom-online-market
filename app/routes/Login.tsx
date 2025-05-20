@@ -9,7 +9,8 @@ export function meta() {
 }
 
 const Login: React.FC = () => {
-  const { login, loading } = useAuth();
+  const { login } = useAuth();
+  const [loading, setLoading] = useState(false);
 
   const [alertOpen, setAlertOpen] = useState(false);
   const [alertMessage, setAlertMessage] = useState("");
@@ -23,6 +24,7 @@ const Login: React.FC = () => {
     password: string;
   }) => {
     try {
+      setLoading(true);
       const { user } = await login(formData.email, formData.password);
       if (user) {
         console.log("Login successful!", user);
@@ -32,6 +34,7 @@ const Login: React.FC = () => {
         setAlertOpen(true);
         window.location.href = "/user/account";
       } else {
+        setLoading(false);
         console.warn("No user returned from login.");
         setAlertTitle("Login Error");
         setAlertMessage("No user returned from login.");
@@ -39,6 +42,7 @@ const Login: React.FC = () => {
         setAlertOpen(true);
       }
     } catch (error: any) {
+      setLoading(false);
       console.error("Login failed:", error.message || error);
       setAlertTitle("Login Failed");
       setAlertMessage(error.message || "Unexpected error");

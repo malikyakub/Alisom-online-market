@@ -109,18 +109,45 @@ const useOrders = () => {
     }
   }
 
-  async function updateOrderStatus(
-    order_id: string,
-    status: "Pending" | "Approved" | "Denied"
+  async function approveOrderAndReduceStock(
+    order_id: string
   ): Promise<ReturnType> {
     setIsLoading(true);
     try {
-      const { error } = await supabase
+      const { error: statusError } = await supabase
         .from("Orders")
-        .update({ Status: status })
+        .update({ Status: "Approved" })
         .eq("Order_id", order_id);
 
-      if (error) throw error;
+      if (statusError) throw statusError;
+
+      const { data: orderItems, error: itemsError } = await supabase
+        .from("Order_items")
+        .select("product_id, quantity")
+        .eq("order_id", order_id);
+
+      if (itemsError) throw itemsError;
+
+      for (const item of orderItems || []) {
+        const quantity = parseInt(item.quantity);
+        if (isNaN(quantity)) continue;
+
+        const { data: product, error: productError } = await supabase
+          .from("products")
+          .select("stock_quantity")
+          .eq("product_id", item.product_id)
+          .single();
+
+        if (productError || !product) continue;
+
+        const newStock = product.stock_quantity - quantity;
+
+        await supabase
+          .from("products")
+          .update({ stock_quantity: newStock })
+          .eq("product_id", item.product_id);
+      }
+
       return { data: true, err: null };
     } catch (error) {
       return { data: null, err: String(error) };
@@ -147,6 +174,53 @@ const useOrders = () => {
     }
   }
 
+  async function deleteOrderAndRestockItems(
+    order_id: string
+  ): Promise<ReturnType> {
+    setIsLoading(true);
+    try {
+      const { data: orderItems, error: itemsError } = await supabase
+        .from("Order_items")
+        .select("product_id, quantity")
+        .eq("order_id", order_id);
+
+      if (itemsError) throw itemsError;
+
+      for (const item of orderItems || []) {
+        const quantity = parseInt(item.quantity);
+        if (isNaN(quantity)) continue;
+
+        const { data: product, error: productError } = await supabase
+          .from("products")
+          .select("stock_quantity")
+          .eq("product_id", item.product_id)
+          .single();
+
+        if (productError || !product) continue;
+
+        const newStock = product.stock_quantity + quantity;
+
+        await supabase
+          .from("products")
+          .update({ stock_quantity: newStock })
+          .eq("product_id", item.product_id);
+      }
+
+      const { error: deleteError } = await supabase
+        .from("Orders")
+        .delete()
+        .eq("Order_id", order_id);
+
+      if (deleteError) throw deleteError;
+
+      return { data: true, err: null };
+    } catch (error) {
+      return { data: null, err: String(error) };
+    } finally {
+      setIsLoading(false);
+    }
+  }
+
   async function AllOrders(): Promise<ReturnType> {
     setIsLoading(true);
     try {
@@ -166,9 +240,10 @@ const useOrders = () => {
 
   return {
     createOrder,
-    updateOrderStatus,
+    approveOrderAndReduceStock,
     getOrdersByUserId,
     AllOrders,
+    deleteOrderAndRestockItems,
     isLoading,
   };
 };
