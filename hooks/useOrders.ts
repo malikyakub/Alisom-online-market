@@ -152,7 +152,7 @@ const useOrders = () => {
     try {
       const { data, error } = await supabase
         .from("Orders")
-        .select("*, users(fullname, email)")
+        .select("*")
         .order("created_at", { ascending: false });
 
       if (error) throw error;
