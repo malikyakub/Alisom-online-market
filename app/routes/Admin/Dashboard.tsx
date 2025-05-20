@@ -2,47 +2,9 @@ import DashboardCard from "components/DashboardCard";
 import DashboardChart from "components/DashboardChart";
 import RecentOrders from "components/RecentOrders";
 import ServiceBookCard from "components/ServiceBookedCard";
-import useAuth from "hooks/useAuth";
-import useUsers from "hooks/useUsers";
-import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom"; // ← make sure react-router-dom is used
 import { FaDollarSign, FaCartPlus, FaWarehouse, FaBox } from "react-icons/fa";
 
 const Dashboard = () => {
-  const [isAdmin, setIsAdmin] = useState<boolean | null>(null);
-  const { user } = useAuth();
-  const { GetUserById } = useUsers();
-  const navigate = useNavigate();
-
-  useEffect(() => {
-    if (!user) {
-      setIsAdmin(false);
-      return;
-    }
-
-    const fetchUserData = async () => {
-      try {
-        const userData = await GetUserById(user.id);
-        const admin = userData.data?.role === "Admin";
-        setIsAdmin(admin);
-
-        if (!admin) {
-          navigate("/");
-        }
-      } catch (error) {
-        console.error("Error fetching user data:", error);
-        setIsAdmin(false);
-        navigate("/");
-      }
-    };
-
-    fetchUserData();
-  }, [user, GetUserById, navigate]);
-
-  if (isAdmin === null) {
-    return <div>Loading...</div>;
-  }
-
   const cardsData = [
     {
       title: "Total Revenue",

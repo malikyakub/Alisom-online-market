@@ -1,6 +1,5 @@
-import React, { useEffect } from "react";
-import { FaUser } from "react-icons/fa6";
-import { FaRegStar } from "react-icons/fa";
+import React, { useEffect, useState } from "react";
+import { FaUser, FaRegStar } from "react-icons/fa";
 import { RiShoppingBagLine } from "react-icons/ri";
 import { MdOutlineCancel } from "react-icons/md";
 import { LuLogOut } from "react-icons/lu";
@@ -9,61 +8,84 @@ import useAuth from "hooks/useAuth";
 import useUsers from "hooks/useUsers";
 
 const ProfilePopup = () => {
-  const { user } = useAuth();
-  const { GetUserById, isLoading } = useUsers();
+  const { user, logout } = useAuth();
+  const { GetUserById } = useUsers();
   const navigate = useNavigate();
-  const [isAdmin, setIsAdmin] = React.useState(false);
-
-  const handleManageAccountClick = () => {
-    if (isAdmin) {
-      navigate("/admin/dashboard");
-    } else {
-      navigate("/user/account");
-    }
-  };
+  const [isAdmin, setIsAdmin] = useState(false);
 
   useEffect(() => {
     if (!user) return;
 
-    const fetchUserData = async () => {
-      console.log("Fetching user data...");
+    const fetchUserRole = async () => {
       try {
-        const userData = await GetUserById(user.id);
-        userData.data.role == "Admin" ? setIsAdmin(true) : setIsAdmin(false);
+        const res = await GetUserById(user.id);
+        setIsAdmin(res.data?.role === "Admin");
       } catch (error) {
-        console.error("Error fetching user data:", error);
+        console.error("Error fetching user role:", error);
       }
     };
 
-    fetchUserData();
+    fetchUserRole();
   }, [user]);
 
-  return (
-    <div className="bg-[#1a2238be] flex flex-col gap-3 p-3 backdrop-blur-2xl w-[225px] rounded">
-      <div
-        className="group flex flex-row text-white items-center gap-2 cursor-pointer"
-        onClick={handleManageAccountClick}
-      >
-        <FaUser className="text-2xl group-hover:text-[#007BFF]" />
-        <h1>{isAdmin ? "Dashboard" : "Manage my account"}</h1>
-      </div>
+  const handleNavigate = (path: string) => {
+    navigate(path);
+  };
 
-      <div className="group flex flex-row text-white items-center gap-2 cursor-pointer">
-        <RiShoppingBagLine className="text-2xl group-hover:text-[#007BFF]" />
-        <h1>My order</h1>
-      </div>
-      <div className="group flex flex-row text-white items-center gap-2 cursor-pointer">
-        <MdOutlineCancel className="text-2xl group-hover:text-[#007BFF]" />
-        <h1>My cancellations</h1>
-      </div>
-      <div className="group flex flex-row text-white items-center gap-2 cursor-pointer">
-        <FaRegStar className="text-2xl group-hover:text-[#007BFF]" />
-        <h1>My reviews</h1>
-      </div>
-      <div className="group flex flex-row text-white items-center gap-2 cursor-pointer">
-        <LuLogOut className="text-2xl group-hover:text-[#007BFF]" />
-        <h1>Logout</h1>
-      </div>
+  const handleLogout = async () => {
+    try {
+      await logout();
+      navigate("/login");
+    } catch (err) {
+      console.error("Logout failed:", err);
+    }
+  };
+
+  const menuItems = [
+    {
+      label: isAdmin ? "Dashboard" : "Manage my account",
+      icon: <FaUser className="text-xl" />,
+      onClick: () =>
+        handleNavigate(isAdmin ? "/admin/dashboard" : "/user/account"),
+    },
+    {
+      label: "My orders",
+      icon: <RiShoppingBagLine className="text-xl" />,
+      onClick: () => handleNavigate("/user/orders"),
+    },
+    {
+      label: "My cancellations",
+      icon: <MdOutlineCancel className="text-xl" />,
+      onClick: () => handleNavigate("/user/cancellations"),
+    },
+    {
+      label: "My reviews",
+      icon: <FaRegStar className="text-xl" />,
+      onClick: () => handleNavigate("/user/reviews"),
+    },
+    {
+      label: user ? "Logout" : "Login",
+      icon: <LuLogOut className="text-xl" />,
+      onClick: handleLogout,
+    },
+  ];
+
+  return (
+    <div
+      className="w-56 rounded-md bg-[#1a2238be] backdrop-blur-2xl p-3 flex flex-col gap-2 shadow-lg"
+      role="menu"
+      aria-label="Profile menu"
+    >
+      {menuItems.map((item, idx) => (
+        <button
+          key={idx}
+          onClick={item.onClick}
+          className="flex items-center gap-3 px-2 py-2 text-sm text-white hover:bg-white/10 rounded transition-colors duration-150 group"
+        >
+          <span className="group-hover:text-[#007BFF]">{item.icon}</span>
+          <span className="group-hover:text-[#007BFF]">{item.label}</span>
+        </button>
+      ))}
     </div>
   );
 };

@@ -57,13 +57,30 @@ const useUsers = () => {
     }
   }
 
-  async function UpdateUser(id: string, newData: object): Promise<ReturnType> {
+  async function UpdateUser(id: string, newData: any): Promise<ReturnType> {
     setIsLoading(true);
     try {
+      const { data: currentUser, error: getUserError } = await supabase
+        .from("users")
+        .select("email")
+        .eq("user_id", id)
+        .single();
+
+      if (getUserError) throw new Error(getUserError.message);
+      if (!currentUser) throw new Error("User not found");
+
+      if (newData.email && newData.email !== currentUser.email) {
+        const { error: authUpdateError } = await supabase.auth.updateUser({
+          email: newData.email,
+        });
+
+        if (authUpdateError) throw new Error(authUpdateError.message);
+      }
+
       const { data: userData, error: userError } = await supabase
         .from("users")
         .update(newData)
-        .eq("id", id)
+        .eq("user_id", id)
         .select();
 
       if (userError) throw new Error(userError.message);

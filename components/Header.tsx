@@ -228,6 +228,7 @@ const Header = () => {
           </button>
         </div>
       </div>
+
       {mobileMenuOpen && (
         <>
           <div className="md:hidden px-6 pb-4">
@@ -255,6 +256,7 @@ const Header = () => {
               ))}
             </ul>
           </div>
+
           <div className="sm:hidden px-6 my-4 flex flex-col gap-4">
             <div className="bg-white/20 hover:shadow-md transition-shadow duration-200 p-2 px-4 rounded flex border items-center gap-3">
               <input
@@ -274,7 +276,7 @@ const Header = () => {
               </button>
             </div>
 
-            <div className="flex items-center justify-around text-gray-600">
+            <div className="flex items-center justify-around text-gray-600 relative">
               <a href="/user/wishlist" aria-label="Wishlist">
                 <BiHeart size={24} />
               </a>
@@ -286,12 +288,19 @@ const Header = () => {
                   </span>
                 )}
               </a>
-              <button
-                onClick={() => setShowProfilePopup(!showProfilePopup)}
-                aria-label="Profile"
-              >
-                <CgProfile size={24} />
-              </button>
+              <div className="relative" ref={profileRef}>
+                <button
+                  onClick={() => setShowProfilePopup(!showProfilePopup)}
+                  aria-label="Profile"
+                >
+                  <CgProfile size={24} />
+                </button>
+                {showProfilePopup && (
+                  <div className="absolute top-10 right-0 z-50">
+                    <ProfilePopup />
+                  </div>
+                )}
+              </div>
             </div>
           </div>
         </>

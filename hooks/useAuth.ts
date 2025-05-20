@@ -15,6 +15,10 @@ interface UseAuthReturn {
     address: string;
   }) => Promise<{ user: User | null }>;
   logout: () => Promise<void>;
+  updatePassword: (
+    currentPassword: string,
+    newPassword: string
+  ) => Promise<{ success: boolean; error?: string }>;
 }
 
 const useAuth = (): UseAuthReturn => {
@@ -66,7 +70,6 @@ const useAuth = (): UseAuthReturn => {
     phone: string;
     address: string;
   }): Promise<{ user: User | null }> => {
-    // Signup user with Supabase auth
     const { data, error } = await supabase.auth.signUp({
       email: userData.email,
       password: userData.password,
@@ -78,7 +81,6 @@ const useAuth = (): UseAuthReturn => {
       throw new Error("User not created after signup.");
     }
 
-    // Create profile and auth record using NewUser from useUsers
     const { err: newUserError } = await NewUser({
       user_id: authUser.id,
       fullname: userData.fullname,
@@ -88,8 +90,6 @@ const useAuth = (): UseAuthReturn => {
     });
 
     if (newUserError) {
-      // Optionally delete auth user here to avoid orphan account
-      // await supabase.auth.admin.deleteUser(authUser.id);
       throw new Error(newUserError);
     }
 
@@ -103,12 +103,48 @@ const useAuth = (): UseAuthReturn => {
     setUser(null);
   };
 
+  const updatePassword = async (
+    currentPassword: string,
+    newPassword: string
+  ): Promise<{ success: boolean; error?: string }> => {
+    if (!user?.email) {
+      return { success: false, error: "No authenticated user." };
+    }
+
+    try {
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email: user.email,
+        password: currentPassword,
+      });
+
+      if (error || !data.user) {
+        return { success: false, error: "Current password is incorrect." };
+      }
+
+      const { error: updateError } = await supabase.auth.updateUser({
+        password: newPassword,
+      });
+
+      if (updateError) {
+        return { success: false, error: updateError.message };
+      }
+
+      return { success: true };
+    } catch (err: any) {
+      return {
+        success: false,
+        error: err.message || "Failed to update password.",
+      };
+    }
+  };
+
   return {
     user,
     loading,
     login,
     signup,
     logout,
+    updatePassword,
   };
 };
 
