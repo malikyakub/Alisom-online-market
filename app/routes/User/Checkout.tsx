@@ -162,7 +162,7 @@ const Checkout: React.FC = () => {
   }, 0);
 
   return (
-    <div className="relative px-4 sm:px-8 py-10">
+    <div className="relative py-10">
       <Alert
         title={alertTitle}
         description={alertDesc}
@@ -174,7 +174,9 @@ const Checkout: React.FC = () => {
       {showAccountPopup && (
         <AccountNumberModal
           total={totalAmount}
-          accountNumber="252612345678"
+          accountNumber={
+            selectedPayment == "EVC Plus" ? "613673734" : "622675734"
+          }
           onClose={handleAfterAccountModal}
         />
       )}

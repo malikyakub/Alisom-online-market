@@ -142,7 +142,7 @@ export default function Cart() {
   );
 
   return (
-    <div>
+    <div className="relative py-10">
       <Alert
         isOpen={alertVisible}
         onClose={() => setAlertVisible(false)}
@@ -159,7 +159,6 @@ export default function Cart() {
         <p>Loading cart...</p>
       ) : cartProducts.length === 0 ? (
         <div className="text-center py-12">
-          {/* SVG for Empty Cart */}
           <svg
             className="mx-auto mb-4 w-24 h-24 text-gray-400"
             fill="none"
@@ -179,9 +178,12 @@ export default function Cart() {
           <p className="text-sm text-gray-500 mb-4">
             Browse products and add them to your cart.
           </p>
-          <button className="px-6 py-2 border border-[#1A2238] font-bold rounded text-sm text-[#666666] hover:bg-[#1A2238] transition hover:text-white">
+          <a
+            href="/"
+            className="px-6 py-2 border border-[#1A2238] font-bold rounded text-sm text-[#666666] hover:bg-[#1A2238] transition hover:text-white"
+          >
             Return to Shop
-          </button>
+          </a>
         </div>
       ) : (
         <>
