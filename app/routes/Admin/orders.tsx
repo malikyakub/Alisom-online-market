@@ -1,62 +1,125 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import PaymentApprovalModal from "components/PaymentApprovalModal";
+import useOrders from "hooks/useOrders";
+import useAuth from "hooks/useAuth";
+import useUsers from "hooks/useUsers";
+import { useNavigate } from "react-router-dom";
+import useSendEmail from "hooks/useSendEmail";
+import type { EmailMessage } from "hooks/useSendEmail";
 
 const OrdersTable: React.FC = () => {
+  const [isAdmin, setIsAdmin] = useState<boolean | null>(null);
+  const { user } = useAuth();
+  const { GetUserById } = useUsers();
+  const { AllOrders, updateOrderStatus } = useOrders();
+  const navigate = useNavigate();
+  const { isLoading, sendBatchEmails } = useSendEmail();
+  type OrderStatus = "Paid" | "Pending" | "Not-paid";
+
   type Order = {
-    id: number;
-    productName: string;
-    customer: string;
-    phone: string;
-    address: string;
-    total: string;
-    method: "Pickup" | "Delivery";
-    status: "Paid" | "Pending" | "No-paid";
+    Order_id: string;
+    Full_name: string;
+    Phone: string;
+    Email: string;
+    Address: string;
+    City: string;
+    total_price: string;
+    Shipping: string;
+    Status: OrderStatus;
   };
 
-  const statuses: Order["status"][] = ["Paid", "Pending", "No-paid"];
-  const initialOrders: Order[] = Array.from({ length: 14 }).map((_, i) => ({
-    id: i + 1,
-    productName: `Product ${i + 1}`,
-    customer: `Customer ${i + 1}`,
-    phone: `+1 (555) 010-${1000 + i}`,
-    address: `123${i} Main St, City ${i + 1}`,
-    total: `$${(100 + i * 10).toFixed(2)}`,
-    method: i % 2 === 0 ? "Pickup" : "Delivery",
-    status: statuses[i % 3],
-  }));
-
-  const [orders, setOrders] = useState<Order[]>(initialOrders);
-  const [selectedOrderIds, setSelectedOrderIds] = useState<Set<number>>(
+  const [orders, setOrders] = useState<Order[]>([]);
+  const [selectedOrderIds, setSelectedOrderIds] = useState<Set<string>>(
     new Set()
   );
-  const [dropdownOpenId, setDropdownOpenId] = useState<number | null>(null);
+  const [dropdownOpenId, setDropdownOpenId] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [showPaymentModal, setShowPaymentModal] = useState(false);
   const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
-
   const rowsPerPage = 12;
-  const totalPages = Math.ceil(orders.length / rowsPerPage);
+
+  useEffect(() => {
+    if (!user) {
+      setIsAdmin(false);
+      return;
+    }
+
+    const fetchUserData = async () => {
+      try {
+        const userData = await GetUserById(user.id);
+        const admin = userData.data?.role === "Admin";
+        setIsAdmin(admin);
+
+        if (!admin) {
+          navigate("/");
+        }
+      } catch (error) {
+        console.error("Error fetching user data:", error);
+        setIsAdmin(false);
+        navigate("/");
+      }
+    };
+
+    fetchUserData();
+  }, [user, GetUserById, navigate]);
+
+  useEffect(() => {
+    const fetchOrders = async () => {
+      const { data, err } = await AllOrders();
+      if (err) {
+        console.error("Error fetching orders:", err);
+        return;
+      }
+
+      const standardizedOrders = data.map((order: any) => {
+        let status = order.Status;
+
+        if (status === "No-paid" || status === "Denied") {
+          status = "Not-paid";
+        } else if (status === "Approved") {
+          status = "Paid";
+        }
+
+        return {
+          ...order,
+          Status: status,
+        };
+      });
+
+      setOrders(standardizedOrders);
+    };
+
+    if (isAdmin) {
+      fetchOrders();
+    }
+  }, [isAdmin]);
 
   const filteredOrders = orders.filter((order) =>
-    order.customer.toLowerCase().includes(searchQuery.toLowerCase())
+    order.Full_name.toLowerCase().includes(searchQuery.toLowerCase())
   );
+
+  const totalPages = Math.ceil(filteredOrders.length / rowsPerPage);
 
   const paginatedOrders = filteredOrders.slice(
     (currentPage - 1) * rowsPerPage,
     currentPage * rowsPerPage
   );
 
-  const handleAction = (action: string, id: number) => {
+  const handleAction = (action: string, id: string) => {
     if (action === "delete") {
-      setOrders((prev) => prev.filter((order) => order.id !== id));
+      setOrders((prev) => prev.filter((order) => order.Order_id !== id));
     }
-    if (action === "copy-id") navigator.clipboard.writeText(id.toString());
-    if (action === "edit") alert(`Edit order ${id}`);
+    if (action === "copy-id") {
+      navigator.clipboard.writeText(id);
+    }
+    if (action === "edit") {
+      alert(`Edit order ${id}`);
+    }
     if (action === "approve-payment") {
-      const order = orders.find((o) => o.id === id);
-      if (order?.status === "Pending") {
+      const order = orders.find((o) => o.Order_id === id);
+      if (order?.Status === "Pending") {
         setSelectedOrder(order);
         setShowPaymentModal(true);
       }
@@ -64,8 +127,9 @@ const OrdersTable: React.FC = () => {
     setDropdownOpenId(null);
   };
 
-  const isSelected = (id: number) => selectedOrderIds.has(id);
-  const toggleSelect = (id: number) => {
+  const isSelected = (id: string) => selectedOrderIds.has(id);
+
+  const toggleSelect = (id: string) => {
     setSelectedOrderIds((prev) => {
       const newSet = new Set(prev);
       newSet.has(id) ? newSet.delete(id) : newSet.add(id);
@@ -74,38 +138,48 @@ const OrdersTable: React.FC = () => {
   };
 
   const areAllOnPageSelected = paginatedOrders.every((o) =>
-    selectedOrderIds.has(o.id)
+    selectedOrderIds.has(o.Order_id)
   );
 
   const toggleSelectAll = () =>
     areAllOnPageSelected
       ? setSelectedOrderIds((prev) => {
           const newSet = new Set(prev);
-          paginatedOrders.forEach((o) => newSet.delete(o.id));
+          paginatedOrders.forEach((o) => newSet.delete(o.Order_id));
           return newSet;
         })
       : setSelectedOrderIds((prev) => {
           const newSet = new Set(prev);
-          paginatedOrders.forEach((o) => newSet.add(o.id));
+          paginatedOrders.forEach((o) => newSet.add(o.Order_id));
           return newSet;
         });
 
-  const getStatusColor = (status: Order["status"]) => {
+  const getStatusStyles = (status: OrderStatus) => {
     switch (status) {
       case "Paid":
-        return "bg-green-100 text-green-800";
+        return "bg-[#28A745]/40 text-[#28A745]";
       case "Pending":
-        return "bg-yellow-100 text-yellow-800";
-      case "No-paid":
-        return "bg-red-100 text-red-800";
+        return "bg-[#FFC107]/40 text-[#FFC107]";
+      case "Not-paid":
       default:
-        return "";
+        return "bg-[#DC3545]/40 text-[#DC3545]";
     }
   };
 
+  const StatusBadge: React.FC<{ status: OrderStatus }> = ({ status }) => (
+    <span
+      className={`inline-flex items-center justify-center px-3 py-2 rounded text-xs font-semibold whitespace-nowrap ${getStatusStyles(
+        status
+      )}`}
+    >
+      {status}
+    </span>
+  );
+
+  if (!isAdmin) return null;
+
   return (
     <div>
-      {/* Header */}
       <div className="flex flex-wrap justify-between items-start sm:items-center mb-6 gap-2">
         <div>
           <h1 className="text-3xl font-bold text-[#1A2238]">
@@ -123,13 +197,11 @@ const OrdersTable: React.FC = () => {
           onChange={(e) => setSearchQuery(e.target.value)}
         />
       </div>
-
-      {/* Table */}
       <div className="overflow-x-auto bg-white rounded-xl shadow-sm">
         <table className="min-w-full text-sm">
           <thead className="bg-[#F4F4F4] text-[#333]">
             <tr>
-              <th className="px-4 py-3 text-left whitespace-nowrap">
+              <th className="px-4 py-3 text-left">
                 <input
                   type="checkbox"
                   className="accent-blue-600"
@@ -138,12 +210,13 @@ const OrdersTable: React.FC = () => {
                 />
               </th>
               {[
-                "Product Name",
                 "Customer",
                 "Phone",
+                "Email",
+                "City",
                 "Address",
                 "Total",
-                "Method",
+                "Shipping",
                 "Status",
                 "",
               ].map((header, i) => (
@@ -159,60 +232,48 @@ const OrdersTable: React.FC = () => {
           <tbody>
             {paginatedOrders.map((order) => (
               <tr
-                key={order.id}
+                key={order.Order_id}
                 className={`border-t ${
-                  isSelected(order.id) ? "bg-blue-50" : "hover:bg-gray-50"
+                  isSelected(order.Order_id) ? "bg-blue-50" : "hover:bg-gray-50"
                 }`}
               >
-                <td className="px-4 py-3 whitespace-nowrap">
+                <td className="px-4 py-3">
                   <input
                     type="checkbox"
                     className="accent-blue-600"
-                    checked={isSelected(order.id)}
-                    onChange={() => toggleSelect(order.id)}
+                    checked={isSelected(order.Order_id)}
+                    onChange={() => toggleSelect(order.Order_id)}
                   />
                 </td>
-                <td className="px-4 py-3 whitespace-nowrap font-bold">
-                  {order.productName}
+                <td className="px-4 py-3 font-bold">{order.Full_name}</td>
+                <td className="px-4 py-3">{order.Phone}</td>
+                <td className="px-4 py-3">{order.Email}</td>
+                <td className="px-4 py-3">{order.City}</td>
+                <td className="px-4 py-3 max-w-[200px] truncate">
+                  {order.Address}
                 </td>
-                <td className="px-4 py-3 whitespace-nowrap">
-                  {order.customer}
-                </td>
-                <td className="px-4 py-3 whitespace-nowrap">{order.phone}</td>
-                <td className="px-4 py-3 whitespace-nowrap max-w-[200px] truncate">
-                  {order.address}
-                </td>
-                <td className="px-4 py-3 whitespace-nowrap">{order.total}</td>
-                <td className="px-4 py-3 whitespace-nowrap">{order.method}</td>
+                <td className="px-4 py-3">${order.total_price}</td>
+                <td className="px-4 py-3">{order.Shipping}</td>
                 <td className="px-4 py-3">
-                  {order.status === "Pending" ? (
+                  {order.Status === "Pending" ? (
                     <button
                       onClick={() => {
                         setSelectedOrder(order);
                         setShowPaymentModal(true);
                       }}
-                      className={`inline-block px-3 py-2 rounded w-[80px] text-xs font-semibold text-center cursor-pointer hover:opacity-80 ${getStatusColor(
-                        order.status
-                      )}`}
+                      className="focus:outline-none hover:opacity-80"
                     >
-                      {order.status}
+                      <StatusBadge status={order.Status} />
                     </button>
                   ) : (
-                    <span
-                      className={`inline-block px-3 py-2 rounded w-[80px] text-xs font-semibold text-center ${getStatusColor(
-                        order.status
-                      )}`}
-                    >
-                      {order.status}
-                    </span>
+                    <StatusBadge status={order.Status} />
                   )}
                 </td>
-
                 <td className="px-4 py-3 relative">
                   <button
                     onClick={() =>
                       setDropdownOpenId((prev) =>
-                        prev === order.id ? null : order.id
+                        prev === order.Order_id ? null : order.Order_id
                       )
                     }
                     className="text-xl text-[#666] hover:text-black transition"
@@ -220,7 +281,7 @@ const OrdersTable: React.FC = () => {
                     ⋯
                   </button>
                   <AnimatePresence>
-                    {dropdownOpenId === order.id && (
+                    {dropdownOpenId === order.Order_id && (
                       <motion.div
                         initial={{ opacity: 0, scale: 0.95, y: -5 }}
                         animate={{ opacity: 1, scale: 1, y: 0 }}
@@ -229,19 +290,21 @@ const OrdersTable: React.FC = () => {
                         className="absolute z-20 right-0 mt-2 w-44 bg-white border border-gray-200 rounded-xl shadow-md p-2"
                       >
                         <button
-                          onClick={() => handleAction("edit", order.id)}
+                          onClick={() => handleAction("edit", order.Order_id)}
                           className="block w-full text-left px-4 py-2 text-sm hover:bg-gray-100 rounded"
                         >
                           Edit
                         </button>
                         <button
-                          onClick={() => handleAction("copy-id", order.id)}
+                          onClick={() =>
+                            handleAction("copy-id", order.Order_id)
+                          }
                           className="block w-full text-left px-4 py-2 text-sm hover:bg-gray-100 rounded"
                         >
                           Copy ID
                         </button>
                         <button
-                          onClick={() => handleAction("delete", order.id)}
+                          onClick={() => handleAction("delete", order.Order_id)}
                           className="block w-full text-left px-4 py-2 text-sm text-white bg-red-500 hover:bg-red-600 rounded"
                         >
                           Delete
@@ -255,8 +318,6 @@ const OrdersTable: React.FC = () => {
           </tbody>
         </table>
       </div>
-
-      {/* Footer */}
       <div className="p-4 bg-[#F4F4F4] flex flex-col sm:flex-row justify-between items-center text-sm text-[#333] gap-2 border-t">
         <p>
           {selectedOrderIds.size > 0
@@ -285,11 +346,37 @@ const OrdersTable: React.FC = () => {
           </div>
         </div>
       </div>
-
       {showPaymentModal && selectedOrder && (
         <PaymentApprovalModal
-          onApprove={() => {
-            alert("Payment approved!");
+          onApprove={async () => {
+            if (selectedOrder) {
+              await updateOrderStatus(selectedOrder.Order_id, "Approved");
+              setOrders((prev) =>
+                prev.map((o) =>
+                  o.Order_id === selectedOrder.Order_id
+                    ? { ...o, Status: "Paid" }
+                    : o
+                )
+              );
+              const messages: EmailMessage[] = [
+                {
+                  from: "noreply@yourdomain.com", // Must match a verified sender in Resend
+                  to: [selectedOrder.Email], // Use customer's email from selectedOrder
+                  subject: "Your Order has been Approved!",
+                  html: `<p>Hello ${selectedOrder.Full_name},</p>
+           <p>Your order with ID <strong>${selectedOrder.Order_id}</strong> has been approved and marked as paid.</p>
+           <p>Thank you for shopping with us!</p>`,
+                },
+              ];
+
+              const { data, err } = await sendBatchEmails(messages);
+
+              if (err) {
+                console.error("Error sending emails:", err);
+              } else {
+                console.log("Emails sent successfully:", data);
+              }
+            }
             setShowPaymentModal(false);
             setSelectedOrder(null);
           }}
@@ -297,9 +384,9 @@ const OrdersTable: React.FC = () => {
             setShowPaymentModal(false);
             setSelectedOrder(null);
           }}
-          customerName={selectedOrder.customer}
-          amount={selectedOrder.total}
-          phone={selectedOrder.phone}
+          customerName={selectedOrder.Full_name}
+          amount={selectedOrder.total_price}
+          phone={selectedOrder.Phone}
         />
       )}
     </div>

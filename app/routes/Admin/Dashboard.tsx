@@ -4,34 +4,45 @@ import RecentOrders from "components/RecentOrders";
 import ServiceBookCard from "components/ServiceBookedCard";
 import useAuth from "hooks/useAuth";
 import useUsers from "hooks/useUsers";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom"; // ← make sure react-router-dom is used
 import { FaDollarSign, FaCartPlus, FaWarehouse, FaBox } from "react-icons/fa";
 
 const Dashboard = () => {
-  const [isAdmin, setIsAdmin] = React.useState(false);
+  const [isAdmin, setIsAdmin] = useState<boolean | null>(null);
   const { user } = useAuth();
   const { GetUserById } = useUsers();
+  const navigate = useNavigate();
 
   useEffect(() => {
-    if (!user) return;
+    if (!user) {
+      setIsAdmin(false);
+      return;
+    }
 
     const fetchUserData = async () => {
-      console.log("Fetching user data...");
       try {
         const userData = await GetUserById(user.id);
-        if (userData.data.role === "Admin") {
-          setIsAdmin(true);
-        } else {
-          setIsAdmin(false);
-          window.location.pathname = "/";
+        const admin = userData.data?.role === "Admin";
+        setIsAdmin(admin);
+
+        if (!admin) {
+          navigate("/");
         }
       } catch (error) {
         console.error("Error fetching user data:", error);
+        setIsAdmin(false);
+        navigate("/");
       }
     };
 
     fetchUserData();
-  }, [user]);
+  }, [user, GetUserById, navigate]);
+
+  if (isAdmin === null) {
+    return <div>Loading...</div>;
+  }
+
   const cardsData = [
     {
       title: "Total Revenue",

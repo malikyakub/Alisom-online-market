@@ -9,6 +9,12 @@ interface CartItem {
   quantity: number;
 }
 
+interface DetailedCartItem extends CartItem {
+  title?: string;
+  price?: number;
+  image?: string;
+}
+
 interface ReturnType<T = any> {
   data: T | null;
   err: string | null;
@@ -19,16 +25,24 @@ const LOCAL_KEY = "guest_cart";
 const useCart = () => {
   const [isLoading, setIsLoading] = useState(false);
   const { GetProductById } = useProducts();
+
   const getLocalCart = (): CartItem[] => {
-    const cart = localStorage.getItem(LOCAL_KEY);
-    return cart ? JSON.parse(cart) : [];
+    try {
+      const cart = localStorage.getItem(LOCAL_KEY);
+      return cart ? JSON.parse(cart) : [];
+    } catch {
+      localStorage.removeItem(LOCAL_KEY);
+      return [];
+    }
   };
 
   const setLocalCart = (items: CartItem[]) => {
     localStorage.setItem(LOCAL_KEY, JSON.stringify(items));
   };
 
-  async function getCart(user_id?: string): Promise<ReturnType<CartItem[]>> {
+  async function getCart(
+    user_id?: string
+  ): Promise<ReturnType<CartItem[] | DetailedCartItem[]>> {
     setIsLoading(true);
     try {
       if (user_id) {
@@ -36,27 +50,21 @@ const useCart = () => {
           .from("cart")
           .select("*")
           .eq("user_id", user_id);
-
         if (error) throw new Error(error.message);
         return { data: data ?? [], err: null };
       } else {
-        const localCart = getLocalCart() || [];
-
+        const localCart = getLocalCart();
         const detailedProducts = await Promise.all(
           localCart.map(async (item: CartItem) => {
             const { data: productDetails, err } = await GetProductById(
               item.product_id
             );
-            if (err) {
-              console.error("Error loading local product:", err);
-              return null;
-            }
+            if (err) return null;
             return { ...productDetails, quantity: item.quantity };
           })
         );
-
         return {
-          data: detailedProducts.filter(Boolean),
+          data: detailedProducts.filter(Boolean) as DetailedCartItem[],
           err: null,
         };
       }
@@ -70,6 +78,7 @@ const useCart = () => {
   async function addToCart(item: CartItem): Promise<ReturnType> {
     setIsLoading(true);
     try {
+      const quantityToAdd = item.quantity ?? 1;
       if (item.user_id) {
         const { data: existingItem, error: fetchError } = await supabase
           .from("cart")
@@ -83,7 +92,7 @@ const useCart = () => {
         if (existingItem) {
           const { data, error: updateError } = await supabase
             .from("cart")
-            .update({ quantity: existingItem.quantity + 1 })
+            .update({ quantity: existingItem.quantity + quantityToAdd })
             .eq("user_id", item.user_id)
             .eq("product_id", item.product_id)
             .select();
@@ -93,7 +102,7 @@ const useCart = () => {
         } else {
           const { data, error } = await supabase
             .from("cart")
-            .insert({ ...item, quantity: 1 })
+            .insert({ ...item, quantity: quantityToAdd })
             .select();
           if (error) throw error;
           return { data, err: null };
@@ -104,9 +113,9 @@ const useCart = () => {
           (i) => i.product_id === item.product_id
         );
         if (existing) {
-          existing.quantity += 1;
+          existing.quantity += quantityToAdd;
         } else {
-          localCart.push({ ...item, quantity: 1 });
+          localCart.push({ ...item, quantity: quantityToAdd });
         }
         setLocalCart(localCart);
         return { data: localCart, err: null };
@@ -123,6 +132,10 @@ const useCart = () => {
     quantity: number,
     user_id?: string
   ): Promise<ReturnType> {
+    if (quantity === 0) {
+      return await removeFromCart(product_id, user_id);
+    }
+
     setIsLoading(true);
     try {
       if (user_id) {
@@ -177,11 +190,47 @@ const useCart = () => {
     }
   }
 
+  async function clearCart(user_id?: string): Promise<ReturnType> {
+    setIsLoading(true);
+    try {
+      if (user_id) {
+        const { error } = await supabase
+          .from("cart")
+          .delete()
+          .eq("user_id", user_id);
+        if (error) throw error;
+        return { data: true, err: null };
+      } else {
+        setLocalCart([]);
+        return { data: true, err: null };
+      }
+    } catch (error: unknown) {
+      return { data: null, err: String(error) };
+    } finally {
+      setIsLoading(false);
+    }
+  }
+
+  async function syncGuestCartToUser(user_id: string): Promise<ReturnType> {
+    try {
+      const guestCart = getLocalCart();
+      for (const item of guestCart) {
+        await addToCart({ ...item, user_id });
+      }
+      localStorage.removeItem(LOCAL_KEY);
+      return { data: true, err: null };
+    } catch (error: unknown) {
+      return { data: null, err: String(error) };
+    }
+  }
+
   return {
     getCart,
     addToCart,
     updateCartItem,
     removeFromCart,
+    clearCart,
+    syncGuestCartToUser,
     isLoading,
   };
 };

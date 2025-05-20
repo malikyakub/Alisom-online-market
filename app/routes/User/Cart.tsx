@@ -80,7 +80,7 @@ export default function Cart() {
       setCartItems(items);
       tempQuantitiesRef.current = items.map((item: any) => item.quantity);
 
-      const detailedProducts = Promise.all(
+      Promise.all(
         items.map(async (item: any) => {
           const { data: productDetails, err } = await GetProductById(
             item.product_id
@@ -142,7 +142,7 @@ export default function Cart() {
   );
 
   return (
-    <div>
+    <div className="relative py-10">
       <Alert
         isOpen={alertVisible}
         onClose={() => setAlertVisible(false)}
@@ -157,6 +157,34 @@ export default function Cart() {
 
       {isLoading ? (
         <p>Loading cart...</p>
+      ) : cartProducts.length === 0 ? (
+        <div className="text-center py-12">
+          <svg
+            className="mx-auto mb-4 w-24 h-24 text-gray-400"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth={1.5}
+            viewBox="0 0 24 24"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2 9h12l-2-9m-6 0V6a2 2 0 114 0v7"
+            />
+          </svg>
+          <h3 className="text-lg font-semibold text-gray-700">
+            Your cart is empty
+          </h3>
+          <p className="text-sm text-gray-500 mb-4">
+            Browse products and add them to your cart.
+          </p>
+          <a
+            href="/"
+            className="px-6 py-2 border border-[#1A2238] font-bold rounded text-sm text-[#666666] hover:bg-[#1A2238] transition hover:text-white"
+          >
+            Return to Shop
+          </a>
+        </div>
       ) : (
         <>
           <div className="flex flex-col gap-2">

@@ -7,7 +7,7 @@ interface Product {
 }
 
 interface Props {
-  product: Product;
+  product?: Product; // product is now optional
   quantity: number;
   onQuantityChange: (quantity: number) => void;
 }
@@ -30,10 +30,29 @@ const ProductDetailsCard: React.FC<Props> = ({
   };
 
   const decrement = () => {
-    const newQty = localQty > 1 ? localQty - 1 : 1;
+    const newQty = localQty > 0 ? localQty - 1 : 0;
     setLocalQty(newQty);
     onQuantityChange(newQty);
   };
+
+  if (!product) {
+    // Skeleton Loading UI
+    return (
+      <div className="bg-white p-4 rounded-md shadow-sm w-full grid grid-cols-1 sm:grid-cols-2 gap-4 animate-pulse">
+        <div className="flex items-center gap-4">
+          <div className="w-16 h-16 bg-gray-200 rounded" />
+          <div className="flex flex-col gap-2">
+            <div className="w-24 h-4 bg-gray-200 rounded" />
+            <div className="w-16 h-3 bg-gray-200 rounded" />
+          </div>
+        </div>
+        <div className="flex items-center justify-between sm:justify-end sm:gap-6">
+          <div className="w-24 h-8 bg-gray-200 rounded" />
+          <div className="w-16 h-4 bg-gray-200 rounded" />
+        </div>
+      </div>
+    );
+  }
 
   const totalPrice = product.price * localQty;
 
