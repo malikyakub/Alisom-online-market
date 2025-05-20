@@ -4,7 +4,6 @@ import supabase from "utils/supabase";
 interface OrderItem {
   product_id: string;
   quantity: number;
-  unit_price: number;
 }
 
 interface ReturnType<T = any> {
@@ -12,37 +11,78 @@ interface ReturnType<T = any> {
   err: string | null;
 }
 
+interface CreateOrderArgs {
+  user_id?: string;
+  fullname?: string;
+  address?: string;
+  city?: string;
+  phone?: string;
+  email?: string;
+  total_price: number;
+  shipping?: string;
+  items: OrderItem[];
+}
+
 const useOrders = () => {
   const [isLoading, setIsLoading] = useState(false);
 
+  type CreateOrderArgs = {
+    user_id?: string;
+    fullname: string;
+    address: string;
+    city: string;
+    phone: string;
+    email: string;
+    total_price: number;
+    shipping: string;
+    items: { product_id: string; quantity: number }[];
+    is_Guest: boolean;
+  };
+
+  type ReturnType = {
+    data: any;
+    err: string | null;
+  };
+
   async function createOrder({
     user_id,
+    fullname,
+    address,
+    city,
+    phone,
+    email,
     total_price,
     shipping,
     items,
-  }: {
-    user_id: string;
-    total_price: number;
-    shipping?: string;
-    items: OrderItem[];
-  }): Promise<ReturnType> {
+    is_Guest,
+  }: CreateOrderArgs): Promise<ReturnType> {
     setIsLoading(true);
     try {
+      const orderPayload: any = {
+        total_price: total_price.toFixed(2),
+        Shipping: shipping || null,
+        created_at: new Date().toISOString(),
+        Full_name: fullname,
+        Address: address,
+        City: city,
+        Phone: phone,
+        Email: email,
+        is_Guest,
+      };
+
+      if (user_id) {
+        orderPayload.User_id = user_id;
+      }
+
       const { data: orderData, error: orderError } = await supabase
         .from("Orders")
-        .insert([
-          {
-            User_id: user_id,
-            Total_price: total_price.toFixed(2),
-            Status: "pending",
-            Shipping: shipping || null,
-            created_at: new Date().toISOString(),
-          },
-        ])
+        .insert([orderPayload])
         .select()
         .single();
 
-      if (orderError) throw orderError;
+      if (orderError) {
+        return { data: null, err: JSON.stringify(orderError) };
+      }
 
       const orderId = orderData.Order_id;
 
@@ -50,17 +90,19 @@ const useOrders = () => {
         order_id: orderId,
         product_id: item.product_id,
         quantity: item.quantity.toString(),
-        unit_price: item.unit_price.toFixed(2),
       }));
 
-      const { error: itemsError } = await supabase
+      const { data: itemsData, error: itemsError } = await supabase
         .from("Order_items")
         .insert(orderItems);
 
-      if (itemsError) throw itemsError;
+      if (itemsError) {
+        return { data: null, err: JSON.stringify(itemsError) };
+      }
 
       return { data: orderData, err: null };
     } catch (error) {
+      console.error("🔥 Unexpected error:", error);
       return { data: null, err: String(error) };
     } finally {
       setIsLoading(false);
@@ -69,7 +111,7 @@ const useOrders = () => {
 
   async function updateOrderStatus(
     order_id: string,
-    status: "pending" | "approved" | "denied"
+    status: "Pending" | "Approved" | "Denied"
   ): Promise<ReturnType> {
     setIsLoading(true);
     try {

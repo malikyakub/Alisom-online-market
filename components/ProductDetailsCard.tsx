@@ -30,7 +30,7 @@ const ProductDetailsCard: React.FC<Props> = ({
   };
 
   const decrement = () => {
-    const newQty = localQty > 1 ? localQty - 1 : 1;
+    const newQty = localQty > 0 ? localQty - 1 : 0;
     setLocalQty(newQty);
     onQuantityChange(newQty);
   };

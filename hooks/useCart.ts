@@ -50,25 +50,19 @@ const useCart = () => {
           .from("cart")
           .select("*")
           .eq("user_id", user_id);
-
         if (error) throw new Error(error.message);
         return { data: data ?? [], err: null };
       } else {
         const localCart = getLocalCart();
-
         const detailedProducts = await Promise.all(
           localCart.map(async (item: CartItem) => {
             const { data: productDetails, err } = await GetProductById(
               item.product_id
             );
-            if (err) {
-              console.error("Error loading local product:", err);
-              return null;
-            }
+            if (err) return null;
             return { ...productDetails, quantity: item.quantity };
           })
         );
-
         return {
           data: detailedProducts.filter(Boolean) as DetailedCartItem[],
           err: null,
@@ -85,7 +79,6 @@ const useCart = () => {
     setIsLoading(true);
     try {
       const quantityToAdd = item.quantity ?? 1;
-
       if (item.user_id) {
         const { data: existingItem, error: fetchError } = await supabase
           .from("cart")
@@ -139,6 +132,10 @@ const useCart = () => {
     quantity: number,
     user_id?: string
   ): Promise<ReturnType> {
+    if (quantity === 0) {
+      return await removeFromCart(product_id, user_id);
+    }
+
     setIsLoading(true);
     try {
       if (user_id) {
