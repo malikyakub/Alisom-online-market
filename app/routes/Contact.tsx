@@ -8,7 +8,7 @@ const Contact = () => {
   const [message, setMessage] = useState("");
 
   return (
-    <div className="py-10">
+    <div className="py-10 px-4">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 space-y-2 sm:space-y-0">
         <div className="text-sm text-gray-500">
           Home / <span className="text-black font-semibold">Contact</span>

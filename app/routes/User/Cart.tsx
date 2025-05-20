@@ -142,7 +142,7 @@ export default function Cart() {
   );
 
   return (
-    <div className="relative py-10">
+    <div className="relative py-10 px-4">
       <Alert
         isOpen={alertVisible}
         onClose={() => setAlertVisible(false)}

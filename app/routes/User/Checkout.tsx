@@ -162,7 +162,7 @@ const Checkout: React.FC = () => {
   }, 0);
 
   return (
-    <div className="relative py-10">
+    <div className="relative py-10 px-4">
       <Alert
         title={alertTitle}
         description={alertDesc}
