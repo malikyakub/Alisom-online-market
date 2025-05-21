@@ -2,7 +2,6 @@ import React, { useEffect, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import PaymentApprovalModal from "components/PaymentApprovalModal";
 import useOrders from "hooks/useOrders";
-import useSendEmail from "hooks/useSendEmail";
 import Alert from "components/Alert";
 
 type OrderStatus = "Paid" | "Pending" | "Not-paid";

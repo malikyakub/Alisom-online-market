@@ -1,7 +1,8 @@
 import React, { useState } from "react";
-import ProductsHero from "components/ProductsHero";
+import ProductsHero from "components/ProductsAndOrdersHero";
 import FeaturedProductCard from "components/FeaturedProductCard";
 import ProductFilter from "components/ProductFilter";
+import ProductsAndOrdersHero from "components/ProductsAndOrdersHero";
 
 const dummyProducts = [
   {
@@ -101,7 +102,11 @@ const Products = () => {
 
   return (
     <div>
-      <ProductsHero />
+      <ProductsAndOrdersHero
+        title="Discover Our Premium Products"
+        subtitle="High-quality items designed to elevate your lifestyle."
+        imageSrc="/assets/images/airpods.png"
+      />
 
       <div className="mt-4 flex flex-col md:flex-row gap-4">
         <div className="w-full md:w-1/4">

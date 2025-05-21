@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { FaUser, FaRegStar } from "react-icons/fa";
 import { RiShoppingBagLine } from "react-icons/ri";
-import { MdOutlineCancel } from "react-icons/md";
 import { LuLogOut } from "react-icons/lu";
 import { useNavigate } from "react-router";
 import useAuth from "hooks/useAuth";
@@ -12,6 +11,7 @@ const ProfilePopup = () => {
   const { GetUserById } = useUsers();
   const navigate = useNavigate();
   const [isAdmin, setIsAdmin] = useState(false);
+  const [fullname, setFullname] = useState("");
 
   useEffect(() => {
     if (!user) return;
@@ -19,6 +19,7 @@ const ProfilePopup = () => {
     const fetchUserRole = async () => {
       try {
         const res = await GetUserById(user.id);
+        setFullname(res.data.fullname);
         setIsAdmin(res.data?.role === "Admin");
       } catch (error) {
         console.error("Error fetching user role:", error);
@@ -43,20 +44,17 @@ const ProfilePopup = () => {
 
   const menuItems = [
     {
-      label: isAdmin ? "Dashboard" : "Manage my account",
+      label: !user ? "My account" : isAdmin ? "Dashboard" : fullname,
       icon: <FaUser className="text-xl" />,
       onClick: () =>
-        handleNavigate(isAdmin ? "/admin/dashboard" : "/user/account"),
+        handleNavigate(
+          !user ? "/login" : isAdmin ? "/admin/dashboard" : "/user/account"
+        ),
     },
     {
       label: "My orders",
       icon: <RiShoppingBagLine className="text-xl" />,
       onClick: () => handleNavigate("/user/orders"),
-    },
-    {
-      label: "My cancellations",
-      icon: <MdOutlineCancel className="text-xl" />,
-      onClick: () => handleNavigate("/user/cancellations"),
     },
     {
       label: "My reviews",

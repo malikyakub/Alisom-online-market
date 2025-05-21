@@ -133,6 +133,7 @@ const Checkout: React.FC = () => {
     }));
 
     const { data, err } = await createOrder({
+      user_id: user?.id,
       fullname: fullname ?? "",
       address: address ?? "",
       city: city ?? "",

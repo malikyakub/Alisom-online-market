@@ -71,7 +71,7 @@ const useOrders = () => {
       };
 
       if (user_id) {
-        orderPayload.User_id = user_id;
+        orderPayload.user_id = user_id;
       }
 
       const { data: orderData, error: orderError } = await supabase
@@ -162,7 +162,7 @@ const useOrders = () => {
       const { data, error } = await supabase
         .from("Orders")
         .select("*")
-        .eq("User_id", user_id)
+        .eq("user_id", user_id)
         .order("created_at", { ascending: false });
 
       if (error) throw error;

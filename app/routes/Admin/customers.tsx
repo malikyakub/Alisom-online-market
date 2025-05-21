@@ -32,7 +32,7 @@ const CustomerTable: React.FC = () => {
           fullName: c.fullname,
           phone: c.phone,
           email: c.email,
-          address: "",
+          address: c.address || "N/A",
           repeat: c.is_repeat ? "YES" : "NO",
           highestOrder: `$${c.highest_order.toFixed(2)}`,
           since: c.since.split("T")[0],

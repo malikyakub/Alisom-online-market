@@ -11,6 +11,7 @@ interface CustomerInsight {
   email: string;
   phone: string;
   highest_order: number;
+  address: string | null;
   is_repeat: boolean;
   since: string;
 }
@@ -21,9 +22,10 @@ const useCustomerInsights = () => {
   async function getCustomerInsights(): Promise<ReturnType<CustomerInsight[]>> {
     setIsLoading(true);
     try {
+      // Step 1: Get all users with role = 'Customer'
       const { data: users, error: userError } = await supabase
         .from("users")
-        .select("user_id, fullname, email, phone, role")
+        .select("user_id, fullname, email, phone, role, address")
         .eq("role", "Customer");
 
       if (userError) throw new Error(userError.message);
@@ -31,6 +33,7 @@ const useCustomerInsights = () => {
 
       const insights: CustomerInsight[] = [];
 
+      // Step 2: For each user, get their matching orders
       for (const user of users) {
         const { data: orders, error: orderError } = await supabase
           .from("Orders")
@@ -57,6 +60,7 @@ const useCustomerInsights = () => {
             email: user.email,
             phone: user.phone,
             highest_order,
+            address: user.address,
             is_repeat,
             since,
           });
