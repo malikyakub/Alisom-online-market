@@ -18,8 +18,6 @@ const AdminHeader: React.FC<AdminHeaderProps> = ({ onToggleTheme }) => {
     { name: "Products", link: "/admin/products" },
     { name: "Orders", link: "/admin/orders" },
     { name: "Customers", link: "/admin/customers" },
-    { name: "Staff", link: "/admin/staff" },
-    { name: "Settings", link: "/admin/settings" },
   ];
 
   useEffect(() => {

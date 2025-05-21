@@ -1,8 +1,42 @@
 import { useEffect, useState } from "react";
+import { motion, useAnimation } from "framer-motion";
 import AdminHeader from "components/AdminHeader";
 import { Outlet, useNavigate } from "react-router-dom";
 import useUsers from "hooks/useUsers";
 import useAuth from "hooks/useAuth";
+
+const LoadingProgressBar = () => {
+  const controls = useAnimation();
+
+  useEffect(() => {
+    controls.start({
+      width: ["0%", "95%"],
+      transition: { duration: 8, ease: "linear" },
+    });
+  }, [controls]);
+
+  return (
+    <div
+      style={{
+        width: "100%",
+        height: 6,
+        backgroundColor: "#e0e0e0",
+        borderRadius: 3,
+        overflow: "hidden",
+      }}
+    >
+      <motion.div
+        style={{
+          height: "100%",
+          backgroundColor: "#17C3B2",
+          borderRadius: 3,
+          width: "0%",
+        }}
+        animate={controls}
+      />
+    </div>
+  );
+};
 
 export default function AdminLayout() {
   const { GetUserById } = useUsers();
@@ -22,8 +56,7 @@ export default function AdminLayout() {
           } else {
             setIsAdmin(true);
           }
-        } catch (error) {
-          console.error("Verification failed:", error);
+        } catch {
           setIsAdmin(false);
           navigate("/");
         } finally {
@@ -41,8 +74,9 @@ export default function AdminLayout() {
 
   if (loading || checkingAuth) {
     return (
-      <div className="flex items-center justify-center min-h-screen">
-        Loading...
+      <div className="flex min-h-screen w-full mx-auto max-w-[1170px] px-4 sm:px-6 flex-col gap-4">
+        <LoadingProgressBar />
+        <span className="text-gray-700">Loading...</span>
       </div>
     );
   }

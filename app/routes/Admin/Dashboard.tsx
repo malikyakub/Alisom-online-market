@@ -1,33 +1,72 @@
+import { useEffect, useState } from "react";
 import DashboardCard from "components/DashboardCard";
 import DashboardChart from "components/DashboardChart";
 import RecentOrders from "components/RecentOrders";
 import ServiceBookCard from "components/ServiceBookedCard";
 import { FaDollarSign, FaCartPlus, FaWarehouse, FaBox } from "react-icons/fa";
+import useDashboard from "hooks/useDashboard";
 
 const Dashboard = () => {
+  const { getDashboardSummary, newOrders, subscribeToNewOrders } =
+    useDashboard();
+
+  const [summary, setSummary] = useState({
+    totalRevenue: 0,
+    totalRevenueLastMonth: 0,
+    productsSold: 0,
+    productsSoldLastMonth: 0,
+    productsInStock: 0,
+  });
+
+  useEffect(() => {
+    getDashboardSummary().then((res) => {
+      if (res.data) setSummary(res.data);
+    });
+
+    const unsubscribe = subscribeToNewOrders();
+    return () => unsubscribe();
+  }, []);
+
+  const calculateGrowth = (current: number, previous: number): string => {
+    if (previous === 0) return "+100%";
+    const growth = ((current - previous) / previous) * 100;
+    const sign = growth >= 0 ? "+" : "-";
+    return `${sign}${Math.abs(growth).toFixed(1)}% from last month`;
+  };
+
   const cardsData = [
     {
       title: "Total Revenue",
-      amount: "$32,875",
-      growth: "+20.1% from last month",
+      amount: `$${summary.totalRevenue.toLocaleString(undefined, {
+        minimumFractionDigits: 2,
+      })}`,
+      growth: calculateGrowth(
+        summary.totalRevenue,
+        summary.totalRevenueLastMonth
+      ),
       icon: FaDollarSign,
     },
     {
       title: "Products Sold",
-      amount: "8,294",
-      growth: "+180.1% from last month",
+      amount: summary.productsSold.toString(),
+      growth: calculateGrowth(
+        summary.productsSold,
+        summary.productsSoldLastMonth
+      ),
       icon: FaCartPlus,
     },
     {
       title: "Products In Stock",
-      amount: "234",
-      growth: "+19% from last month",
+      amount: summary.productsInStock.toString(),
+      growth: "+0% from last month",
       icon: FaWarehouse,
     },
     {
       title: "New Orders",
-      amount: "16",
-      growth: "10 unpaid",
+      amount: newOrders.length.toString(),
+      growth: `${
+        newOrders.filter((o) => (o as any).status === "Pending").length
+      } unpaid`,
       icon: FaBox,
     },
   ];
