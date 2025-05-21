@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import ClipLoader from "react-spinners/ClipLoader";
 import { motion, AnimatePresence } from "framer-motion";
 import { FaPlusCircle } from "react-icons/fa";
 import useProducts from "hooks/useProducts";
@@ -47,7 +48,7 @@ const ProductTable: React.FC = () => {
     type: "info",
   });
 
-  const { AllProducts, DeleteProduct } = useProducts();
+  const { AllProducts, DeleteProduct, isLoading } = useProducts();
   const rowsPerPage = 12;
   const [products, setProducts] = useState<Product[] | null>(null);
 
@@ -383,7 +384,14 @@ const ProductTable: React.FC = () => {
                           }
                           className="block w-full text-left px-4 py-2 text-sm text-white bg-[#DC3545] hover:bg-[#C82333] rounded"
                         >
-                          Delete
+                          {isLoading ? (
+                            <span className="flex items-center gap-2">
+                              <ClipLoader size={16} color="#fff" />
+                              Deleting...
+                            </span>
+                          ) : (
+                            "Delete"
+                          )}
                         </button>
                       </motion.div>
                     )}

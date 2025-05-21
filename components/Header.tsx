@@ -8,13 +8,15 @@ import Alert from "./Alert";
 import useAuth from "hooks/useAuth";
 import useCart from "hooks/useCart";
 import supabase from "utils/supabase";
+import useWishlist from "hooks/useWishlist";
 
 const Header = () => {
   const { user, logout } = useAuth();
-  const [searchQuery, setSearchQuery] = useState("");
-  const [cartCount, setCartCount] = useState(0);
   const { getCart } = useCart();
-
+  const { getWishlist } = useWishlist();
+  const [cartCount, setCartCount] = useState(0);
+  const [wishlistCount, setWishlistCount] = useState(0);
+  const [searchQuery, setSearchQuery] = useState("");
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [currentPath, setCurrentPath] = useState("/");
   const [showProfilePopup, setShowProfilePopup] = useState(false);
@@ -28,43 +30,65 @@ const Header = () => {
   const profileRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
-    const loadCart = async () => {
-      const { data, err } = await getCart(user?.id);
-      if (!err && data) {
-        setCartCount(data.length);
+    const loadCartAndWishlist = async () => {
+      if (user?.id) {
+        const [cartRes, wishlistRes] = await Promise.all([
+          getCart(user.id),
+          getWishlist(user.id),
+        ]);
+        if (!cartRes.err && cartRes.data) setCartCount(cartRes.data.length);
+        if (!wishlistRes.err && wishlistRes.data)
+          setWishlistCount(wishlistRes.data.length);
+      } else {
+        const guestCart = localStorage.getItem("guest_cart");
+        const guestWishlist = localStorage.getItem("guest_wishlist");
+        setCartCount(guestCart ? JSON.parse(guestCart).length : 0);
+        setWishlistCount(guestWishlist ? JSON.parse(guestWishlist).length : 0);
       }
     };
 
-    if (user?.id) {
-      loadCart();
+    loadCartAndWishlist();
 
-      const subscription = supabase
-        .channel("public:cart")
-        .on(
-          "postgres_changes",
-          {
-            event: "*",
-            schema: "public",
-            table: "cart",
-            filter: `user_id=eq.${user.id}`,
-          },
-          async () => {
-            const { data, err } = await getCart(user.id);
-            if (!err && data) {
-              setCartCount(data.length);
-            }
-          }
-        )
-        .subscribe();
+    if (!user?.id) return;
 
-      return () => {
-        supabase.removeChannel(subscription);
-      };
-    } else {
-      const cart = localStorage.getItem("guest_cart");
-      const items = cart ? JSON.parse(cart) : [];
-      setCartCount(items.length);
-    }
+    const cartSub = supabase
+      .channel("public:cart")
+      .on(
+        "postgres_changes",
+        {
+          event: "*",
+          schema: "public",
+          table: "cart",
+          filter: `user_id=eq.${user.id}`,
+        },
+        async () => {
+          const { data, err } = await getCart(user.id);
+          if (!err && data) setCartCount(data.length);
+        }
+      )
+      .subscribe();
+
+    const wishlistSub = supabase
+      .channel("public:wishlist")
+      .on(
+        "postgres_changes",
+        {
+          event: "*",
+          schema: "public",
+          table: "wishlist",
+          filter: `user_id=eq.${user.id}`,
+        },
+        async () => {
+          const { data, err } = await getWishlist(user.id);
+          if (!err && data) setWishlistCount(data.length);
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(cartSub);
+      supabase.removeChannel(wishlistSub);
+    };
   }, [user]);
 
   useEffect(() => {
@@ -175,10 +199,15 @@ const Header = () => {
           <div className="flex items-center gap-4">
             <a
               href="/user/wishlist"
-              className="text-gray-600 hover:text-[#007BFF]"
+              className="text-gray-600 hover:text-[#007BFF] relative"
               aria-label="Wishlist"
             >
               <BiHeart size={24} />
+              {wishlistCount > 0 && (
+                <span className="absolute -top-2 -right-2 bg-[#DC3545] text-white text-[10px] rounded-full w-4 h-4 flex items-center justify-center">
+                  {wishlistCount}
+                </span>
+              )}
             </a>
             <a
               href="/user/cart"
@@ -270,8 +299,17 @@ const Header = () => {
               </button>
             </div>
             <div className="flex items-center justify-around text-gray-600 relative">
-              <a href="/user/wishlist" aria-label="Wishlist">
+              <a
+                href="/user/wishlist"
+                className="relative"
+                aria-label="Wishlist"
+              >
                 <BiHeart size={24} />
+                {wishlistCount > 0 && (
+                  <span className="absolute -top-2 -right-2 bg-[#DC3545] text-white text-[10px] rounded-full w-4 h-4 flex items-center justify-center">
+                    {wishlistCount}
+                  </span>
+                )}
               </a>
               <a href="/user/cart" className="relative" aria-label="Cart">
                 <LuShoppingCart size={24} />

@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import supabase from "utils/supabase";
 import useProducts from "./useProducts";
 import useCart from "./useCart";
@@ -52,7 +52,21 @@ const useWishlist = () => {
           .select("*")
           .eq("user_id", user_id);
         if (error) throw new Error(error.message);
-        return { data: data ?? [], err: null };
+
+        const detailedProducts = await Promise.all(
+          (data ?? []).map(async (item: WishlistItem) => {
+            const { data: productDetails, err } = await GetProductById(
+              item.product_id
+            );
+            if (err) return null;
+            return { ...productDetails };
+          })
+        );
+
+        return {
+          data: detailedProducts.filter(Boolean) as DetailedWishlistItem[],
+          err: null,
+        };
       } else {
         const localWishlist = getLocalWishlist();
         const detailedProducts = await Promise.all(
@@ -180,6 +194,23 @@ const useWishlist = () => {
     }
   }
 
+  async function moveToCart(
+    product_id: string,
+    user_id?: string
+  ): Promise<ReturnType> {
+    try {
+      const addResult = await addToCart({ product_id, user_id, quantity: 1 });
+      if (addResult.err) throw new Error(addResult.err);
+
+      const removeResult = await removeFromWishlist(product_id, user_id);
+      if (removeResult.err) throw new Error(removeResult.err);
+
+      return { data: true, err: null };
+    } catch (error: unknown) {
+      return { data: null, err: String(error) };
+    }
+  }
+
   async function getRecommendedProducts(): Promise<ReturnType> {
     setIsLoading(true);
     try {
@@ -211,31 +242,14 @@ const useWishlist = () => {
     }
   }
 
-  async function moveToCart(
-    product_id: string,
-    user_id?: string
-  ): Promise<ReturnType> {
-    try {
-      const addResult = await addToCart({ product_id, user_id, quantity: 1 });
-      if (addResult.err) throw new Error(addResult.err);
-
-      const removeResult = await removeFromWishlist(product_id, user_id);
-      if (removeResult.err) throw new Error(removeResult.err);
-
-      return { data: true, err: null };
-    } catch (error: unknown) {
-      return { data: null, err: String(error) };
-    }
-  }
-
   return {
     getWishlist,
     addToWishlist,
     removeFromWishlist,
     clearWishlist,
-    getRecommendedProducts,
     syncGuestWishlistToUser,
     moveToCart,
+    getRecommendedProducts,
     isLoading,
   };
 };

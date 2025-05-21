@@ -6,6 +6,7 @@ import usecategory from "hooks/useCategories";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 import Alert from "components/Alert";
+import ClipLoader from "react-spinners/ClipLoader";
 
 type Category = {
   id: number;
@@ -20,6 +21,7 @@ const CategoryTable: React.FC = () => {
     NewCategory,
     UpdateCategory,
     getCategoryProducts,
+    DeleteCategory,
     isLoading,
   } = usecategory();
 
@@ -92,11 +94,19 @@ const CategoryTable: React.FC = () => {
     fetchCategories();
   }, []);
 
-  const handleAction = (action: string, id: number) => {
+  const handleAction = (action: string, id: number, name?: string) => {
     const category = categories.find((c) => c.id === id);
     if (!category) return;
     if (action === "delete")
-      showAlert("Deleted", `Category ${id} deleted`, "warning");
+      (async () => {
+        const res = await DeleteCategory(id.toString());
+        if (res.err) {
+          showAlert("Error", "Failed to delete category", "danger");
+        } else {
+          showAlert("Deleted", `Category ${name} deleted`, "warning");
+          await fetchCategories();
+        }
+      })();
     if (action === "copy-id") navigator.clipboard.writeText(id.toString());
     if (action === "edit") {
       setEditingCategory(category);
@@ -285,10 +295,19 @@ const CategoryTable: React.FC = () => {
                           Copy ID
                         </button>
                         <button
-                          onClick={() => handleAction("delete", category.id)}
+                          onClick={() =>
+                            handleAction("delete", category.id, category.name)
+                          }
                           className="block w-full text-left px-4 py-2 text-sm text-white bg-[#DC3545] hover:bg-[#C82333] rounded"
                         >
-                          Delete
+                          {isLoading ? (
+                            <span className="flex items-center gap-2">
+                              <ClipLoader size={16} color="#fff" />
+                              Deleting...
+                            </span>
+                          ) : (
+                            "Delete"
+                          )}
                         </button>
                       </motion.div>
                     )}

@@ -45,7 +45,7 @@ const MyOrders = () => {
             <p className="text-lg text-[#DC3545]">No orders found.</p>
           </div>
         ) : (
-          <div className="flex flex-col gap-y-6">
+          <div className="flex flex-col my-6">
             {orders.map((order) => (
               <OrderCard key={order.Order_id} order={order} />
             ))}

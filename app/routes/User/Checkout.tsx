@@ -34,6 +34,7 @@ const Checkout: React.FC = () => {
   const [city, setCity] = useState("");
   const [phone, setPhone] = useState("");
   const [email, setEmail] = useState("");
+  const [saveInfo, setSaveInfo] = useState(false);
   const [purchasedProducts, setPurchasedProducts] = useState<Product[]>([]);
   const [cartItems, setCartItems] = useState<any[]>([]);
   const [alertOpen, setAlertOpen] = useState(false);
@@ -54,7 +55,20 @@ const Checkout: React.FC = () => {
         setEmail(data.email || "");
       }
     };
-    fetchUserData();
+
+    if (user) {
+      fetchUserData();
+    } else {
+      const storedData = localStorage.getItem("checkout_form_data");
+      if (storedData) {
+        const parsed = JSON.parse(storedData);
+        setFullname(parsed.fullname || "");
+        setAddress(parsed.address || "");
+        setCity(parsed.city || "");
+        setPhone(parsed.phone || "");
+        setEmail(parsed.email || "");
+      }
+    }
   }, [user]);
 
   useEffect(() => {
@@ -123,6 +137,16 @@ const Checkout: React.FC = () => {
 
   const handleFormSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    if (!user && saveInfo) {
+      const formData = {
+        fullname,
+        address,
+        city,
+        phone,
+        email,
+      };
+      localStorage.setItem("checkout_form_data", JSON.stringify(formData));
+    }
     setShowAccountPopup(true);
   };
 
@@ -146,7 +170,6 @@ const Checkout: React.FC = () => {
     });
 
     if (err || !data) {
-      console.error("Error creating order:", err);
       setAlertType("danger");
       setAlertTitle("Order Failed");
       setAlertDesc("There was an issue placing your order. Please try again.");
@@ -266,7 +289,12 @@ const Checkout: React.FC = () => {
               ))}
 
               <label className="inline-flex items-center mt-2 text-sm text-gray-600">
-                <input type="checkbox" className="mr-2 accent-green-500" />
+                <input
+                  type="checkbox"
+                  className="mr-2 accent-green-500"
+                  checked={saveInfo}
+                  onChange={(e) => setSaveInfo(e.target.checked)}
+                />
                 Save this information for faster check-out next time
               </label>
 

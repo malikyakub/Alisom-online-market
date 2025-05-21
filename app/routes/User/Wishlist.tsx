@@ -20,34 +20,36 @@ const WishlistPage = () => {
   const [wishlistProducts, setWishlistProducts] = useState<any[]>([]);
   const [recommended, setRecommended] = useState<any[]>([]);
 
+  console.log("wishlistProducts", wishlistProducts);
+  console.log("recommended", recommended);
+
   useEffect(() => {
-    const fetchWishlist = async (userId: string) => {
+    const fetchWishlistData = async (userId: string) => {
       const { data, err } = await getWishlist(userId);
       if (err || !data) {
         setWishlistProducts([]);
         return;
       }
 
-      try {
-        const detailedProducts = await Promise.all(
-          data.map(async (item: any) => {
-            const productId = item.product_id || item.id;
-            const { data: productDetails, err: productErr } =
-              await GetProductById(productId);
-            if (productErr || !productDetails) return null;
-            const { data: ratingData } = await GetAverageRating(productId);
+      const detailedProducts = await Promise.all(
+        data.map(async (item: any) => {
+          const productId = item.product_id || item.id;
 
-            return {
-              ...productDetails,
-              rating: ratingData?.average ?? null,
-              ratingCount: ratingData?.count ?? 0,
-            };
-          })
-        );
-        setWishlistProducts(detailedProducts.filter(Boolean));
-      } catch {
-        setWishlistProducts([]);
-      }
+          const { data: productDetails, err: productErr } =
+            await GetProductById(productId);
+          if (productErr || !productDetails) return null;
+
+          const { data: ratingData } = await GetAverageRating(productId);
+
+          return {
+            ...productDetails,
+            rating: ratingData?.average ?? null,
+            ratingCount: ratingData?.count ?? 0,
+          };
+        })
+      );
+
+      setWishlistProducts(detailedProducts.filter(Boolean));
     };
 
     const fetchRecommendations = async () => {
@@ -57,30 +59,49 @@ const WishlistPage = () => {
         return;
       }
 
-      try {
-        const detailedRecommended = await Promise.all(
-          data.map(async (item: any) => {
-            const productId = item.product_id || item.id;
-            const { data: productDetails } = await GetProductById(productId);
-            const { data: ratingData } = await GetAverageRating(productId);
+      const detailedRecommended = await Promise.all(
+        data.map(async (item: any) => {
+          const productId = item.product_id || item.id;
 
-            return {
-              ...productDetails,
-              rating: ratingData?.average ?? null,
-              ratingCount: ratingData?.count ?? 0,
-            };
-          })
-        );
-        setRecommended(detailedRecommended.filter(Boolean));
-      } catch {
-        setRecommended([]);
-      }
+          const { data: productDetails } = await GetProductById(productId);
+          const { data: ratingData } = await GetAverageRating(productId);
+
+          return {
+            ...productDetails,
+            rating: ratingData?.average ?? null,
+            ratingCount: ratingData?.count ?? 0,
+          };
+        })
+      );
+
+      setRecommended(detailedRecommended.filter(Boolean));
     };
 
     if (user?.id) {
-      fetchWishlist(user.id);
+      fetchWishlistData(user.id);
     } else {
-      setWishlistProducts([]);
+      // For guest users, you can optionally load from localStorage:
+      const guestWishlist = localStorage.getItem("guest_wishlist");
+      const items = guestWishlist ? JSON.parse(guestWishlist) : [];
+
+      Promise.all(
+        items.map(async (item: any) => {
+          const productId = item.product_id || item.id;
+
+          const { data: productDetails, err } = await GetProductById(productId);
+          const { data: ratingData } = await GetAverageRating(productId);
+
+          if (err || !productDetails) return null;
+
+          return {
+            ...productDetails,
+            rating: ratingData?.average ?? null,
+            ratingCount: ratingData?.count ?? 0,
+          };
+        })
+      ).then((results) => {
+        setWishlistProducts(results.filter(Boolean));
+      });
     }
 
     fetchRecommendations();
