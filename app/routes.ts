@@ -14,6 +14,8 @@ export default [
     route("Products", "routes/User/Products.tsx"),
     route("Wishlist", "routes/User/Wishlist.tsx"),
     route("products/:productId", "routes/User/ProductDetails.tsx"),
+    route("orders", "routes/User/MyOrders.tsx"),
+    route("reviews", "routes/User/MyReviews.tsx"),
   ]),
 
   route("Admin", "routes/Admin/_layout.tsx", {}, [

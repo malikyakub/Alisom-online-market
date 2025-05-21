@@ -40,7 +40,8 @@ export default function Home() {
   const [canProdPrev, setCanProdPrev] = useState(false);
   const [prodVisibleCards, setProdVisibleCards] = useState(3);
 
-  const { GetFeaturedProducts, getFirstTen, isLoading } = useProducts();
+  const { GetFeaturedProducts, getFirstTen, isLoading, GetAverageRating } =
+    useProducts();
   const [featuredProducts, setFeaturedProducts] = useState<any[]>([]);
   const [allProducts, setAllProducts] = useState<any[]>([]);
 
@@ -127,11 +128,18 @@ export default function Home() {
   useEffect(() => {
     const now = new Date();
 
-    const enrich = (p: any) => {
+    const enrich = async (p: any) => {
       const createdAt = p.created_at ? new Date(p.created_at) : null;
       const isNew =
         createdAt &&
         (now.getTime() - createdAt.getTime()) / (1000 * 60 * 60 * 24) <= 7;
+
+      const { data: ratingData, err: ratingErr } = await GetAverageRating(
+        p.product_id
+      );
+      if (ratingErr) {
+        console.warn(`Failed to fetch rating for ${p.product_id}:`, ratingErr);
+      }
 
       return {
         id: p.product_id,
@@ -142,6 +150,8 @@ export default function Home() {
         category: p.category?.name,
         image: p.image ?? "",
         badge: p.discount ? `%${p.discount}` : isNew ? "New" : null,
+        rating: ratingData?.average ?? null,
+        ratingCount: ratingData?.count ?? 0,
       };
     };
 
@@ -152,10 +162,14 @@ export default function Home() {
       ]);
 
       if (!featuredRes.err && featuredRes.data) {
-        setFeaturedProducts(featuredRes.data.map(enrich));
+        const enrichedFeatured = await Promise.all(
+          featuredRes.data.map(enrich)
+        );
+        setFeaturedProducts(enrichedFeatured);
       }
       if (!allRes.err && allRes.data) {
-        setAllProducts(allRes.data.map(enrich));
+        const enrichedAll = await Promise.all(allRes.data.map(enrich));
+        setAllProducts(enrichedAll);
       }
     })();
   }, []);
@@ -222,6 +236,7 @@ export default function Home() {
                   oldPrice={p.oldPrice}
                   badge={p.badge}
                   featured
+                  rating={p.rating}
                 />
               </div>
             ))}
@@ -253,6 +268,7 @@ export default function Home() {
               oldPrice={product.oldPrice}
               badge={product.badge}
               productId={product.id}
+              rating={product.rating}
             />
           </div>
         ))}

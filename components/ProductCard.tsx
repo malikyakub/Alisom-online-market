@@ -3,6 +3,7 @@ import { BiCart, BiHeart, BiCheck, BiShow } from "react-icons/bi";
 import { AiFillStar, AiOutlineStar, AiTwotoneStar } from "react-icons/ai";
 import useCart from "hooks/useCart";
 import useAuth from "hooks/useAuth";
+import useWishlist from "hooks/useWishlist";
 import Alert from "components/Alert";
 
 type ProductCardProps = {
@@ -31,35 +32,36 @@ const ProductCard = ({
   const [isInCart, setIsInCart] = useState(false);
   const [isInWishlist, setIsInWishlist] = useState(false);
   const [alertOpen, setAlertOpen] = useState(false);
+  const [wishlistAlertOpen, setWishlistAlertOpen] = useState(false);
   const { addToCart } = useCart();
+  const { addToWishlist } = useWishlist();
   const { user } = useAuth();
 
   const handleAddToCart = async () => {
     setIsInCart(true);
-
     await addToCart({
       product_id: productId,
       quantity: 1,
       ...(user?.id ? { user_id: user.id } : {}),
     });
-
     setAlertOpen(true);
-
     setTimeout(() => setIsInCart(false), 2000);
   };
 
-  const handleAddToWishlist = () => {
+  const handleAddToWishlist = async () => {
     setIsInWishlist(true);
+    await addToWishlist({
+      product_id: productId,
+      ...(user?.id ? { user_id: user.id } : {}),
+    });
+    setWishlistAlertOpen(true);
     setTimeout(() => setIsInWishlist(false), 2000);
   };
 
   const renderStars = () => {
-    if (rating == null) return null;
-
     const stars = [];
     const fullStars = Math.floor(rating);
     const hasHalf = rating % 1 >= 0.5;
-
     for (let i = 0; i < 5; i++) {
       if (i < fullStars) {
         stars.push(<AiFillStar key={i} className="text-[#FFD700]" />);
@@ -69,7 +71,6 @@ const ProductCard = ({
         stars.push(<AiOutlineStar key={i} className="text-[#FFD700]" />);
       }
     }
-
     return <div className="flex items-center gap-1">{stars}</div>;
   };
 
@@ -84,7 +85,13 @@ const ProductCard = ({
         isOpen={alertOpen}
         onClose={() => setAlertOpen(false)}
       />
-
+      <Alert
+        title="Added to Wishlist"
+        description={`"${name}" has been added to your wishlist.`}
+        type="info"
+        isOpen={wishlistAlertOpen}
+        onClose={() => setWishlistAlertOpen(false)}
+      />
       <div className="relative bg-white w-[230px] h-[360px] rounded shadow hover:shadow-md transition overflow-hidden group flex flex-col">
         {featured && (
           <>
@@ -99,7 +106,6 @@ const ProductCard = ({
                 {badge}
               </div>
             )}
-
             <div className="absolute top-2 right-2 flex flex-col gap-2 z-10">
               <button
                 onClick={handleAddToWishlist}
@@ -111,7 +117,6 @@ const ProductCard = ({
               >
                 <BiHeart className="text-white text-xl" />
               </button>
-
               <a
                 href={productLink}
                 className="p-1.5 rounded-full bg-[#007BFF]/20 hover:bg-[#007BFF]/30 transition"
@@ -121,11 +126,9 @@ const ProductCard = ({
             </div>
           </>
         )}
-
-        <div className="w-full h-[240px] overflow-hidden">
+        <a href={productLink} className="w-full h-[240px] overflow-hidden">
           <img src={image} alt={name} className="w-full h-full object-cover" />
-        </div>
-
+        </a>
         <div className="flex flex-col p-2">
           <h1 className="text-lg font-bold text-[#1A2238] truncate">{name}</h1>
           <div className="flex flex-row gap-2 items-center">
@@ -138,7 +141,6 @@ const ProductCard = ({
           </div>
           {renderStars()}
         </div>
-
         <button
           onClick={handleAddToCart}
           className={`absolute bottom-0 w-full py-2 text-white font-medium transition-all duration-300 ${

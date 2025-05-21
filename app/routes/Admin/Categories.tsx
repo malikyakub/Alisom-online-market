@@ -1,8 +1,11 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { FaPlusCircle } from "react-icons/fa";
 import AddCategoryModal from "components/AddCategoryModal";
-
+import usecategory from "hooks/useCategories";
+import dayjs from "dayjs";
+import relativeTime from "dayjs/plugin/relativeTime";
+import Alert from "components/Alert";
 
 type Category = {
   id: number;
@@ -11,32 +14,98 @@ type Category = {
   dateAdded: string;
 };
 
-const initialCategories: Category[] = Array.from({ length: 14 }).map(
-  (_, i) => ({
-    id: i + 1,
-    name: `Category ${i + 1}`,
-    products: 5 + i,
-    dateAdded: `202${i % 5}-01-01`,
-  })
-);
-
 const CategoryTable: React.FC = () => {
+  const {
+    Allcategory,
+    NewCategory,
+    UpdateCategory,
+    getCategoryProducts,
+    isLoading,
+  } = usecategory();
+
+  const [categories, setCategories] = useState<Category[]>([]);
   const [selectedIds, setSelectedIds] = useState<Set<number>>(new Set());
   const [dropdownOpenId, setDropdownOpenId] = useState<number | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const rowsPerPage = 12;
-  const totalPages = Math.ceil(initialCategories.length / rowsPerPage);
-
+  const totalPages = Math.ceil(categories.length / rowsPerPage);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [editingCategory, setEditingCategory] = useState<Category | null>(null);
+  const [alert, setAlert] = useState<{
+    title: string;
+    description: string;
+    type?: "success" | "warning" | "danger" | "info";
+    isOpen: boolean;
+  }>({
+    title: "",
+    description: "",
+    type: "info",
+    isOpen: false,
+  });
+
+  const showAlert = (
+    title: string,
+    description: string,
+    type: "success" | "warning" | "danger" | "info" = "info"
+  ) => {
+    setAlert({ title, description, type, isOpen: true });
+  };
+
+  dayjs.extend(relativeTime);
+
+  const formatDate = (dateString: string) => {
+    const date = dayjs(dateString);
+    const today = dayjs().startOf("day");
+    const yesterday = today.subtract(1, "day");
+    if (date.isSame(today, "day")) return "today";
+    if (date.isSame(yesterday, "day")) return "yesterday";
+    return date.format("DD/MM/YYYY");
+  };
+
+  const fetchCategories = async () => {
+    try {
+      const res = await Allcategory();
+      if (!res.data) {
+        console.error("Failed to load categories:", res.err);
+        return;
+      }
+      const categoriesWithCounts = await Promise.all(
+        res.data.map(async (c: any) => {
+          const productRes = await getCategoryProducts(c.category_id);
+          const productCount = productRes.data ? productRes.data.length : 0;
+          return {
+            id: c.category_id,
+            name: c.name,
+            products: productCount,
+            dateAdded: formatDate(c.Added_date),
+          };
+        })
+      );
+      setCategories(categoriesWithCounts);
+    } catch (error) {
+      console.error("Unexpected error loading categories:", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchCategories();
+  }, []);
+
   const handleAction = (action: string, id: number) => {
-    if (action === "delete") alert(`Delete category ${id}`);
+    const category = categories.find((c) => c.id === id);
+    if (!category) return;
+    if (action === "delete")
+      showAlert("Deleted", `Category ${id} deleted`, "warning");
     if (action === "copy-id") navigator.clipboard.writeText(id.toString());
-    if (action === "edit") alert(`Edit category ${id}`);
+    if (action === "edit") {
+      setEditingCategory(category);
+      setIsModalOpen(true);
+    }
     setDropdownOpenId(null);
   };
 
-  const filtered = initialCategories.filter((c) =>
+  const filtered = categories.filter((c) =>
     c.name.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
@@ -78,15 +147,29 @@ const CategoryTable: React.FC = () => {
   };
 
   const handleAddCategory = () => {
+    setEditingCategory(null);
     setIsModalOpen(true);
   };
 
-  const closeModal = () => {
+  const handleSaveCategory = async (name: string) => {
+    if (editingCategory) {
+      const res = await UpdateCategory(editingCategory.id.toString(), { name });
+      if (res.err)
+        return showAlert("Error", "Failed to update category", "danger");
+      showAlert("Success", "Category updated successfully", "success");
+    } else {
+      const res = await NewCategory({ name });
+      if (res.err)
+        return showAlert("Error", "Failed to add category", "danger");
+      showAlert("Success", "Category added successfully", "success");
+    }
+    await fetchCategories();
     setIsModalOpen(false);
+    setEditingCategory(null);
   };
 
   return (
-    <div className="">
+    <div>
       <div className="flex flex-wrap flex-row justify-between items-start sm:items-center mb-6 gap-2">
         <div>
           <h1 className="text-3xl font-bold text-[#1A2238]">
@@ -160,13 +243,16 @@ const CategoryTable: React.FC = () => {
                 <td className="px-4 py-3 font-semibold text-[#333] w-fit whitespace-nowrap">
                   {category.name}
                 </td>
-                <td className="px-4 py-3 text-[#333] w-fit text-center whitespace-nowrap">
-                  {category.products}
+                <td className="px-4 py-3 text-[#333] w-fit whitespace-nowrap">
+                  <span className="font-bold">{category.products}</span>
+                  <span className="ml-1">
+                    {category.products === 1 ? "product" : "products"}
+                  </span>
                 </td>
-                <td className="px-4 py-3 text-[#333] w-fit text-right whitespace-nowrap">
+                <td className="px-4 py-3 text-[#333] w-fit whitespace-nowrap">
                   {category.dateAdded}
                 </td>
-                <td className="px-4 py-3 text-right relative w-fit whitespace-nowrap">
+                <td className="px-4 py-3 relative w-fit text-right whitespace-nowrap">
                   <button
                     onClick={() =>
                       setDropdownOpenId((prev) =>
@@ -177,7 +263,6 @@ const CategoryTable: React.FC = () => {
                   >
                     ⋯
                   </button>
-
                   <AnimatePresence>
                     {dropdownOpenId === category.id && (
                       <motion.div
@@ -213,6 +298,7 @@ const CategoryTable: React.FC = () => {
             ))}
           </tbody>
         </table>
+
         <div className="p-4 bg-[#F4F4F4] flex flex-col sm:flex-row justify-between items-center text-sm text-[#333] gap-2 border-t">
           <p>
             {selectedIds.size > 0
@@ -244,11 +330,29 @@ const CategoryTable: React.FC = () => {
           </div>
         </div>
       </div>
+
       <AnimatePresence>
         {isModalOpen && (
-          <AddCategoryModal isOpen={isModalOpen} onClose={closeModal} />
+          <AddCategoryModal
+            isLoading={isLoading}
+            isOpen={isModalOpen}
+            onClose={() => {
+              setIsModalOpen(false);
+              setEditingCategory(null);
+            }}
+            onSave={handleSaveCategory}
+            initialName={editingCategory?.name || ""}
+          />
         )}
       </AnimatePresence>
+
+      <Alert
+        title={alert.title}
+        description={alert.description}
+        type={alert.type}
+        isOpen={alert.isOpen}
+        onClose={() => setAlert((prev) => ({ ...prev, isOpen: false }))}
+      />
     </div>
   );
 };

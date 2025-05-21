@@ -7,6 +7,7 @@ import Alert from "./Alert";
 import useProducts from "hooks/useProducts";
 import useCart from "hooks/useCart";
 import useAuth from "hooks/useAuth";
+import useWishlist from "hooks/useWishlist";
 
 interface Product {
   product_id: string;
@@ -30,7 +31,7 @@ const ProductFullDetails: React.FC<Props> = ({
   quantity,
   onQuantityChange,
 }) => {
-  const [viewingReviews, setViewingReviews] = useState(false);
+  const [viewingReviews, setViewingReviews] = useState(true);
   const [wishlistAlert, setWishlistAlert] = useState(false);
   const [cartAlert, setCartAlert] = useState(false);
   const [wishActive, setWishActive] = useState(false);
@@ -40,10 +41,15 @@ const ProductFullDetails: React.FC<Props> = ({
   const { GetAverageRating } = useProducts();
   const { addToCart } = useCart();
   const { user } = useAuth();
+  const { addToWishlist } = useWishlist();
 
-  const handleAddToWishlist = () => {
+  const handleAddToWishlist = async () => {
     setWishlistAlert(true);
     setWishActive(true);
+    await addToWishlist({
+      user_id: user?.id,
+      product_id: product.product_id,
+    });
     setTimeout(() => setWishActive(false), 2000);
   };
 
