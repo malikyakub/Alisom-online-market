@@ -5,6 +5,7 @@ import Heading from "components/Heading";
 import CategoryCard from "components/CategoryCard";
 import HerCard from "components/HerCard";
 import ProductCard from "components/ProductCard";
+import ProductCardSkeleton from "components/skeletons/ProductCardSkeleton";
 
 import {
   FaLaptop,
@@ -40,7 +41,7 @@ export default function Home() {
   const [canProdPrev, setCanProdPrev] = useState(false);
   const [prodVisibleCards, setProdVisibleCards] = useState(3);
 
-  const { GetFeaturedProducts, getFirstTen, isLoading, GetAverageRating } =
+  const { GetFeaturedProducts, getFirstEight, isLoading, GetAverageRating } =
     useProducts();
   const [featuredProducts, setFeaturedProducts] = useState<any[]>([]);
   const [allProducts, setAllProducts] = useState<any[]>([]);
@@ -107,6 +108,7 @@ export default function Home() {
       return next;
     });
   };
+
   useEffect(() => {
     const resizeObserver = new ResizeObserver(() => {
       if (categoryRef.current) {
@@ -158,7 +160,7 @@ export default function Home() {
     (async () => {
       const [featuredRes, allRes] = await Promise.all([
         GetFeaturedProducts(),
-        getFirstTen(),
+        getFirstEight(),
       ]);
 
       if (!featuredRes.err && featuredRes.data) {
@@ -219,7 +221,15 @@ export default function Home() {
         ref={productRef}
       >
         {isLoading ? (
-          <div className="text-white text-center">Loading products...</div>
+          <motion.div className="flex gap-4">
+            {Array(prodVisibleCards)
+              .fill(null)
+              .map((_, i) => (
+                <div key={i} className="min-w-[230px]">
+                  <ProductCardSkeleton />
+                </div>
+              ))}
+          </motion.div>
         ) : featuredProducts.length ? (
           <motion.div
             className="flex gap-4"
@@ -255,23 +265,42 @@ export default function Home() {
       />
 
       <div className="flex flex-wrap gap-4">
-        {allProducts.map((product) => (
-          <div
-            key={product.id}
-            className="w-[calc(50%-8px)] sm:w-[calc(50%-8px)] md:w-[calc(33.333%-11px)] lg:w-[calc(25%-12px)]"
+        {isLoading
+          ? Array(8)
+              .fill(null)
+              .map((_, i) => (
+                <div
+                  key={i}
+                  className="w-[calc(50%-8px)] sm:w-[calc(50%-8px)] md:w-[calc(33.333%-11px)] lg:w-[calc(25%-12px)]"
+                >
+                  <ProductCardSkeleton />
+                </div>
+              ))
+          : allProducts.map((product) => (
+              <div
+                key={product.id}
+                className="w-[calc(50%-8px)] sm:w-[calc(50%-8px)] md:w-[calc(33.333%-11px)] lg:w-[calc(25%-12px)]"
+              >
+                <ProductCard
+                  featured={false}
+                  image={product.image}
+                  name={product.name}
+                  price={product.price}
+                  oldPrice={product.oldPrice}
+                  badge={product.badge}
+                  productId={product.id}
+                  rating={product.rating}
+                />
+              </div>
+            ))}
+        <div className="w-full flex justify-center mt-6">
+          <a
+            className="px-6 py-2 bg-[#007BFF] text-white rounded hover:bg-blue-700 transition"
+            href="/user/products"
           >
-            <ProductCard
-              featured={false}
-              image={product.image}
-              name={product.name}
-              price={product.price}
-              oldPrice={product.oldPrice}
-              badge={product.badge}
-              productId={product.id}
-              rating={product.rating}
-            />
-          </div>
-        ))}
+            View All
+          </a>
+        </div>
       </div>
     </div>
   );

@@ -31,15 +31,19 @@ const MyOrders = () => {
         imageSrc="/assets/images/order-carboard.png"
         gradient="from-gray-900 via-gray-800 to-gray-900"
       />
-      <div className="container mx-auto mt-10 space-y-6">
+      <div>
         {!user ? (
-          <p className="text-lg text-[#FFC107]">
-            Please log in to see your Orders.
-          </p>
+          <div className="w-full h-screen flex py-4">
+            <p className="text-lg text-[#FFC107]">
+              Please log in to see your Orders.
+            </p>
+          </div>
         ) : isLoading ? (
           <p className="text-lg">Loading...</p>
         ) : orders.length === 0 ? (
-          <p className="text-lg text-[#DC3545]">No orders found.</p>
+          <div className="w-full h-screen flex py-4">
+            <p className="text-lg text-[#DC3545]">No orders found.</p>
+          </div>
         ) : (
           <div className="flex flex-col gap-y-6">
             {orders.map((order) => (

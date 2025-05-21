@@ -64,9 +64,11 @@ const MyReviews = () => {
 
   if (!user) {
     return (
-      <p className="text-lg text-yellow-500">
-        Please log in to see your reviews.
-      </p>
+      <div className="w-full h-screen flex py-4">
+        <p className="text-lg text-yellow-500">
+          Please log in to see your reviews.
+        </p>
+      </div>
     );
   }
 

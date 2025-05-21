@@ -6,7 +6,14 @@ import { useNavigate } from "react-router";
 import useAuth from "hooks/useAuth";
 import useUsers from "hooks/useUsers";
 
-const ProfilePopup = () => {
+interface ProfilePopupProps {
+  isOpen?: boolean;
+  onClose?: () => void;
+}
+
+const ProfilePopup = ({ isOpen = false, onClose }: ProfilePopupProps) => {
+  if (!isOpen) return null;
+
   const { user, logout } = useAuth();
   const { GetUserById } = useUsers();
   const navigate = useNavigate();
@@ -31,12 +38,14 @@ const ProfilePopup = () => {
 
   const handleNavigate = (path: string) => {
     navigate(path);
+    onClose?.();
   };
 
   const handleLogout = async () => {
     try {
       await logout();
       navigate("/login");
+      onClose?.();
     } catch (err) {
       console.error("Logout failed:", err);
     }

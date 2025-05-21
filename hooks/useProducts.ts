@@ -268,7 +268,7 @@ const useProducts = () => {
     return { data: uploadedUrls, err: null };
   }
 
-  async function getFirstTen(): Promise<ReturnType<any[]>> {
+  async function getFirstEight(): Promise<ReturnType<any[]>> {
     setIsLoading(true);
     try {
       const { data, error } = await supabase
@@ -281,7 +281,7 @@ const useProducts = () => {
         images:product_images ( image_url )
       `
         )
-        .limit(10);
+        .limit(8);
 
       if (error) throw error;
 
@@ -391,7 +391,7 @@ const useProducts = () => {
     UpdateProduct,
     NewProduct,
     UploadProductImages,
-    getFirstTen,
+    getFirstEight,
     GetProductImages,
     GetRelatedProducts,
     GetAverageRating,

@@ -1,50 +1,8 @@
-import React, { useState } from "react";
-import ProductsHero from "components/ProductsAndOrdersHero";
-import FeaturedProductCard from "components/FeaturedProductCard";
-import ProductFilter from "components/ProductFilter";
+import React, { useEffect, useState } from "react";
 import ProductsAndOrdersHero from "components/ProductsAndOrdersHero";
-
-const dummyProducts = [
-  {
-    image:
-      "https://i.pinimg.com/736x/85/26/c6/8526c60791e3ff70d937b35562fc3fc3.jpg",
-    title: "Smart Table Clock",
-    price: 79.99,
-    rating: 4,
-    category: "Wearable",
-    brand: "Xiaomi",
-    isFreeShipping: true,
-    isOnDiscount: true,
-    isNewArrival: false,
-    color: "Blue",
-  },
-  {
-    image:
-      "https://i.pinimg.com/736x/b2/d6/d5/b2d6d5389618f8087147c49bc5a56b68.jpg",
-    title: "Lenovo USB-C Charger",
-    price: 59.99,
-    rating: 5,
-    category: "PC",
-    brand: "Lenovo",
-    isFreeShipping: false,
-    isOnDiscount: false,
-    isNewArrival: true,
-    color: "Black",
-  },
-  {
-    image:
-      "https://i.pinimg.com/736x/23/d0/b9/23d0b9da6bbc74b5c3554bf5683c992e.jpg",
-    title: "Lenovo Laptop",
-    price: 120,
-    rating: 3,
-    category: "PC",
-    brand: "Lenovo",
-    isFreeShipping: true,
-    isOnDiscount: true,
-    isNewArrival: true,
-    color: "White",
-  },
-];
+import ProductCard from "components/ProductCard";
+import ProductFilter from "components/ProductFilter";
+import useProducts from "hooks/useProducts";
 
 const Products = () => {
   const [filters, setFilters] = useState<{
@@ -56,49 +14,50 @@ const Products = () => {
     discount: number[];
   } | null>(null);
 
+  const { AllProducts, isLoading } = useProducts();
+  const [products, setProducts] = useState<any[]>([]);
+
   const handleApplyFilters = (appliedFilters: any) => {
-    setFilters(appliedFilters);
+    const defaultedFilters = {
+      priceRange: appliedFilters.priceRange || [0, 5000],
+      rating: appliedFilters.rating || [0, 5],
+      categories: appliedFilters.categories || [],
+      brands: appliedFilters.brands || [],
+      colors: appliedFilters.colors || [],
+      discount: appliedFilters.discount || [],
+    };
+    setFilters(defaultedFilters);
   };
 
+  useEffect(() => {
+    const fetchProducts = async () => {
+      const { data, err } = await AllProducts();
+      if (!err) {
+        setProducts(data ?? []);
+      } else {
+        console.error(err);
+      }
+    };
+    fetchProducts();
+  }, []);
+
   const filteredProducts = filters
-    ? dummyProducts.filter((product) => {
+    ? products.filter((product) => {
         const withinPrice =
           product.price >= filters.priceRange[0] &&
           product.price <= filters.priceRange[1];
 
-        const withinRating =
-          product.rating >= filters.rating[0] &&
-          product.rating <= filters.rating[1];
-
         const matchesCategory =
           filters.categories.length === 0 ||
-          filters.categories.includes(product.category);
+          filters.categories.includes(product.category?.name);
 
         const matchesBrand =
-          filters.brands.length === 0 || filters.brands.includes(product.brand);
+          filters.brands.length === 0 ||
+          filters.brands.includes(product.brand?.name);
 
-        const matchesColor =
-          filters.colors.length === 0 ||
-          filters.colors.some(
-            (color) =>
-              product.color?.toLowerCase() === color.toLowerCase() ||
-              product.title.toLowerCase().includes(color.toLowerCase())
-          );
-
-        const matchesDiscount =
-          filters.discount.length === 0 ||
-          (filters.discount.includes(10) && product.isOnDiscount);
-
-        return (
-          withinPrice &&
-          withinRating &&
-          matchesCategory &&
-          matchesBrand &&
-          matchesColor &&
-          matchesDiscount
-        );
+        return withinPrice && matchesCategory && matchesBrand;
       })
-    : dummyProducts;
+    : products;
 
   return (
     <div>
@@ -107,19 +66,30 @@ const Products = () => {
         subtitle="High-quality items designed to elevate your lifestyle."
         imageSrc="/assets/images/airpods.png"
       />
-
-      <div className="mt-4 flex flex-col md:flex-row gap-4">
-        <div className="w-full md:w-1/4">
+      <div className="my-4 flex flex-col md:flex-row gap-4">
+        <div className="w-full md:w-1/4 sticky top-0">
           <ProductFilter onApplyFilters={handleApplyFilters} />
         </div>
-
-        <div className="p-4 flex-1 bg-red-50 rounded-lg shadow flex flex-wrap gap-4">
-          {filteredProducts.length ? (
+        <div className="p-4 flex-1 bg-[#17C3B2]/10 rounded shadow flex flex-wrap gap-4">
+          {isLoading ? (
+            <p>Loading...</p>
+          ) : filteredProducts.length ? (
             filteredProducts.map((product, idx) => (
-              <FeaturedProductCard key={idx} {...product} />
+              <ProductCard
+                key={product.id || idx}
+                image={product.image}
+                name={product.name}
+                price={product.price}
+                oldPrice={product.old_price}
+                rating={product.rating}
+                featured={product.featured || false}
+                productId={product.product_id}
+              />
             ))
           ) : (
-            <p>No products match your filters.</p>
+            <div className="w-full h-screen flex py-4">
+              <p className="text-[#FFC107]">That's why you're single.</p>
+            </div>
           )}
         </div>
       </div>

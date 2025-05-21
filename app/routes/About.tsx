@@ -99,7 +99,7 @@ const About: React.FC = () => {
         aria-labelledby="our-story-title"
         className="flex flex-col lg:flex-row gap-10 items-center"
       >
-        <div className="flex-1 space-y-6">
+        <div className="flex-1 lg:w-1/2 space-y-6">
           <h2
             id="our-story-title"
             className="text-3xl font-bold text-[#1A2238]"
@@ -119,12 +119,14 @@ const About: React.FC = () => {
             market dominance.
           </p>
         </div>
-        <div className="flex-1">
-          <img
-            src="https://i.pinimg.com/736x/09/8c/68/098c68ef387f3f3950f5b40183468656.jpg"
-            alt="Illustration representing Our Story"
-            className="w-full rounded-lg object-cover"
-          />
+        <div className="flex-1 lg:w-1/2 flex justify-center">
+          <div className="w-[350px] h-[350px] relative rounded-lg overflow-hidden">
+            <img
+              src="/assets/images/store.png"
+              alt="Illustration representing Our Story"
+              className="w-full h-full object-cover"
+            />
+          </div>
         </div>
       </section>
 
