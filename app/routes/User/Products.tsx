@@ -1,125 +1,103 @@
-import React, { useState } from "react";
-import ProductsHero from "components/ProductsAndOrdersHero";
-import FeaturedProductCard from "components/FeaturedProductCard";
-import ProductFilter from "components/ProductFilter";
+import React, { useEffect, useState } from "react";
 import ProductsAndOrdersHero from "components/ProductsAndOrdersHero";
-
-const dummyProducts = [
-  {
-    image:
-      "https://i.pinimg.com/736x/85/26/c6/8526c60791e3ff70d937b35562fc3fc3.jpg",
-    title: "Smart Table Clock",
-    price: 79.99,
-    rating: 4,
-    category: "Wearable",
-    brand: "Xiaomi",
-    isFreeShipping: true,
-    isOnDiscount: true,
-    isNewArrival: false,
-    color: "Blue",
-  },
-  {
-    image:
-      "https://i.pinimg.com/736x/b2/d6/d5/b2d6d5389618f8087147c49bc5a56b68.jpg",
-    title: "Lenovo USB-C Charger",
-    price: 59.99,
-    rating: 5,
-    category: "PC",
-    brand: "Lenovo",
-    isFreeShipping: false,
-    isOnDiscount: false,
-    isNewArrival: true,
-    color: "Black",
-  },
-  {
-    image:
-      "https://i.pinimg.com/736x/23/d0/b9/23d0b9da6bbc74b5c3554bf5683c992e.jpg",
-    title: "Lenovo Laptop",
-    price: 120,
-    rating: 3,
-    category: "PC",
-    brand: "Lenovo",
-    isFreeShipping: true,
-    isOnDiscount: true,
-    isNewArrival: true,
-    color: "White",
-  },
-];
+import ProductCard from "components/ProductCard";
+import ProductFilter from "components/ProductFilter";
+import { useFilterProducts } from "hooks/useFilterProducts";
+import type { FilterValues } from "components/ProductFilter";
 
 const Products = () => {
-  const [filters, setFilters] = useState<{
-    priceRange: number[];
-    rating: number[];
-    categories: string[];
-    brands: string[];
-    colors: string[];
-    discount: number[];
-  } | null>(null);
+  const [filters, setFilters] = useState<FilterValues>({
+    query: "",
+    priceRange: [0, 5000],
+    rating: [0, 5],
+    categories: [],
+    brands: [],
+    colors: [],
+    discount: [],
+    sortBy: undefined,
+  });
 
-  const handleApplyFilters = (appliedFilters: any) => {
-    setFilters(appliedFilters);
+  const { FilterProducts, isLoading } = useFilterProducts();
+  const [products, setProducts] = useState<any[]>([]);
+
+  const handleApplyFilters = (appliedFilters: FilterValues) => {
+    setFilters((prev) => ({ ...prev, ...appliedFilters }));
   };
 
-  const filteredProducts = filters
-    ? dummyProducts.filter((product) => {
-        const withinPrice =
-          product.price >= filters.priceRange[0] &&
-          product.price <= filters.priceRange[1];
-
-        const withinRating =
-          product.rating >= filters.rating[0] &&
-          product.rating <= filters.rating[1];
-
-        const matchesCategory =
-          filters.categories.length === 0 ||
-          filters.categories.includes(product.category);
-
-        const matchesBrand =
-          filters.brands.length === 0 || filters.brands.includes(product.brand);
-
-        const matchesColor =
-          filters.colors.length === 0 ||
-          filters.colors.some(
-            (color) =>
-              product.color?.toLowerCase() === color.toLowerCase() ||
-              product.title.toLowerCase().includes(color.toLowerCase())
-          );
-
-        const matchesDiscount =
-          filters.discount.length === 0 ||
-          (filters.discount.includes(10) && product.isOnDiscount);
-
-        return (
-          withinPrice &&
-          withinRating &&
-          matchesCategory &&
-          matchesBrand &&
-          matchesColor &&
-          matchesDiscount
-        );
-      })
-    : dummyProducts;
+  useEffect(() => {
+    const fetchProducts = async () => {
+      const { data, err } = await FilterProducts({
+        query: filters.query,
+        minPrice: filters.priceRange[0],
+        maxPrice: filters.priceRange[1],
+        sortBy: ["most_sold", "top_rated", "price_asc", "price_desc"].includes(
+          filters.sortBy as string
+        )
+          ? (filters.sortBy as
+              | "most_sold"
+              | "top_rated"
+              | "price_asc"
+              | "price_desc")
+          : undefined,
+      });
+      if (!err && data) {
+        const filteredByCategoryBrandRating = data.filter((product) => {
+          const matchesCategory =
+            filters.categories.length === 0 ||
+            filters.categories.includes(product.category?.name);
+          const matchesBrand =
+            filters.brands.length === 0 ||
+            filters.brands.includes(product.brand?.name);
+          const withinRating =
+            typeof product.average_rating === "number" &&
+            product.average_rating >= filters.rating[0] &&
+            product.average_rating <= filters.rating[1];
+          return matchesCategory && matchesBrand && withinRating;
+        });
+        setProducts(filteredByCategoryBrandRating);
+      } else {
+        setProducts([]);
+      }
+    };
+    fetchProducts();
+  }, [filters]);
 
   return (
-    <div>
+    <div className="mb-4">
       <ProductsAndOrdersHero
         title="Discover Our Premium Products"
         subtitle="High-quality items designed to elevate your lifestyle."
         imageSrc="/assets/images/airpods.png"
       />
-
       <div className="mt-4 flex flex-col md:flex-row gap-4">
         <div className="w-full md:w-1/4">
-          <ProductFilter onApplyFilters={handleApplyFilters} />
+          <ProductFilter
+            filters={filters}
+            onFiltersChange={handleApplyFilters}
+          />
         </div>
-
         <div className="p-4 flex-1 bg-red-50 rounded-lg shadow flex flex-wrap gap-4">
-          {filteredProducts.length ? (
-            filteredProducts.map((product, idx) => (
-              <FeaturedProductCard key={idx} {...product} />
+          {isLoading ? (
+            <p>Loading...</p>
+          ) : products.length ? (
+            products.map((product, idx) => (
+              <ProductCard
+                key={product.product_id || idx}
+                image={product.image}
+                name={product.name}
+                price={product.price}
+                oldPrice={product.old_price}
+                rating={product.average_rating || 0}
+                featured={product.featured || false}
+                badge=""
+                badgeColor=""
+                productId={product.product_id}
+              />
             ))
           ) : (
-            <p>No products match your filters.</p>
+            <div className="w-full h-screen flex py-4">
+              <p className="text-[#FFC107]">That's why you're single.</p>
+            </div>
           )}
         </div>
       </div>

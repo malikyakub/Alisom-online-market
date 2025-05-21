@@ -64,9 +64,11 @@ const MyReviews = () => {
 
   if (!user) {
     return (
-      <p className="text-lg text-yellow-500">
-        Please log in to see your reviews.
-      </p>
+      <div className="w-full h-screen flex py-4">
+        <p className="text-lg text-yellow-500">
+          Please log in to see your reviews.
+        </p>
+      </div>
     );
   }
 
@@ -76,14 +78,17 @@ const MyReviews = () => {
 
   if (error) {
     return (
-      <p className="text-lg text-red-600">Error loading reviews: {error}</p>
+      <div className="w-full h-screen flex py-4">
+        <p className="text-lg text-red-600">Error loading reviews: {error}</p>
+      </div>
     );
   }
 
   if (reviews.length === 0) {
-    return <p className="text-lg">You have not posted any reviews yet.</p>;
+    <div className="w-full h-screen flex py-4">
+      return <p className="text-lg">You have not posted any reviews yet.</p>;
+    </div>;
   }
-
   return (
     <div className="w-full p-4">
       <h2 className="text-2xl font-bold mb-6">My Reviews</h2>

@@ -121,7 +121,6 @@ const Header = () => {
         isOpen={alertOpen}
         onClose={() => setAlertOpen(false)}
       />
-
       <div className="max-w-[1170px] mx-auto py-4 px-6 flex items-center justify-between gap-6">
         <a href="/">
           <img
@@ -130,7 +129,6 @@ const Header = () => {
             className="w-10 h-10 object-contain"
           />
         </a>
-
         <nav className="hidden md:flex flex-1 justify-center">
           <ul className="flex items-center gap-6 text-sm sm:text-base font-medium">
             {navItems.map((item) => (
@@ -156,7 +154,6 @@ const Header = () => {
             ))}
           </ul>
         </nav>
-
         <div className="hidden sm:flex items-center gap-6 relative">
           <div className="bg-white/20 hover:shadow-md transition-shadow duration-200 p-2 px-4 rounded-lg flex items-center gap-3">
             <input
@@ -175,7 +172,6 @@ const Header = () => {
               <BiSearch size={20} />
             </button>
           </div>
-
           <div className="flex items-center gap-4">
             <a
               href="/user/wishlist"
@@ -184,7 +180,6 @@ const Header = () => {
             >
               <BiHeart size={24} />
             </a>
-
             <a
               href="/user/cart"
               className="text-gray-600 hover:text-[#007BFF] relative"
@@ -197,7 +192,6 @@ const Header = () => {
                 </span>
               )}
             </a>
-
             <div className="relative" ref={profileRef}>
               <button
                 className="text-gray-600 hover:text-[#007BFF]"
@@ -208,13 +202,15 @@ const Header = () => {
               </button>
               {showProfilePopup && (
                 <div className="absolute top-10 right-0 z-50">
-                  <ProfilePopup />
+                  <ProfilePopup
+                    isOpen={showProfilePopup}
+                    onClose={() => setShowProfilePopup(false)}
+                  />
                 </div>
               )}
             </div>
           </div>
         </div>
-
         <div className="md:hidden">
           <button
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
@@ -228,7 +224,6 @@ const Header = () => {
           </button>
         </div>
       </div>
-
       {mobileMenuOpen && (
         <>
           <div className="md:hidden px-6 pb-4">
@@ -256,7 +251,6 @@ const Header = () => {
               ))}
             </ul>
           </div>
-
           <div className="sm:hidden px-6 my-4 flex flex-col gap-4">
             <div className="bg-white/20 hover:shadow-md transition-shadow duration-200 p-2 px-4 rounded flex border items-center gap-3">
               <input
@@ -275,7 +269,6 @@ const Header = () => {
                 <BiSearch size={25} />
               </button>
             </div>
-
             <div className="flex items-center justify-around text-gray-600 relative">
               <a href="/user/wishlist" aria-label="Wishlist">
                 <BiHeart size={24} />
@@ -297,7 +290,10 @@ const Header = () => {
                 </button>
                 {showProfilePopup && (
                   <div className="absolute top-10 right-0 z-50">
-                    <ProfilePopup />
+                    <ProfilePopup
+                      isOpen={showProfilePopup}
+                      onClose={() => setShowProfilePopup(false)}
+                    />
                   </div>
                 )}
               </div>
