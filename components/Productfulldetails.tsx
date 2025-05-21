@@ -166,17 +166,19 @@ const ProductFullDetails: React.FC<Props> = ({
                 ease: "linear",
               }}
             >
-              {product.Specifications.map((spec, i) => {
-                const cleaned = spec.replace(/[^a-zA-Z0-9\s]/g, "").trim();
-                return (
-                  <div
-                    key={i}
-                    className="rounded border border-[#007BFF] bg-[#007BFF]/20 hover:bg-[#007BFF]/30 font-semibold text-[#1A2238] py-1 px-3"
-                  >
-                    {cleaned}
-                  </div>
-                );
-              })}
+              {[...product.Specifications, ...product.Specifications].map(
+                (spec, i) => {
+                  const cleaned = spec.replace(/[^a-zA-Z0-9\s]/g, "").trim();
+                  return (
+                    <div
+                      key={i}
+                      className="rounded border border-[#007BFF] bg-[#007BFF]/20 hover:bg-[#007BFF]/30 font-semibold text-[#1A2238] py-1 px-3"
+                    >
+                      {cleaned}
+                    </div>
+                  );
+                }
+              )}
             </motion.div>
           </motion.div>
         )}
