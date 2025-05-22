@@ -18,9 +18,13 @@ import {
   FaPrint,
   FaHdd,
   FaPlug,
+  FaCheckCircle,
+  FaHeadset,
+  FaTruck,
 } from "react-icons/fa";
 import { MdHome, MdWork, MdWifi, MdSecurity } from "react-icons/md";
 import { GiCookingPot, GiWashingMachine } from "react-icons/gi";
+import FeatureCard from "components/FeatureCard";
 
 const CARD_WIDTH = 180;
 const GAP = 16;
@@ -45,6 +49,24 @@ export default function Home() {
     useProducts();
   const [featuredProducts, setFeaturedProducts] = useState<any[]>([]);
   const [allProducts, setAllProducts] = useState<any[]>([]);
+
+  const features = [
+    {
+      icon: FaTruck,
+      title: "FREE AND FAST DELIVERY",
+      description: "Free delivery for all orders over $140",
+    },
+    {
+      icon: FaHeadset,
+      title: "24/7 CUSTOMER SERVICE",
+      description: "Friendly 24/7 customer support",
+    },
+    {
+      icon: FaCheckCircle,
+      title: "MONEY BACK GUARANTEE",
+      description: "We return money within 30 days",
+    },
+  ];
 
   const categories = [
     { icon: FaLaptop, text: "Laptop" },
@@ -293,6 +315,19 @@ export default function Home() {
                 />
               </div>
             ))}
+      </div>
+      <div className="flex justify-center my-6">
+        <a
+          href="/user/products"
+          className="bg-[#007BFF] text-white w-52 text-center py-3 font-bold rounded hover:bg-blue-700 transition"
+        >
+          View all
+        </a>
+      </div>
+      <div className="flex flex-col sm:flex-row flex-wrap gap-8 my-5 justify-center">
+        {features.map((feature, index) => (
+          <FeatureCard key={index} {...feature} />
+        ))}
       </div>
     </div>
   );

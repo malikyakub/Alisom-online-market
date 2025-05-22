@@ -19,8 +19,11 @@ type Order = {
 };
 
 const OrdersTable: React.FC = () => {
-  const { AllOrders, approveOrderAndReduceStock, deleteOrderAndRestockItems } =
-    useOrders();
+  const {
+    AllOrders,
+    updateOrderStatusAndAdjustStock,
+    deleteOrderAndRestockItems,
+  } = useOrders();
 
   const [orders, setOrders] = useState<Order[]>([]);
   const [selectedOrderIds, setSelectedOrderIds] = useState<Set<string>>(
@@ -172,32 +175,39 @@ const OrdersTable: React.FC = () => {
     </span>
   );
 
-  const handleApprovePayment = async () => {
-    if (selectedOrder) {
-      const { data, err } = await approveOrderAndReduceStock(
-        selectedOrder.Order_id
-      );
+  const handlePaymentDecision = async (action: "Approved" | "Denied") => {
+    if (!selectedOrder) return;
 
-      if (!err) {
-        setOrders((prev) =>
-          prev.map((o) =>
-            o.Order_id === selectedOrder.Order_id ? { ...o, Status: "Paid" } : o
-          )
-        );
-        setAlert({
-          isOpen: true,
-          title: "Payment Approved",
-          description: `Payment for order ${selectedOrder.Order_id} has been approved.`,
-          type: "success",
-        });
-      } else {
-        setAlert({
-          isOpen: true,
-          title: "Approval Failed",
-          description: String(err),
-          type: "danger",
-        });
-      }
+    const { data, err } = await updateOrderStatusAndAdjustStock(
+      selectedOrder.Order_id,
+      action
+    );
+
+    if (!err) {
+      setOrders((prev) =>
+        prev.map((o) =>
+          o.Order_id === selectedOrder.Order_id
+            ? { ...o, Status: action === "Approved" ? "Paid" : "Not-paid" }
+            : o
+        )
+      );
+      setAlert({
+        isOpen: true,
+        title: `Payment ${action === "Approved" ? "Approved" : "Denied"}`,
+        description: `Payment for order ${
+          selectedOrder.Order_id
+        } has been ${action.toLowerCase()}.`,
+        type: action === "Approved" ? "success" : "warning",
+      });
+    } else {
+      setAlert({
+        isOpen: true,
+        title: `Payment ${
+          action === "Approved" ? "Approval" : "Denial"
+        } Failed`,
+        description: String(err),
+        type: "danger",
+      });
     }
 
     setShowPaymentModal(false);
@@ -390,7 +400,8 @@ const OrdersTable: React.FC = () => {
 
       {showPaymentModal && selectedOrder && (
         <PaymentApprovalModal
-          onApprove={handleApprovePayment}
+          onApprove={() => handlePaymentDecision("Approved")}
+          onDeny={() => handlePaymentDecision("Denied")}
           onCancel={handleCancelPayment}
           customerName={selectedOrder.Full_name}
           amount={selectedOrder.total_price}

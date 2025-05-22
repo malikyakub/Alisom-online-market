@@ -2,6 +2,7 @@ import React from "react";
 
 type PaymentApprovalModalProps = {
   onApprove: () => void;
+  onDeny: () => void;
   onCancel: () => void;
   customerName: string;
   amount: string;
@@ -11,6 +12,7 @@ type PaymentApprovalModalProps = {
 const PaymentApprovalModal: React.FC<PaymentApprovalModalProps> = ({
   onApprove,
   onCancel,
+  onDeny,
   customerName,
   amount,
   phone,
@@ -59,7 +61,7 @@ const PaymentApprovalModal: React.FC<PaymentApprovalModalProps> = ({
           </button>
           <button
             type="button"
-            onClick={onCancel}
+            onClick={onDeny}
             className="flex-grow min-w-[140px] bg-red-500 text-white font-bold py-2 px-4 rounded hover:bg-red-700"
           >
             Deny payment

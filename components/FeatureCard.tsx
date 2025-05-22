@@ -12,9 +12,9 @@ const FeatureCard: React.FC<FeatureCardProps> = ({
   description,
 }) => {
   return (
-    <div className="relative group flex flex-col items-center justify-center w-60 h-40 rounded-xl bg-white hover:bg-[#17C3B2] transition-colors duration-300 overflow-hidden shadow-md">
-      <div className="relative z-10 w-14 h-14 rounded-full bg-[#1A2238]/20 flex items-center justify-center shadow-md">
-        <Icon className="text-[#1A2238] text-xl" />
+    <div className="relative group flex flex-col items-center justify-center w-[300px] h-40 rounded bg-white hover:bg-[#17C3B2] transition-colors duration-300 overflow-hidden shadow-md">
+      <div className="relative z-10 w-16 h-16 rounded-full bg-[#1A2238]/20 flex items-center justify-center shadow-md">
+        <Icon className="text-[#1A2238] text-2xl" />
       </div>
 
       <div className="relative z-10 mt-4 text-center px-2">

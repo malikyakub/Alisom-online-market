@@ -109,43 +109,47 @@ const useOrders = () => {
     }
   }
 
-  async function approveOrderAndReduceStock(
-    order_id: string
+  async function updateOrderStatusAndAdjustStock(
+    order_id: string,
+    action: "Approved" | "Denied"
   ): Promise<ReturnType> {
     setIsLoading(true);
     try {
       const { error: statusError } = await supabase
         .from("Orders")
-        .update({ Status: "Approved" })
+        .update({ Status: action })
         .eq("Order_id", order_id);
 
       if (statusError) throw statusError;
 
-      const { data: orderItems, error: itemsError } = await supabase
-        .from("Order_items")
-        .select("product_id, quantity")
-        .eq("order_id", order_id);
+      // Only adjust stock if the order is approved
+      if (action === "Approved") {
+        const { data: orderItems, error: itemsError } = await supabase
+          .from("Order_items")
+          .select("product_id, quantity")
+          .eq("order_id", order_id);
 
-      if (itemsError) throw itemsError;
+        if (itemsError) throw itemsError;
 
-      for (const item of orderItems || []) {
-        const quantity = parseInt(item.quantity);
-        if (isNaN(quantity)) continue;
+        for (const item of orderItems || []) {
+          const quantity = parseInt(item.quantity);
+          if (isNaN(quantity)) continue;
 
-        const { data: product, error: productError } = await supabase
-          .from("products")
-          .select("stock_quantity")
-          .eq("product_id", item.product_id)
-          .single();
+          const { data: product, error: productError } = await supabase
+            .from("products")
+            .select("stock_quantity")
+            .eq("product_id", item.product_id)
+            .single();
 
-        if (productError || !product) continue;
+          if (productError || !product) continue;
 
-        const newStock = product.stock_quantity - quantity;
+          const newStock = product.stock_quantity - quantity;
 
-        await supabase
-          .from("products")
-          .update({ stock_quantity: newStock })
-          .eq("product_id", item.product_id);
+          await supabase
+            .from("products")
+            .update({ stock_quantity: newStock })
+            .eq("product_id", item.product_id);
+        }
       }
 
       return { data: true, err: null };
@@ -240,7 +244,7 @@ const useOrders = () => {
 
   return {
     createOrder,
-    approveOrderAndReduceStock,
+    updateOrderStatusAndAdjustStock,
     getOrdersByUserId,
     AllOrders,
     deleteOrderAndRestockItems,
