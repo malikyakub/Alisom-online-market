@@ -69,21 +69,6 @@ const useDashboard = () => {
   async function getDashboardSummary(): Promise<ReturnType<DashboardSummary>> {
     setIsLoading(true);
     try {
-      // 1. Total Revenue (Approved orders)
-      const { data: totalRevenueData, error: revErr } = await supabase
-        .from("Orders")
-        .select("total_price", { count: "exact" })
-        .eq("Status", "Approved");
-      if (revErr) throw revErr;
-
-      const totalRevenue = totalRevenueData
-        ? totalRevenueData.reduce(
-            (acc, order) => acc + Number(order.total_price ?? 0),
-            0
-          )
-        : 0;
-
-      // Dates for last month range
       const now = new Date();
       const firstDayLastMonth = new Date(
         now.getFullYear(),
@@ -99,7 +84,18 @@ const useDashboard = () => {
         59
       );
 
-      // 2. Total Revenue Last Month (Approved orders last month)
+      const { data: totalRevenueData, error: revErr } = await supabase
+        .from("Orders")
+        .select("total_price")
+        .eq("Status", "Approved");
+      if (revErr) throw revErr;
+
+      const totalRevenue =
+        totalRevenueData?.reduce(
+          (acc, order) => acc + Number(order.total_price ?? 0),
+          0
+        ) ?? 0;
+
       const { data: lastMonthRevenueData, error: lastRevErr } = await supabase
         .from("Orders")
         .select("total_price")
@@ -108,14 +104,12 @@ const useDashboard = () => {
         .lte("created_at", lastDayLastMonth.toISOString());
       if (lastRevErr) throw lastRevErr;
 
-      const totalRevenueLastMonth = lastMonthRevenueData
-        ? lastMonthRevenueData.reduce(
-            (acc, order) => acc + Number(order.total_price ?? 0),
-            0
-          )
-        : 0;
+      const totalRevenueLastMonth =
+        lastMonthRevenueData?.reduce(
+          (acc, order) => acc + Number(order.total_price ?? 0),
+          0
+        ) ?? 0;
 
-      // 3. Get Approved Orders IDs (for products sold calculation)
       const { data: approvedOrdersData, error: approvedOrdersErr } =
         await supabase
           .from("Orders")
@@ -124,21 +118,18 @@ const useDashboard = () => {
       if (approvedOrdersErr) throw approvedOrdersErr;
       const approvedOrderIds = approvedOrdersData?.map((o) => o.Order_id) ?? [];
 
-      // 4. Products Sold (sum quantity in approved orders)
       const { data: productsSoldData, error: productsSoldErr } = await supabase
         .from("Order_items")
         .select("quantity, order_id")
         .in("order_id", approvedOrderIds);
       if (productsSoldErr) throw productsSoldErr;
 
-      const productsSold = productsSoldData
-        ? productsSoldData.reduce(
-            (acc, item) => acc + Number(item.quantity ?? 0),
-            0
-          )
-        : 0;
+      const productsSold =
+        productsSoldData?.reduce(
+          (acc, item) => acc + Number(item.quantity ?? 0),
+          0
+        ) ?? 0;
 
-      // 5. Get Approved Orders IDs Last Month
       const { data: lastMonthApprovedOrders, error: lastMonthOrdersErr } =
         await supabase
           .from("Orders")
@@ -150,7 +141,6 @@ const useDashboard = () => {
       const lastMonthOrderIds =
         lastMonthApprovedOrders?.map((o) => o.Order_id) ?? [];
 
-      // 6. Products Sold Last Month (sum quantity in approved orders last month)
       const {
         data: productsSoldLastMonthData,
         error: productsSoldLastMonthErr,
@@ -160,22 +150,19 @@ const useDashboard = () => {
         .in("order_id", lastMonthOrderIds);
       if (productsSoldLastMonthErr) throw productsSoldLastMonthErr;
 
-      const productsSoldLastMonth = productsSoldLastMonthData
-        ? productsSoldLastMonthData.reduce(
-            (acc, item) => acc + Number(item.quantity ?? 0),
-            0
-          )
-        : 0;
+      const productsSoldLastMonth =
+        productsSoldLastMonthData?.reduce(
+          (acc, item) => acc + Number(item.quantity ?? 0),
+          0
+        ) ?? 0;
 
-      // 7. Products In Stock (sum stock_quantity)
       const { data: stockData, error: stockErr } = await supabase
         .from("products")
         .select("stock_quantity");
       if (stockErr) throw stockErr;
 
-      const productsInStock = stockData
-        ? stockData.reduce((acc, p) => acc + (p.stock_quantity ?? 0), 0)
-        : 0;
+      const productsInStock =
+        stockData?.reduce((acc, p) => acc + (p.stock_quantity ?? 0), 0) ?? 0;
 
       return {
         data: {
@@ -228,7 +215,7 @@ const useDashboard = () => {
           key = orderDate.toISOString().split("T")[0];
         }
         if (!aggregationMap[key]) aggregationMap[key] = { sales: 0, income: 0 };
-        aggregationMap[key].sales += 1; // sales = count of orders
+        aggregationMap[key].sales += 1;
         aggregationMap[key].income += Number(order.total_price ?? 0);
       }
       const result: { period: string; sales: number; income: number }[] = [];

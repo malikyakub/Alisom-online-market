@@ -10,7 +10,9 @@ const Dashboard = () => {
   const {
     getDashboardSummary,
     newOrders,
+    recentOrders,
     subscribeToNewPendingOrders,
+    subscribeToNewApprovedOrders,
     isLoading,
   } = useDashboard();
 
@@ -24,34 +26,21 @@ const Dashboard = () => {
 
   useEffect(() => {
     let isMounted = true;
-
     getDashboardSummary().then((res) => {
       if (isMounted && res.data) setSummary(res.data);
     });
 
-    const unsubscribe = subscribeToNewPendingOrders();
+    const unsubscribePending = subscribeToNewPendingOrders();
+    const unsubscribeApproved = subscribeToNewApprovedOrders();
 
     return () => {
       isMounted = false;
-      unsubscribe();
+      unsubscribePending();
+      unsubscribeApproved();
     };
-  }, [getDashboardSummary, subscribeToNewPendingOrders]);
+  }, [
 
-  console.log("Summary data:", summary);
-  useEffect(() => {
-    let isMounted = true;
-
-    getDashboardSummary().then((res) => {
-      if (isMounted && res.data) setSummary(res.data);
-    });
-
-    const unsubscribe = subscribeToNewPendingOrders();
-
-    return () => {
-      isMounted = false;
-      unsubscribe();
-    };
-  }, [getDashboardSummary, subscribeToNewPendingOrders]);
+  ]);
 
   const calculateGrowth = (current: number, previous: number): string => {
     if (previous === 0) return "+100%";
@@ -126,7 +115,7 @@ const Dashboard = () => {
         </div>
 
         <div className="lg:w-1/3 w-full flex flex-col gap-2">
-          <RecentOrders />
+          <RecentOrders orders={recentOrders} isLoading={isLoading} />
           <ServiceBookCard />
         </div>
       </div>
