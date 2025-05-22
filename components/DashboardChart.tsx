@@ -23,23 +23,27 @@ const DashboardChart: React.FC = () => {
   const { getDashboardData, isLoading } = useDashboard();
 
   useEffect(() => {
-    (async () => {
+    const fetchData = async () => {
       const periodMap: Record<"today" | "thisWeek" | "thisMonth", TimePeriod> =
         {
           today: "daily",
           thisWeek: "weekly",
           thisMonth: "monthly",
         };
+
       const { data } = await getDashboardData(periodMap[timePeriod]);
+
       if (data && data.length > 0) {
         setChartData({
           labels: data.map((d) => d.period),
           sales: data.map((d) => d.sales),
           income: data.map((d) => d.income),
         });
-        setTimeRange([0, data.length - 1]);
+        setTimeRange([0, data.length - 1]); // Adjust range to fit the data length
       }
-    })();
+    };
+
+    fetchData();
   }, [timePeriod, getDashboardData]);
 
   const displayedLabels = chartData.labels.slice(

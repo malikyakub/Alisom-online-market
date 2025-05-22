@@ -64,9 +64,7 @@ const Dashboard = () => {
     {
       title: "New Orders",
       amount: newOrders.length.toString(),
-      growth: `${
-        newOrders.filter((o) => (o as any).status === "Pending").length
-      } unpaid`,
+      growth: `${newOrders.length} pending`,
       icon: FaBox,
     },
   ];
