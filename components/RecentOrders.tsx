@@ -1,28 +1,25 @@
+import React, { useEffect, useState } from "react";
 import useDashboard from "hooks/useDashboard";
-import React, { useState, useEffect } from "react";
 
 const RecentOrders = () => {
   const [isMobile, setIsMobile] = useState(true);
-  const [orders, setOrders] = useState<any[]>([]);
-  const { getRecentOrders, isLoading } = useDashboard();
+  const { recentOrders, subscribeToNewApprovedOrders, isLoading } = useDashboard();
 
   useEffect(() => {
     const handleResize = () => {
       setIsMobile(window.innerWidth < 768);
     };
-
     handleResize();
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
   useEffect(() => {
-    getRecentOrders(10).then((res) => {
-      if (res.data) setOrders(res.data);
-    });
-  }, []);
+    const unsubscribe = subscribeToNewApprovedOrders();
+    return () => unsubscribe();
+  }, [subscribeToNewApprovedOrders]);
 
-  const displayedOrders = isMobile ? orders : orders.slice(0, 2);
+  const displayedOrders = isMobile ? recentOrders : recentOrders.slice(0, 2);
 
   return (
     <div className="w-full rounded-lg shadow-md p-4 flex-1 border border-blue-500">
@@ -30,7 +27,7 @@ const RecentOrders = () => {
       <p className="text-gray-500 text-sm mb-4">
         {isLoading
           ? "Loading recent orders..."
-          : `You have ${orders.length} recent orders`}
+          : `You have ${recentOrders.length} orders in the last 24 hours`}
       </p>
 
       {displayedOrders.map((order, index) => (

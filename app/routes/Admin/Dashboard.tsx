@@ -7,8 +7,12 @@ import { FaDollarSign, FaCartPlus, FaWarehouse, FaBox } from "react-icons/fa";
 import useDashboard from "hooks/useDashboard";
 
 const Dashboard = () => {
-  const { getDashboardSummary, newOrders, subscribeToNewOrders } =
-    useDashboard();
+  const {
+    getDashboardSummary,
+    newOrders,
+    subscribeToNewPendingOrders,
+    isLoading,
+  } = useDashboard();
 
   const [summary, setSummary] = useState({
     totalRevenue: 0,
@@ -19,13 +23,35 @@ const Dashboard = () => {
   });
 
   useEffect(() => {
+    let isMounted = true;
+
     getDashboardSummary().then((res) => {
-      if (res.data) setSummary(res.data);
+      if (isMounted && res.data) setSummary(res.data);
     });
 
-    const unsubscribe = subscribeToNewOrders();
-    return () => unsubscribe();
-  }, []);
+    const unsubscribe = subscribeToNewPendingOrders();
+
+    return () => {
+      isMounted = false;
+      unsubscribe();
+    };
+  }, [getDashboardSummary, subscribeToNewPendingOrders]);
+
+  console.log("Summary data:", summary);
+  useEffect(() => {
+    let isMounted = true;
+
+    getDashboardSummary().then((res) => {
+      if (isMounted && res.data) setSummary(res.data);
+    });
+
+    const unsubscribe = subscribeToNewPendingOrders();
+
+    return () => {
+      isMounted = false;
+      unsubscribe();
+    };
+  }, [getDashboardSummary, subscribeToNewPendingOrders]);
 
   const calculateGrowth = (current: number, previous: number): string => {
     if (previous === 0) return "+100%";

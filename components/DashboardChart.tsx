@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { BarChart } from "@mui/x-charts/BarChart";
 import Slider from "@mui/material/Slider";
+import ClipLoader from "react-spinners/ClipLoader";
 import useDashboard from "hooks/useDashboard";
 
 type TimePeriod = "daily" | "weekly" | "monthly";
@@ -32,19 +33,36 @@ const DashboardChart: React.FC = () => {
         };
 
       const { data } = await getDashboardData(periodMap[timePeriod]);
+      if (!data) return;
 
-      if (data && data.length > 0) {
-        setChartData({
-          labels: data.map((d) => d.period),
-          sales: data.map((d) => d.sales),
-          income: data.map((d) => d.income),
+      let labelsFormatted: string[] = [];
+
+      if (timePeriod === "today") {
+        labelsFormatted = data.map((d) => `${Number(d.period)}h`);
+      } else if (timePeriod === "thisWeek") {
+        const weekdays = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+        labelsFormatted = data.map((d) => {
+          const date = new Date(d.period);
+          return weekdays[date.getDay()] || d.period;
         });
-        setTimeRange([0, data.length - 1]); // Adjust range to fit the data length
+      } else {
+        labelsFormatted = data.map((d) => {
+          const date = new Date(d.period);
+          return date.getDate().toString();
+        });
       }
+
+      setChartData({
+        labels: labelsFormatted,
+        sales: data.map((d) => d.sales),
+        income: data.map((d) => d.income),
+      });
+
+      setTimeRange([0, data.length - 1]);
     };
 
     fetchData();
-  }, [timePeriod, getDashboardData]);
+  }, [timePeriod]);
 
   const displayedLabels = chartData.labels.slice(
     timeRange[0],
@@ -57,9 +75,7 @@ const DashboardChart: React.FC = () => {
   );
 
   const handleRangeChange = (_event: Event, newValue: number | number[]) => {
-    if (Array.isArray(newValue)) {
-      setTimeRange(newValue);
-    }
+    if (Array.isArray(newValue)) setTimeRange(newValue);
   };
 
   return (
@@ -107,21 +123,25 @@ const DashboardChart: React.FC = () => {
         className="relative w-full flex items-center justify-center"
         style={{ minHeight: 400 }}
       >
-        <BarChart
-          xAxis={[
-            { id: "categories", data: displayedLabels, scaleType: "band" },
-          ]}
-          series={[
-            { label: "Sales", data: displayedSales, color: "#007BFF" },
-            {
-              label: "Income",
-              data: displayedIncome,
-              color: "#17C3B2",
-              valueFormatter: (value) => `$${value}`,
-            },
-          ]}
-          height={380}
-        />
+        {isLoading ? (
+          <ClipLoader color="#007BFF" size={50} />
+        ) : (
+          <BarChart
+            xAxis={[
+              { id: "categories", data: displayedLabels, scaleType: "band" },
+            ]}
+            series={[
+              { label: "Sales", data: displayedSales, color: "#007BFF" },
+              {
+                label: "Income",
+                data: displayedIncome,
+                color: "#17C3B2",
+                valueFormatter: (value) => `$${value}`,
+              },
+            ]}
+            height={380}
+          />
+        )}
       </div>
     </div>
   );
