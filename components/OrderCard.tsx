@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import Alert from "components/Alert";
 import AccountNumberModal from "components/AccountNumberPopup";
+import useOrders from "hooks/useOrders";
 
 type OrderCardProps = {
   order: {
@@ -33,8 +34,21 @@ const getStatusStyles = (status: string) => {
 const OrderCard = ({ order }: OrderCardProps) => {
   const [showAccountModal, setShowAccountModal] = useState(false);
   const [showAlert, setShowAlert] = useState(false);
+  const { updateOrderStatusAndAdjustStock, isLoading } = useOrders();
 
-  const handleDeniedClick = () => {
+  const handleDeniedClick = async () => {
+    const { data, err } = await updateOrderStatusAndAdjustStock(
+      order.Order_id,
+      "Pending"
+    );
+    if (err) {
+      setShowAlert(true);
+      return;
+    }
+    if (data) {
+      setShowAlert(true);
+    }
+    setShowAlert(false);
     setShowAccountModal(true);
   };
 
@@ -51,7 +65,11 @@ const OrderCard = ({ order }: OrderCardProps) => {
             Order ID: {order.Order_id}
           </h3>
           {order.Status === "Denied" ? (
-            <button onClick={handleDeniedClick}>
+            <button
+              onClick={handleDeniedClick}
+              disabled={isLoading}
+              className="cursor-pointer"
+            >
               <span
                 className={`inline-block font-semibold text-sm rounded px-3 py-2 mb-2 ${getStatusStyles(
                   order.Status

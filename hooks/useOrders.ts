@@ -39,11 +39,6 @@ const useOrders = () => {
     is_Guest: boolean;
   };
 
-  type ReturnType = {
-    data: any;
-    err: string | null;
-  };
-
   async function createOrder({
     user_id,
     fullname,
@@ -111,7 +106,7 @@ const useOrders = () => {
 
   async function updateOrderStatusAndAdjustStock(
     order_id: string,
-    action: "Approved" | "Denied"
+    action: "Approved" | "Denied" | "Pending"
   ): Promise<ReturnType> {
     setIsLoading(true);
     try {
@@ -122,7 +117,7 @@ const useOrders = () => {
 
       if (statusError) throw statusError;
 
-      // Only adjust stock if the order is approved
+      // Only adjust stock if status is "Approved"
       if (action === "Approved") {
         const { data: orderItems, error: itemsError } = await supabase
           .from("Order_items")
@@ -242,10 +237,110 @@ const useOrders = () => {
     }
   }
 
+  async function getOrder(order_id: string): Promise<ReturnType> {
+    setIsLoading(true);
+    try {
+      const { data: order, error: orderError } = await supabase
+        .from("Orders")
+        .select("*")
+        .eq("Order_id", order_id)
+        .single();
+
+      if (orderError) throw orderError;
+
+      const { data: items, error: itemsError } = await supabase
+        .from("Order_items")
+        .select("*, products(name, price)")
+        .eq("order_id", order_id);
+
+      if (itemsError) throw itemsError;
+
+      return {
+        data: { ...order, items },
+        err: null,
+      };
+    } catch (error) {
+      return { data: null, err: String(error) };
+    } finally {
+      setIsLoading(false);
+    }
+  }
+
+  async function returnItem(
+    order_id: string,
+    order_item_id: string
+  ): Promise<ReturnType> {
+    setIsLoading(true);
+    try {
+      const { data: orderItem, error: itemError } = await supabase
+        .from("Order_items")
+        .select("product_id, quantity")
+        .eq("order_item_id", order_item_id)
+        .single();
+
+      if (itemError) throw itemError;
+
+      const quantity = parseInt(orderItem.quantity);
+      if (isNaN(quantity)) throw new Error("Invalid quantity");
+
+      const { data: product, error: productError } = await supabase
+        .from("products")
+        .select("price, stock_quantity")
+        .eq("product_id", orderItem.product_id)
+        .single();
+
+      if (productError || !product)
+        throw productError || new Error("Product not found");
+
+      const itemValue = quantity * parseFloat(product.price);
+
+      const { data: order, error: orderError } = await supabase
+        .from("Orders")
+        .select("total_price")
+        .eq("Order_id", order_id)
+        .single();
+
+      if (orderError) throw orderError;
+
+      const newTotal = parseFloat(order.total_price) - itemValue;
+
+      const { error: updateOrderError } = await supabase
+        .from("Orders")
+        .update({ total_price: newTotal.toFixed(2) })
+        .eq("Order_id", order_id);
+
+      if (updateOrderError) throw updateOrderError;
+
+      const newStockQty = product.stock_quantity + quantity;
+
+      const { error: updateStockError } = await supabase
+        .from("products")
+        .update({ stock_quantity: newStockQty })
+        .eq("product_id", orderItem.product_id);
+
+      if (updateStockError) throw updateStockError;
+
+      const { error: deleteItemError } = await supabase
+        .from("Order_items")
+        .delete()
+        .eq("order_item_id", order_item_id);
+
+      if (deleteItemError) throw deleteItemError;
+
+      return { data: true, err: null };
+    } catch (error) {
+      return { data: null, err: String(error) };
+    } finally {
+      setIsLoading(false);
+    }
+  }
+
   return {
     createOrder,
     updateOrderStatusAndAdjustStock,
     getOrdersByUserId,
+    getOrder,
+    returnItem,
     AllOrders,
     deleteOrderAndRestockItems,
     isLoading,

@@ -23,6 +23,7 @@ const OrdersTable: React.FC = () => {
     AllOrders,
     updateOrderStatusAndAdjustStock,
     deleteOrderAndRestockItems,
+    isLoading,
   } = useOrders();
 
   const [orders, setOrders] = useState<Order[]>([]);
@@ -109,12 +110,7 @@ const OrdersTable: React.FC = () => {
         });
         break;
       case "edit":
-        setAlert({
-          isOpen: true,
-          title: "Edit Action",
-          description: `Edit order ${id} - (not implemented).`,
-          type: "warning",
-        });
+        window.location.href = `/admin/orders/${id}`;
         break;
       case "approve-payment":
         if (order?.Status === "Pending") {
@@ -400,6 +396,7 @@ const OrdersTable: React.FC = () => {
 
       {showPaymentModal && selectedOrder && (
         <PaymentApprovalModal
+          isLoading={isLoading}
           onApprove={() => handlePaymentDecision("Approved")}
           onDeny={() => handlePaymentDecision("Denied")}
           onCancel={handleCancelPayment}
