@@ -9,7 +9,7 @@ type TimePeriod = "daily" | "weekly" | "monthly";
 const DashboardChart: React.FC = () => {
   const [timePeriod, setTimePeriod] = useState<
     "today" | "thisWeek" | "thisMonth"
-  >("thisMonth");
+  >("today");
   const [timeRange, setTimeRange] = useState<number[]>([0, 0]);
   const [chartData, setChartData] = useState<{
     labels: string[];
@@ -136,7 +136,7 @@ const DashboardChart: React.FC = () => {
                 label: "Income",
                 data: displayedIncome,
                 color: "#17C3B2",
-                valueFormatter: (value) => `$${value}`,
+                valueFormatter: (value) => `$${(value ?? 0).toFixed(2)}`,
               },
             ]}
             height={380}

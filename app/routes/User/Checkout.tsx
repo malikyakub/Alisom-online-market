@@ -179,6 +179,9 @@ const Checkout: React.FC = () => {
     }
 
     setShowAccountPopup(false);
+    setTimeout(() => {
+      window.history.back();
+    }, 3000);
   };
 
   const totalAmount = purchasedProducts.reduce((acc, product) => {

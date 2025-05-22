@@ -61,7 +61,10 @@ const ProductFullDetails: React.FC<Props> = ({
       ...(user?.id ? { user_id: user.id } : {}),
     });
     setCartAlert(true);
-    setTimeout(() => setIsInCart(false), 2000);
+    setTimeout(() => {
+      setIsInCart(false);
+      window.location.href = "/user/cart";
+    }, 2000);
   };
 
   useEffect(() => {

@@ -16,22 +16,10 @@ const LoadingProgressBar = () => {
   }, [controls]);
 
   return (
-    <div
-      style={{
-        width: "100%",
-        height: 6,
-        backgroundColor: "#e0e0e0",
-        borderRadius: 3,
-        overflow: "hidden",
-      }}
-    >
+    <div className="w-full h-2 bg-gray-200 overflow-hidden">
       <motion.div
-        style={{
-          height: "100%",
-          backgroundColor: "#17C3B2",
-          borderRadius: 3,
-          width: "0%",
-        }}
+        className="h-full bg-teal-500 rounded"
+        style={{ width: "0%" }}
         animate={controls}
       />
     </div>
@@ -74,9 +62,8 @@ export default function AdminLayout() {
 
   if (loading || checkingAuth) {
     return (
-      <div className="flex min-h-screen w-full mx-auto max-w-[1170px] px-4 sm:px-6 flex-col gap-4">
+      <div className="flex min-h-screen mt-2 w-full mx-auto max-w-[1170px] px-4 sm:px-6 flex-col gap-4">
         <LoadingProgressBar />
-        <span className="text-gray-700">Loading...</span>
       </div>
     );
   }
@@ -92,7 +79,7 @@ export default function AdminLayout() {
           <Outlet />
         ) : (
           <div className="flex items-center justify-center min-h-screen">
-            <h1 className="text-2xl font-bold text-red-500">
+            <h1 className="text-2xl font-bold text-red-500 text-centers">
               You do not have permission to access this page.
             </h1>
           </div>
