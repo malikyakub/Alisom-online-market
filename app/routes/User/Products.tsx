@@ -41,7 +41,7 @@ const Products = () => {
           : undefined,
       });
       if (!err && data) {
-        const filteredByCategoryBrandRating = data.filter((product) => {
+        const filtered = data.filter((product) => {
           const matchesCategory =
             filters.categories.length === 0 ||
             filters.categories.includes(product.category?.name);
@@ -54,7 +54,7 @@ const Products = () => {
             product.average_rating <= filters.rating[1];
           return matchesCategory && matchesBrand && withinRating;
         });
-        setProducts(filteredByCategoryBrandRating);
+        setProducts(filtered);
       } else {
         setProducts([]);
       }
@@ -63,7 +63,7 @@ const Products = () => {
   }, [filters]);
 
   return (
-    <div className="mb-4">
+    <div className="mb-4 dark:text-white">
       <ProductsAndOrdersHero
         title="Discover Our Premium Products"
         subtitle="High-quality items designed to elevate your lifestyle."
@@ -76,9 +76,9 @@ const Products = () => {
             onFiltersChange={handleApplyFilters}
           />
         </div>
-        <div className="p-4 flex-1 bg-red-50 rounded-lg shadow flex flex-wrap gap-4">
+        <div className="p-4 flex-1 bg-red-50 dark:bg-gray-800 rounded-lg shadow flex flex-wrap gap-4 min-h-[50vh]">
           {isLoading ? (
-            <p>Loading...</p>
+            <p className="text-gray-600 dark:text-gray-300">Loading...</p>
           ) : products.length ? (
             products.map((product, idx) => (
               <ProductCard
@@ -95,8 +95,10 @@ const Products = () => {
               />
             ))
           ) : (
-            <div className="w-full h-screen flex py-4">
-              <p className="text-[#FFC107]">That's why you're single.</p>
+            <div className="w-full py-8 flex items-center justify-center">
+              <p className="text-yellow-500 dark:text-yellow-400 text-center">
+                That’s why you’re single.
+              </p>
             </div>
           )}
         </div>

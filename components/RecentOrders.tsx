@@ -2,12 +2,12 @@ import React, { useEffect, useState } from "react";
 import useDashboard from "hooks/useDashboard";
 
 type Order = {
-    Order_id: string;
-    total_price: string | null;
-    created_at: string;
-    Full_name: string | null;
-    Email: string | null;
-    Status: string;
+  Order_id: string;
+  total_price: string | null;
+  created_at: string;
+  Full_name: string | null;
+  Email: string | null;
+  Status: string;
 };
 
 type RecentOrdersProps = {
@@ -36,7 +36,7 @@ const RecentOrders: React.FC<RecentOrdersProps> = ({
 
   return (
     <div className="w-full rounded-lg shadow-md p-4 flex-1 border border-blue-500">
-      <h2 className="font-semibold text-xl text-gray-800">Recent Orders</h2>
+      <h2 className="font-semibold text-xl text-[#1A2238]">Recent Orders</h2>
       <p className="text-gray-500 text-sm mb-4">
         {isLoading
           ? "Loading recent orders..."
@@ -46,7 +46,7 @@ const RecentOrders: React.FC<RecentOrdersProps> = ({
       {displayedOrders.map((order, index) => (
         <div key={index} className="mb-4 flex justify-between items-center">
           <div className="flex flex-col">
-            <div className="font-medium text-gray-800">
+            <div className="font-medium text-[#1A2238] dark:text-white capitalize">
               {order.Full_name || "Guest User"}
             </div>
             <div className="text-sm text-gray-500">{order.Email}</div>

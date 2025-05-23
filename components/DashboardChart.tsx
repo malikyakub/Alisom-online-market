@@ -79,12 +79,10 @@ const DashboardChart: React.FC = () => {
   };
 
   return (
-    <div className="p-4 h-full flex flex-col justify-between">
+    <div className="p-4 h-full flex flex-col justify-between text-gray-900 dark:text-gray-100">
       <div className="flex flex-col">
         <div className="flex flex-row justify-between items-center mb-4 gap-4">
-          <h3 className="text-lg font-bold text-[#1A2238]">
-            Sales & Income Chart
-          </h3>
+          <h3 className="text-lg font-bold">Sales & Income Chart</h3>
           <select
             id="time-period"
             value={timePeriod}
@@ -93,15 +91,16 @@ const DashboardChart: React.FC = () => {
                 e.target.value as "today" | "thisWeek" | "thisMonth"
               )
             }
-            className="p-2 border rounded w-fit"
+            className="p-2 border rounded w-fit bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-700 text-gray-900 dark:text-gray-100"
           >
             <option value="today">Today</option>
             <option value="thisWeek">This Week</option>
             <option value="thisMonth">This Month</option>
           </select>
         </div>
+
         <div className="mb-4 w-full">
-          <label className="block mb-2 font-medium text-[#1A2238]">
+          <label className="block mb-2 font-medium">
             Range: {displayedLabels[0]} -{" "}
             {displayedLabels[displayedLabels.length - 1]}
           </label>
@@ -110,7 +109,12 @@ const DashboardChart: React.FC = () => {
               value={timeRange}
               onChange={handleRangeChange}
               valueLabelDisplay="auto"
-              sx={{ color: "#007BFF" }}
+              sx={{
+                color: "#3B82F6", // Tailwind blue-500
+                "& .MuiSlider-markLabel": {
+                  color: "#9CA3AF", // Tailwind gray-400
+                },
+              }}
               min={0}
               max={chartData.labels.length - 1}
               step={1}
@@ -119,23 +123,38 @@ const DashboardChart: React.FC = () => {
           )}
         </div>
       </div>
+
       <div
-        className="relative w-full flex items-center justify-center"
+        className="relative w-full flex items-center justify-center rounded-lg"
         style={{ minHeight: 400 }}
       >
         {isLoading ? (
-          <ClipLoader color="#007BFF" size={50} />
+          <ClipLoader color="#3B82F6" size={50} />
         ) : (
           <BarChart
             xAxis={[
-              { id: "categories", data: displayedLabels, scaleType: "band" },
+              {
+                id: "categories",
+                data: displayedLabels,
+                scaleType: "band",
+                tickLabelStyle: { fill: "white" },
+              },
+            ]}
+            yAxis={[
+              {
+                tickLabelStyle: { fill: "white" },
+              },
             ]}
             series={[
-              { label: "Sales", data: displayedSales, color: "#007BFF" },
+              {
+                label: "Sales",
+                data: displayedSales,
+                color: "#3B82F6",
+              },
               {
                 label: "Income",
                 data: displayedIncome,
-                color: "#17C3B2",
+                color: "#10B981",
                 valueFormatter: (value) => `$${(value ?? 0).toFixed(2)}`,
               },
             ]}

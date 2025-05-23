@@ -211,7 +211,7 @@ const AddProduct: React.FC = () => {
   };
 
   return (
-    <div className="mx-auto lg:px-8">
+    <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
       <Alert
         isOpen={alert.isOpen}
         title={alert.title}
@@ -220,12 +220,16 @@ const AddProduct: React.FC = () => {
         onClose={() => setAlert((prev) => ({ ...prev, isOpen: false }))}
       />
 
-      <div className="mb-4">
-        <h1 className="text-xl font-semibold text-[#333333]">Add Product</h1>
-        <p className="text-[#A3A3A3] text-sm mb-6">Add a new product here.</p>
+      <div className="mb-6">
+        <h1 className="text-2xl font-semibold text-gray-900 dark:text-white">
+          Add Product
+        </h1>
+        <p className="text-gray-500 text-sm mt-1 mb-8">
+          Add a new product here.
+        </p>
 
-        <div className="mb-8">
-          <label className="block font-semibold mb-2 text-[#333333]">
+        <div>
+          <label className="block font-semibold mb-2 text-gray-900 dark:text-white">
             Images
           </label>
           <input
@@ -247,13 +251,13 @@ const AddProduct: React.FC = () => {
             </button>
 
             {selectedFiles.length > 0 && (
-              <div className="flex flex-wrap gap-4 mt-2 sm:mt-0">
+              <div className="flex flex-wrap gap-3 mt-3 sm:mt-0">
                 {selectedFiles.map((file, index) => {
                   const imageUrl = URL.createObjectURL(file);
                   return (
                     <div
                       key={index}
-                      className="relative group w-[50px] h-[50px] border border-gray-300 rounded overflow-hidden"
+                      className="relative w-12 h-12 border border-gray-300 rounded-md overflow-hidden group"
                     >
                       <img
                         src={imageUrl}
@@ -262,14 +266,14 @@ const AddProduct: React.FC = () => {
                       />
                       <button
                         type="button"
-                        onClick={() => {
+                        onClick={() =>
                           setSelectedFiles((prev) =>
                             prev.filter((_, i) => i !== index)
-                          );
-                        }}
+                          )
+                        }
                         className="absolute inset-0 bg-black/50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
                       >
-                        <FiX className="text-white text-xl" />
+                        <FiX className="text-white text-lg" />
                       </button>
                     </div>
                   );
@@ -280,205 +284,205 @@ const AddProduct: React.FC = () => {
         </div>
       </div>
 
-      <div>
-        <form className="space-y-5" onSubmit={handleSubmit}>
-          <div className="flex flex-wrap gap-4">
-            <div className="flex-1 min-w-[220px]">
-              <label className="block text-sm font-medium text-[#666666]">
-                Name
-              </label>
-              <input
-                type="text"
-                name="name"
-                value={form.name}
-                onChange={handleChange}
-                placeholder="Product name"
-                className="mt-1 w-full border border-[#666666] rounded-md shadow-sm text-sm px-3 py-2 focus:ring-[#007BFF] focus:border-[#007BFF]"
-              />
-            </div>
-
-            <div className="flex-1 min-w-[220px]">
-              <label className="block text-sm font-medium text-[#666666]">
-                Category
-              </label>
-              <select
-                name="category_id"
-                value={form.category_id}
-                onChange={handleChange}
-                className="mt-1 w-full border border-[#666666] rounded-md shadow-sm text-sm px-3 py-2 focus:ring-[#007BFF] focus:border-[#007BFF]"
-              >
-                <option value="">Select Category</option>
-                {categories.map((cat) => (
-                  <option key={cat.category_id} value={cat.category_id}>
-                    {cat.name}
-                  </option>
-                ))}
-              </select>
-            </div>
-
-            <div className="flex-1 min-w-[220px]">
-              <label className="block text-sm font-medium text-[#666666]">
-                Brand
-              </label>
-              <select
-                name="brand_id"
-                value={form.brand_id}
-                onChange={handleChange}
-                className="mt-1 w-full border border-[#666666] rounded-md shadow-sm text-sm px-3 py-2 focus:ring-[#007BFF] focus:border-[#007BFF]"
-              >
-                <option value="">Select Brand</option>
-                {brands.map((brand) => (
-                  <option key={brand.brand_id} value={brand.brand_id}>
-                    {brand.name}
-                  </option>
-                ))}
-              </select>
-            </div>
-
-            <div className="w-full">
-              <label className="block text-sm font-medium text-[#666666]">
-                Specification
-              </label>
-              <input
-                type="text"
-                name="specification"
-                value={form.specification}
-                onChange={handleChange}
-                placeholder="Product specification"
-                className="mt-1 w-full border border-[#666666] rounded-md shadow-sm text-sm px-3 py-2 focus:ring-[#007BFF] focus:border-[#007BFF]"
-              />
-            </div>
-
-            <div className="flex-1 min-w-[220px]">
-              <label className="block text-sm font-medium text-[#666666]">
-                Sale Price
-              </label>
-              <input
-                type="number"
-                name="sale_price"
-                value={form.sale_price}
-                onChange={handleChange}
-                placeholder="$0.00"
-                className="mt-1 w-full border border-[#666666] rounded-md shadow-sm text-sm px-3 py-2 focus:ring-[#007BFF] focus:border-[#007BFF]"
-              />
-            </div>
-
-            <div className="flex-1 min-w-[220px]">
-              <label className="block text-sm font-medium text-[#666666]">
-                Purchase Price
-              </label>
-              <input
-                type="number"
-                name="purchase_price"
-                value={form.purchase_price}
-                onChange={handleChange}
-                placeholder="$0.00"
-                className="mt-1 w-full border border-[#666666] rounded-md shadow-sm text-sm px-3 py-2 focus:ring-[#007BFF] focus:border-[#007BFF]"
-              />
-            </div>
-
-            <div className="w-full">
-              <label className="block text-sm font-medium text-[#666666]">
-                Description
-              </label>
-              <textarea
-                name="description"
-                rows={5}
-                value={form.description}
-                onChange={handleChange}
-                placeholder="Product description..."
-                className="mt-1 w-full border border-[#666666] rounded-md shadow-sm text-sm px-3 py-2 focus:ring-[#007BFF] focus:border-[#007BFF]"
-              ></textarea>
-            </div>
+      <form className="space-y-6" onSubmit={handleSubmit}>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div>
+            <label className="block text-sm font-medium text-gray-700 dark:text-white">
+              Name
+            </label>
+            <input
+              type="text"
+              name="name"
+              value={form.name}
+              onChange={handleChange}
+              placeholder="Product name"
+              className="mt-1 block w-full rounded border border-gray-300 shadow-sm px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-white/10 dark:text-white"
+            />
           </div>
 
-          <div className="flex flex-wrap gap-4">
-            <div className="flex-1 min-w-[200px]">
-              <label className="text-sm font-medium">Featured</label>
-              <select
-                name="isFeatured"
-                value={form.isFeatured ? "true" : "false"}
-                onChange={handleChange}
-                className="w-full p-2 border rounded mt-1"
-              >
-                <option value="false">No</option>
-                <option value="true">Yes</option>
-              </select>
-            </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 dark:text-white">
+              Category
+            </label>
+            <select
+              name="category_id"
+              value={form.category_id}
+              onChange={handleChange}
+              className="mt-1 block w-full rounded border border-gray-300 shadow-sm px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-white/10 dark:text-white"
+            >
+              <option value="">Select Category</option>
+              {categories.map((cat) => (
+                <option key={cat.category_id} value={cat.category_id}>
+                  {cat.name}
+                </option>
+              ))}
+            </select>
+          </div>
 
-            {form.isFeatured && (
-              <div className="flex-1 min-w-[200px]">
-                <label className="block text-sm font-medium text-[#666666]">
-                  Discount %
-                </label>
-                <input
-                  type="number"
-                  name="discount"
-                  value={form.discount}
-                  onChange={handleChange}
-                  placeholder="e.g. 15"
-                  className="mt-1 block w-full border border-[#666666] rounded-md shadow-sm text-sm px-3 py-2 focus:ring-[#007BFF] focus:border-[#007BFF]"
-                />
-              </div>
-            )}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 dark:text-white">
+              Brand
+            </label>
+            <select
+              name="brand_id"
+              value={form.brand_id}
+              onChange={handleChange}
+              className="mt-1 block w-full rounded border border-gray-300 shadow-sm px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-white/10 dark:text-white"
+            >
+              <option value="">Select Brand</option>
+              {brands.map((brand) => (
+                <option key={brand.brand_id} value={brand.brand_id}>
+                  {brand.name}
+                </option>
+              ))}
+            </select>
+          </div>
 
-            <div className="flex-1 min-w-[200px]">
-              <label className="block text-sm font-medium text-[#666666]">
-                Profit
+          <div className="sm:col-span-2 lg:col-span-3">
+            <label className="block text-sm font-medium text-gray-700 dark:text-white">
+              Specification
+            </label>
+            <input
+              type="text"
+              name="specification"
+              value={form.specification}
+              onChange={handleChange}
+              placeholder="Product specification"
+              className="mt-1 block w-full rounded border border-gray-300 shadow-sm px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-white/10 dark:text-white"
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 dark:text-white">
+              Sale Price
+            </label>
+            <input
+              type="number"
+              name="sale_price"
+              value={form.sale_price}
+              onChange={handleChange}
+              placeholder="$0.00"
+              className="mt-1 block w-full rounded border border-gray-300 shadow-sm px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-white/10 dark:text-white"
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 dark:text-white">
+              Purchase Price
+            </label>
+            <input
+              type="number"
+              name="purchase_price"
+              value={form.purchase_price}
+              onChange={handleChange}
+              placeholder="$0.00"
+              className="mt-1 block w-full rounded border border-gray-300 shadow-sm px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-white/10 dark:text-white"
+            />
+          </div>
+
+          <div className="sm:col-span-2 lg:col-span-3">
+            <label className="block text-sm font-medium text-gray-700 dark:text-white">
+              Description
+            </label>
+            <textarea
+              name="description"
+              rows={4}
+              value={form.description}
+              onChange={handleChange}
+              placeholder="Product description..."
+              className="mt-1 block w-full rounded border border-gray-300 shadow-sm px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-white/10 dark:text-white"
+            />
+          </div>
+        </div>
+
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
+          <div>
+            <label className="block text-sm font-medium text-gray-700 dark:text-white">
+              Featured
+            </label>
+            <select
+              name="isFeatured"
+              value={form.isFeatured ? "true" : "false"}
+              onChange={handleChange}
+              className="mt-1 block w-full rounded border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-white/10 dark:text-white"
+            >
+              <option value="false">No</option>
+              <option value="true">Yes</option>
+            </select>
+          </div>
+
+          {form.isFeatured && (
+            <div>
+              <label className="block text-sm font-medium text-gray-700 dark:text-white">
+                Discount %
               </label>
               <input
                 type="number"
-                value={profit.toFixed(2)}
-                readOnly
-                className="mt-1 block w-full border border-[#666666] bg-gray-100 rounded-md shadow-sm text-sm px-3 py-2"
-              />
-            </div>
-
-            <div className="flex-1 min-w-[200px]">
-              <label className="block text-sm font-medium text-[#666666]">
-                Available in Stock
-              </label>
-              <input
-                type="number"
-                name="stock"
-                value={form.stock}
+                name="discount"
+                value={form.discount}
                 onChange={handleChange}
-                placeholder="0"
-                className="mt-1 block w-full border border-[#666666] rounded-md shadow-sm text-sm px-3 py-2 focus:ring-[#007BFF] focus:border-[#007BFF]"
+                placeholder="e.g. 15"
+                className="mt-1 block w-full rounded-md border border-gray-300 shadow-sm px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-white/10 dark:text-white"
               />
             </div>
+          )}
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 dark:text-white">
+              Profit
+            </label>
+            <input
+              type="number"
+              value={profit.toFixed(2)}
+              readOnly
+              className="mt-1 block w-full rounded-md border border-gray-300 bg-gray-100 shadow-sm px-3 py-2 text-sm dark:bg-white/10 dark:text-white"
+            />
           </div>
 
-          <div className="flex flex-col sm:flex-row sm:justify-end sm:space-x-4 space-y-2 sm:space-y-0">
-            <button
-              type="button"
-              className="px-4 py-2 bg-[#F4F4F4] text-[#666666] rounded-md hover:opacity-90"
-            >
-              Cancel
-            </button>
-            <button
-              type="button"
-              className="px-4 py-2 bg-[#F4F4F4] text-[#666666] rounded-md hover:opacity-90"
-            >
-              Save Draft
-            </button>
-            <button
-              type="submit"
-              disabled={isLoading}
-              className="flex items-center text-center justify-center gap-2 px-4 py-2 bg-[#007BFF] text-white rounded-md hover:brightness-90 disabled:opacity-70"
-            >
-              {isLoading && <ClipLoader color="#fff" size={16} />}
-              {isLoading
-                ? id
-                  ? "Updating..."
-                  : "Adding..."
-                : id
-                ? "Update Product"
-                : "Add Product"}
-            </button>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 dark:text-white">
+              Available in Stock
+            </label>
+            <input
+              type="number"
+              name="stock"
+              value={form.stock}
+              onChange={handleChange}
+              placeholder="0"
+              className="mt-1 block w-full rounded-md border border-gray-300 shadow-sm px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-white/10 dark:text-white"
+            />
           </div>
-        </form>
-      </div>
+        </div>
+
+        <div className="flex flex-col sm:flex-row sm:justify-end sm:space-x-4 space-y-3 sm:space-y-0 mt-6">
+          <button
+            type="button"
+            className="px-5 py-2 bg-gray-100 text-gray-700 rounded-md hover:bg-gray-200 dark:bg-white/10 dark:text-white dark:hover:bg-white/20 transition"
+          >
+            Cancel
+          </button>
+          <button
+            type="button"
+            className="px-5 py-2 bg-gray-100 text-gray-700 rounded-md hover:bg-gray-200 dark:bg-white/10 dark:text-white dark:hover:bg-white/20 transition"
+          >
+            Save Draft
+          </button>
+          <button
+            type="submit"
+            disabled={isLoading}
+            className="inline-flex items-center justify-center gap-2 px-5 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:opacity-70 transition"
+          >
+            {isLoading && <ClipLoader color="#fff" size={16} />}
+            {isLoading
+              ? id
+                ? "Updating..."
+                : "Adding..."
+              : id
+              ? "Update Product"
+              : "Add Product"}
+          </button>
+        </div>
+      </form>
     </div>
   );
 };

@@ -43,13 +43,16 @@ const RegisterForm: React.FC<RegisterFormProps> = ({
     }
   };
 
+  const inputClass =
+    "w-full border rounded px-4 py-2 focus:outline-none focus:bg-blue-100 focus:border-[#007BFF] border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-white dark:placeholder-gray-400";
+
   return (
     <div className="flex items-center justify-center w-full">
-      <div className="w-full max-w-md">
-        <h2 className="text-2xl font-bold mb-1">
+      <div className="w-full max-w-md bg-white dark:bg-gray-900 p-4 rounded-md shadow-md">
+        <h2 className="text-2xl font-bold mb-1 text-gray-900 dark:text-white">
           {isLogin ? "Welcome back" : "Create an account"}
         </h2>
-        <p className="text-sm text-gray-500 mb-6">
+        <p className="text-sm text-gray-500 dark:text-gray-400 mb-6">
           {isLogin
             ? "Enter your credentials to login"
             : "Enter your details below"}
@@ -64,7 +67,7 @@ const RegisterForm: React.FC<RegisterFormProps> = ({
                 value={formData.name}
                 onChange={handleChange}
                 placeholder="Name"
-                className="w-full border border-gray-300 rounded px-4 py-2 focus:outline-none focus:bg-blue-100 focus:border-[#007BFF]"
+                className={inputClass}
               />
               <input
                 type="text"
@@ -72,7 +75,7 @@ const RegisterForm: React.FC<RegisterFormProps> = ({
                 value={formData.phone}
                 onChange={handleChange}
                 placeholder="Phone"
-                className="w-full border border-gray-300 rounded px-4 py-2 focus:outline-none focus:bg-blue-100 focus:border-[#007BFF]"
+                className={inputClass}
               />
               <input
                 type="text"
@@ -80,7 +83,7 @@ const RegisterForm: React.FC<RegisterFormProps> = ({
                 value={formData.address}
                 onChange={handleChange}
                 placeholder="Address"
-                className="w-full border border-gray-300 rounded px-4 py-2 focus:outline-none focus:bg-blue-100 focus:border-[#007BFF]"
+                className={inputClass}
               />
             </>
           )}
@@ -90,7 +93,7 @@ const RegisterForm: React.FC<RegisterFormProps> = ({
             value={formData.email}
             onChange={handleChange}
             placeholder="Email"
-            className="w-full border border-gray-300 rounded px-4 py-2 focus:outline-none focus:bg-blue-100 focus:border-[#007BFF]"
+            className={inputClass}
           />
           <input
             type="password"
@@ -98,7 +101,7 @@ const RegisterForm: React.FC<RegisterFormProps> = ({
             value={formData.password}
             onChange={handleChange}
             placeholder={isLogin ? "Password" : "Create Password"}
-            className="w-full border border-gray-300 rounded px-4 py-2 focus:outline-none focus:bg-blue-100 focus:border-[#007BFF]"
+            className={inputClass}
           />
           {!isLogin && (
             <input
@@ -107,13 +110,13 @@ const RegisterForm: React.FC<RegisterFormProps> = ({
               value={formData.confirmPassword}
               onChange={handleChange}
               placeholder="Confirm Password"
-              className="w-full border border-gray-300 rounded px-4 py-2 focus:outline-none focus:bg-blue-100 focus:border-[#007BFF]"
+              className={inputClass}
             />
           )}
 
           <button
             type="submit"
-            className="w-full bg-blue-600 text-white rounded px-4 py-2 font-semibold flex items-center justify-center"
+            className="w-full bg-blue-600 hover:bg-blue-700 text-white rounded px-4 py-2 font-semibold flex items-center justify-center disabled:opacity-70"
             disabled={isLoading}
           >
             {isLoading ? (
@@ -132,9 +135,9 @@ const RegisterForm: React.FC<RegisterFormProps> = ({
         </form>
 
         <div className="my-4 flex items-center">
-          <div className="flex-grow border-t border-gray-300"></div>
-          <span className="mx-4 text-gray-500">or</span>
-          <div className="flex-grow border-t border-gray-300"></div>
+          <div className="flex-grow border-t border-gray-300 dark:border-gray-600"></div>
+          <span className="mx-4 text-gray-500 dark:text-gray-400">or</span>
+          <div className="flex-grow border-t border-gray-300 dark:border-gray-600"></div>
         </div>
 
         <button
@@ -142,7 +145,7 @@ const RegisterForm: React.FC<RegisterFormProps> = ({
           onClick={async () => {
             if (onGoogleSignIn) await onGoogleSignIn();
           }}
-          className="w-full border border-gray-300 rounded px-4 py-2 flex items-center justify-center gap-2"
+          className="w-full border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-black dark:text-white rounded px-4 py-2 flex items-center justify-center gap-2"
         >
           <img
             src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg"
@@ -152,11 +155,11 @@ const RegisterForm: React.FC<RegisterFormProps> = ({
           {isLogin ? "Log in with Google" : "Sign up with Google"}
         </button>
 
-        <p className="mt-6 text-center text-sm">
+        <p className="mt-6 text-center text-sm text-gray-700 dark:text-gray-300">
           {isLogin ? "Don't have an account?" : "Already have an account?"}{" "}
           <a
             href={isLogin ? "/signup" : "/login"}
-            className="text-blue-600 font-medium"
+            className="text-blue-600 dark:text-blue-400 font-medium"
           >
             {isLogin ? "Sign up" : "Log in"}
           </a>

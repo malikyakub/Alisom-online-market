@@ -11,7 +11,7 @@ const ProductsAndOrdersHero: React.FC<ProductsAndOrdersHeroProps> = ({
   title,
   subtitle,
   imageSrc,
-  gradient = "from-gray-900 via-gray-800 to-gray-900",
+  gradient = "from-gray-900 via-[#1A2238] to-gray-900",
 }) => {
   return (
     <section

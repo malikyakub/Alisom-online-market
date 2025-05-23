@@ -53,6 +53,7 @@ export default function ProductFilter({
     colors = [],
     discount = [],
   } = filters;
+
   const [categoriesData, setCategoriesData] = useState<Category[]>([]);
   const [brandsData, setBrandsData] = useState<Brand[]>([]);
   const [isLoadingCategories, setIsLoadingCategories] = useState(false);
@@ -132,7 +133,9 @@ export default function ProductFilter({
     onChange: (value: T | null) => void
   ) => (
     <div>
-      <h3 className="font-semibold text-sm text-gray-700 mb-2">{title}</h3>
+      <h3 className="font-semibold text-sm text-gray-700 dark:text-gray-200 mb-2">
+        {title}
+      </h3>
       <div className="flex flex-wrap gap-2">
         {options.map((opt) => {
           const isSelected = current === opt;
@@ -141,8 +144,8 @@ export default function ProductFilter({
               key={typeof opt === "string" ? opt : String(opt)}
               className={`px-3 py-1 text-sm rounded cursor-pointer border transition ${
                 isSelected
-                  ? "text-[#007BFF] border-[#007BFF] bg-[#007BFF22]"
-                  : "text-[#666666] border-[#A3A3A3] hover:bg-gray-100"
+                  ? "text-[#007BFF] border-[#007BFF] bg-[#007BFF22] dark:bg-[#007BFF33]"
+                  : "text-[#666666] dark:text-gray-300 border-[#A3A3A3] dark:border-gray-600 hover:bg-gray-100 dark:hover:bg-gray-700"
               }`}
               onClick={() => toggleRadio(opt, current, onChange)}
             >
@@ -159,7 +162,7 @@ export default function ProductFilter({
       {Array.from({ length: count }).map((_, i) => (
         <div
           key={i}
-          className="h-6 bg-gray-300 rounded animate-pulse w-24"
+          className="h-6 bg-gray-300 dark:bg-gray-600 rounded animate-pulse w-24"
         ></div>
       ))}
     </div>
@@ -176,7 +179,7 @@ export default function ProductFilter({
       <div className="md:hidden">
         <button
           onClick={toggleMobile}
-          className="flex w-full justify-end items-center gap-2 px-4 py-2 text-sm rounded bg-[#F4F4F4] text-[#333333]"
+          className="flex w-full justify-end items-center gap-2 px-4 py-2 text-sm rounded bg-[#F4F4F4] dark:bg-gray-700 text-[#333333] dark:text-white"
         >
           <FiFilter /> Filters
         </button>
@@ -188,7 +191,7 @@ export default function ProductFilter({
             initial={{ height: 0, opacity: 0 }}
             animate={{ height: "auto", opacity: 1 }}
             exit={{ height: 0, opacity: 0 }}
-            className="md:hidden bg-white p-4 rounded-md shadow space-y-4 mb-4"
+            className="md:hidden bg-white dark:bg-gray-800 p-4 rounded-md shadow space-y-4 mb-4"
           >
             <div>
               <input
@@ -196,11 +199,11 @@ export default function ProductFilter({
                 value={query}
                 onChange={handleQueryChange}
                 placeholder="Search products..."
-                className="w-full px-3 py-2 border rounded text-sm"
+                className="w-full px-3 py-2 border rounded text-sm bg-white dark:bg-gray-800 text-black dark:text-white placeholder:text-gray-400 dark:placeholder:text-gray-500"
               />
             </div>
             <div>
-              <h3 className="font-semibold text-sm text-gray-700 mb-2">
+              <h3 className="font-semibold text-sm text-gray-700 dark:text-gray-200 mb-2">
                 Price Range
               </h3>
               <Slider
@@ -228,7 +231,7 @@ export default function ProductFilter({
                   handleBrandChange
                 )}
             <div>
-              <h3 className="font-semibold text-sm text-gray-700 mb-2">
+              <h3 className="font-semibold text-sm text-gray-700 dark:text-gray-200 mb-2">
                 Sort By
               </h3>
               <div className="flex flex-wrap gap-2">
@@ -239,8 +242,8 @@ export default function ProductFilter({
                       key={opt.value}
                       className={`px-3 py-1 text-sm rounded cursor-pointer border transition ${
                         isSelected
-                          ? "text-[#007BFF] border-[#007BFF] bg-[#007BFF22]"
-                          : "text-[#666666] border-[#A3A3A3] hover:bg-gray-100"
+                          ? "text-[#007BFF] border-[#007BFF] bg-[#007BFF22] dark:bg-[#007BFF33]"
+                          : "text-[#666666] dark:text-gray-300 border-[#A3A3A3] dark:border-gray-600 hover:bg-gray-100 dark:hover:bg-gray-700"
                       }`}
                       onClick={() =>
                         handleSortChange(isSelected ? null : opt.value)
@@ -254,7 +257,7 @@ export default function ProductFilter({
             </div>
             <button
               onClick={clearFilters}
-              className="w-full text-sm py-2 rounded transition bg-gray-300 text-gray-700"
+              className="w-full text-sm py-2 rounded transition bg-gray-300 dark:bg-gray-600 text-gray-700 dark:text-white"
             >
               Clear Filters
             </button>
@@ -262,18 +265,18 @@ export default function ProductFilter({
         )}
       </AnimatePresence>
 
-      <div className="hidden md:flex w-full max-w-xs p-4 border rounded-lg bg-white space-y-4 flex-col">
+      <div className="hidden md:flex w-full max-w-xs p-4 border dark:border-white/10 rounded-lg bg-white dark:bg-gray-800 space-y-4 flex-col">
         <div>
           <input
             type="text"
             value={query}
             onChange={handleQueryChange}
             placeholder="Search products..."
-            className="w-full px-3 py-2 border rounded text-sm"
+            className="w-full px-3 py-2 border rounded text-sm bg-white dark:bg-gray-800 text-black dark:text-white placeholder:text-gray-400 dark:placeholder:text-gray-500"
           />
         </div>
         <div>
-          <h3 className="font-semibold text-sm text-gray-700 mb-2">
+          <h3 className="font-semibold text-sm text-gray-700 dark:text-gray-200 mb-2">
             Price Range
           </h3>
           <Slider
@@ -301,7 +304,9 @@ export default function ProductFilter({
               handleBrandChange
             )}
         <div>
-          <h3 className="font-semibold text-sm text-gray-700 mb-2">Sort By</h3>
+          <h3 className="font-semibold text-sm text-gray-700 dark:text-gray-200 mb-2">
+            Sort By
+          </h3>
           <div className="flex flex-wrap gap-2">
             {sortOptions.map((opt) => {
               const isSelected = sortBy === opt.value;
@@ -310,8 +315,8 @@ export default function ProductFilter({
                   key={opt.value}
                   className={`px-3 py-1 text-sm rounded cursor-pointer border transition ${
                     isSelected
-                      ? "text-[#007BFF] border-[#007BFF] bg-[#007BFF22]"
-                      : "text-[#666666] border-[#A3A3A3] hover:bg-gray-100"
+                      ? "text-[#007BFF] border-[#007BFF] bg-[#007BFF22] dark:bg-[#007BFF33]"
+                      : "text-[#666666] dark:text-gray-300 border-[#A3A3A3] dark:border-gray-600 hover:bg-gray-100 dark:hover:bg-gray-700"
                   }`}
                   onClick={() =>
                     handleSortChange(isSelected ? null : opt.value)
@@ -325,7 +330,7 @@ export default function ProductFilter({
         </div>
         <button
           onClick={clearFilters}
-          className="w-full text-sm py-2 rounded transition bg-gray-300 text-gray-700"
+          className="w-full text-sm py-2 rounded transition bg-gray-300 dark:bg-gray-600 text-gray-700 dark:text-white"
         >
           Clear Filters
         </button>

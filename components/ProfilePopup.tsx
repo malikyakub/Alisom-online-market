@@ -79,7 +79,7 @@ const ProfilePopup = ({ isOpen = false, onClose }: ProfilePopupProps) => {
 
   return (
     <div
-      className="w-56 rounded-md bg-[#1a2238be] backdrop-blur-2xl p-3 flex flex-col gap-2 shadow-lg"
+      className="w-56 rounded-md bg-white/80 dark:bg-[#1a2238]/80 backdrop-blur-3xl p-3 flex flex-col gap-2 shadow-lg"
       role="menu"
       aria-label="Profile menu"
     >
@@ -87,10 +87,14 @@ const ProfilePopup = ({ isOpen = false, onClose }: ProfilePopupProps) => {
         <button
           key={idx}
           onClick={item.onClick}
-          className="flex items-center gap-3 px-2 py-2 text-sm text-white hover:bg-white/10 rounded transition-colors duration-150 group"
+          className="flex items-center gap-3 px-2 py-2 text-sm text-black dark:text-white hover:bg-black/5 dark:hover:bg-white/10 rounded transition-colors duration-150 group"
         >
-          <span className="group-hover:text-[#007BFF]">{item.icon}</span>
-          <span className="group-hover:text-[#007BFF]">{item.label}</span>
+          <span className="group-hover:text-blue-600 dark:group-hover:text-blue-400">
+            {item.icon}
+          </span>
+          <span className="group-hover:text-blue-600 dark:group-hover:text-blue-400">
+            {item.label}
+          </span>
         </button>
       ))}
     </div>

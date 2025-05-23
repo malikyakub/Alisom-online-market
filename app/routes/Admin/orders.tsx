@@ -216,7 +216,7 @@ const OrdersTable: React.FC = () => {
   };
 
   return (
-    <div>
+    <div className="text-[#1A2238] dark:text-[#F4F4F4] min-h-screen">
       <Alert
         isOpen={alert.isOpen}
         title={alert.title}
@@ -227,25 +227,25 @@ const OrdersTable: React.FC = () => {
 
       <div className="flex flex-wrap justify-between items-start sm:items-center mb-6 gap-2">
         <div>
-          <h1 className="text-2xl font-bold text-[#1A2238]">
+          <h1 className="text-2xl font-bold">
             Orders ({filteredOrders.length})
           </h1>
-          <p className="text-lg text-[#666666]">
+          <p className="text-lg text-[#666666] dark:text-[#CCCCCC]">
             Manage your orders and shipping details.
           </p>
         </div>
         <input
           type="text"
           placeholder="Search by customer..."
-          className="border border-[#A3A3A3] rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className="border border-[#A3A3A3] dark:border-white/20 bg-white dark:bg-white/10 rounded-lg px-3 py-2 text-sm text-[#333] dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
         />
       </div>
 
-      <div className="overflow-x-auto bg-white rounded-xl shadow-sm">
+      <div className="overflow-x-auto bg-white dark:bg-[#2C2C2C]/20 rounded-xl shadow-sm">
         <table className="min-w-full text-sm">
-          <thead className="bg-[#F4F4F4] text-[#333]">
+          <thead className="bg-[#F4F4F4] dark:bg-[#2C2C2C]/50 text-[#333] dark:text-white">
             <tr>
               <th className="px-4 py-3 text-left">
                 <input
@@ -275,12 +275,15 @@ const OrdersTable: React.FC = () => {
               ))}
             </tr>
           </thead>
+
           <tbody>
             {paginatedOrders.map((order) => (
               <tr
                 key={order.Order_id}
-                className={`border-t ${
-                  isSelected(order.Order_id) ? "bg-blue-50" : "hover:bg-gray-50"
+                className={`border-t transition-colors ${
+                  isSelected(order.Order_id)
+                    ? "bg-blue-50 dark:bg-[#2B3C55]"
+                    : "hover:bg-gray-50 dark:hover:bg-[#1F2937]"
                 }`}
               >
                 <td className="px-4 py-3">
@@ -322,7 +325,7 @@ const OrdersTable: React.FC = () => {
                         prev === order.Order_id ? null : order.Order_id
                       )
                     }
-                    className="text-xl text-[#666] hover:text-black transition"
+                    className="text-xl text-[#666] dark:text-[#CCCCCC] hover:text-black dark:hover:text-white transition"
                   >
                     ⋯
                   </button>
@@ -333,11 +336,11 @@ const OrdersTable: React.FC = () => {
                         animate={{ opacity: 1, scale: 1, y: 0 }}
                         exit={{ opacity: 0, scale: 0.95, y: -5 }}
                         transition={{ duration: 0.15 }}
-                        className="absolute z-20 right-0 mt-2 w-44 bg-white border border-gray-200 rounded-xl shadow-md p-2"
+                        className="absolute z-20 right-0 mt-2 w-44 bg-white dark:bg-[#F4F4F4]/10 backdrop-blur-2xl border border-gray-200 dark:border-white/20 rounded-xl shadow-md p-2"
                       >
                         <button
                           onClick={() => handleAction("edit", order.Order_id)}
-                          className="block w-full text-left px-4 py-2 text-sm hover:bg-gray-100 rounded"
+                          className="block w-full text-left px-4 py-2 text-sm text-[#333] dark:text-white hover:bg-gray-100 dark:hover:bg-white/10 rounded"
                         >
                           Edit
                         </button>
@@ -345,7 +348,7 @@ const OrdersTable: React.FC = () => {
                           onClick={() =>
                             handleAction("copy-id", order.Order_id)
                           }
-                          className="block w-full text-left px-4 py-2 text-sm hover:bg-gray-100 rounded"
+                          className="block w-full text-left px-4 py-2 text-sm text-[#333] dark:text-white hover:bg-gray-100 dark:hover:bg-white/10 rounded"
                         >
                           Copy ID
                         </button>
@@ -365,7 +368,7 @@ const OrdersTable: React.FC = () => {
         </table>
       </div>
 
-      <div className="p-4 bg-[#F4F4F4] flex flex-col sm:flex-row justify-between items-center text-sm text-[#333] gap-2 border-t">
+      <div className="p-4 bg-[#F4F4F4] dark:bg-[#2C2C2C] flex flex-col sm:flex-row justify-between items-center text-sm text-[#333] dark:text-white gap-2 border-t border-gray-200 dark:border-white/10">
         <p>
           {selectedOrderIds.size > 0
             ? `${selectedOrderIds.size} of ${filteredOrders.length} selected`
@@ -379,14 +382,14 @@ const OrdersTable: React.FC = () => {
             <button
               onClick={() => setCurrentPage((p) => Math.max(p - 1, 1))}
               disabled={currentPage === 1}
-              className="px-3 py-1 hover:bg-white disabled:opacity-50"
+              className="px-3 py-1 hover:bg-white dark:hover:bg-white/10 disabled:opacity-50"
             >
               &lt;
             </button>
             <button
               onClick={() => setCurrentPage((p) => Math.min(p + 1, totalPages))}
               disabled={currentPage === totalPages}
-              className="px-3 py-1 hover:bg-white disabled:opacity-50"
+              className="px-3 py-1 hover:bg-white dark:hover:bg-white/10 disabled:opacity-50"
             >
               &gt;
             </button>

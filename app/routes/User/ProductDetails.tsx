@@ -69,10 +69,10 @@ const ProductDetails: React.FC = () => {
   if (!product) return <div className="p-4">Product not found.</div>;
 
   return (
-    <div className="p-4 md:p-6">
-      <div className="text-sm text-gray-500 mb-4">
+    <div className="p-4 sm:p-6 lg:p-8 h-full">
+      <div className="text-sm text-white mb-4">
         Home / Shop /{" "}
-        <span className="text-black font-semibold">{product.name}</span>
+        <span className="text-[#17C3B2] font-semibold">{product.name}</span>
       </div>
 
       <div className="flex flex-col lg:flex-row gap-10">

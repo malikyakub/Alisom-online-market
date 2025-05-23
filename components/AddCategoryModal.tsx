@@ -32,9 +32,9 @@ const AddCategoryModal: React.FC<Props> = ({
 
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-[#1a22384d] backdrop-blur-sm z-50 px-2">
-      <div className="bg-white p-4 sm:p-6 rounded-lg shadow-lg w-full max-w-sm sm:max-w-md">
+      <div className="bg-white dark:bg-[#1A2238] p-4 sm:p-6 rounded-lg shadow-lg w-full max-w-sm sm:max-w-md">
         <div className="flex justify-between items-center mb-4">
-          <h2 className="text-lg sm:text-xl font-bold">
+          <h2 className="text-lg sm:text-xl font-bold text-[#1A2238] dark:text-[#F4F4F4]">
             {initialName ? "Edit Category" : "Add Category"}
           </h2>
           <button onClick={onClose} className="text-gray-500 text-xl font-bold">
@@ -51,7 +51,7 @@ const AddCategoryModal: React.FC<Props> = ({
           placeholder="Name…"
           value={name}
           onChange={(e) => setName(e.target.value)}
-          className="w-full p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-400 focus:bg-blue-100 hover:bg-blue-50 transition-colors duration-200 text-sm sm:text-base"
+          className="w-full p-2 border border-gray-300 text-[#1A2238] rounded focus:outline-none focus:ring-2 focus:ring-blue-400 focus:bg-blue-100 hover:bg-blue-50 transition-colors duration-200 text-sm sm:text-base"
         />
         <div className="flex justify-end mt-4">
           <button

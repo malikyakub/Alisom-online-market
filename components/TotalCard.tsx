@@ -8,26 +8,40 @@ type TotalCardProps = {
 
 const TotalCard: React.FC<TotalCardProps> = ({ subtotal, shipping, total }) => {
   return (
-    <div className="bg-white p-6 rounded-lg shadow-md w-full md:max-w-md mx-auto">
-      <h2 className="text-lg font-bold mb-4">Cart Total</h2>
+    <div className="bg-white dark:bg-gray-900 p-6 rounded-lg shadow-md w-full md:max-w-md mx-auto">
+      <h2 className="text-lg font-bold mb-4 text-gray-900 dark:text-white">
+        Cart Total
+      </h2>
 
       <div className="flex justify-between mb-2">
-        <span className="font-semibold">Subtotal:</span>
-        <span className="font-semibold">${subtotal.toFixed(2)}</span>
+        <span className="font-semibold text-gray-800 dark:text-gray-300">
+          Subtotal:
+        </span>
+        <span className="font-semibold text-gray-800 dark:text-gray-300">
+          ${subtotal.toFixed(2)}
+        </span>
       </div>
 
-      <hr className="my-2" />
+      <hr className="my-2 border-gray-300 dark:border-gray-700" />
 
       <div className="flex justify-between mb-2">
-        <span className="font-semibold">Shipping:</span>
-        <span className="font-semibold">{shipping}</span>
+        <span className="font-semibold text-gray-800 dark:text-gray-300">
+          Shipping:
+        </span>
+        <span className="font-semibold text-gray-800 dark:text-gray-300">
+          {shipping}
+        </span>
       </div>
 
-      <hr className="my-2" />
+      <hr className="my-2 border-gray-300 dark:border-gray-700" />
 
       <div className="flex justify-between mb-4">
-        <span className="font-semibold">Total:</span>
-        <span className="font-semibold">${total.toFixed(2)}</span>
+        <span className="font-semibold text-gray-900 dark:text-white">
+          Total:
+        </span>
+        <span className="font-semibold text-gray-900 dark:text-white">
+          ${total.toFixed(2)}
+        </span>
       </div>
 
       <a

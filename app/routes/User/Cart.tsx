@@ -142,7 +142,7 @@ export default function Cart() {
   );
 
   return (
-    <div className="relative py-10 px-4">
+    <div className="relative py-10 px-4 text-gray-900 dark:text-gray-100">
       <Alert
         isOpen={alertVisible}
         onClose={() => setAlertVisible(false)}
@@ -151,16 +151,17 @@ export default function Cart() {
         description={alertContent.description}
       />
 
-      <div className="text-sm text-gray-500 mb-6">
-        Home / Shop / <span className="text-black font-semibold">Cart</span>
+      <div className="text-sm text-gray-500 dark:text-gray-400 mb-6">
+        Home / Shop /{" "}
+        <span className="text-black dark:text-white font-semibold">Cart</span>
       </div>
 
       {isLoading ? (
-        <p>Loading cart...</p>
+        <p className="text-gray-700 dark:text-gray-300">Loading cart...</p>
       ) : cartProducts.length === 0 ? (
         <div className="text-center py-12">
           <svg
-            className="mx-auto mb-4 w-24 h-24 text-gray-400"
+            className="mx-auto mb-4 w-24 h-24 text-gray-400 dark:text-gray-600"
             fill="none"
             stroke="currentColor"
             strokeWidth={1.5}
@@ -172,15 +173,15 @@ export default function Cart() {
               d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2 9h12l-2-9m-6 0V6a2 2 0 114 0v7"
             />
           </svg>
-          <h3 className="text-lg font-semibold text-gray-700">
+          <h3 className="text-lg font-semibold text-gray-700 dark:text-gray-300">
             Your cart is empty
           </h3>
-          <p className="text-sm text-gray-500 mb-4">
+          <p className="text-sm text-gray-500 dark:text-gray-400 mb-4">
             Browse products and add them to your cart.
           </p>
           <a
-            href="/"
-            className="px-6 py-2 border border-[#1A2238] font-bold rounded text-sm text-[#666666] hover:bg-[#1A2238] transition hover:text-white"
+            href="/user/products"
+            className="px-6 py-2 border border-[#1A2238] font-bold rounded text-sm text-[#666666] dark:text-gray-300 hover:bg-[#1A2238] dark:hover:bg-[#17C3B2] transition hover:text-white"
           >
             Return to Shop
           </a>
@@ -199,9 +200,12 @@ export default function Cart() {
           </div>
 
           <div className="flex justify-between my-4">
-            <button className="px-6 py-2 border border-[#1A2238] font-bold rounded text-sm text-[#666666] hover:bg-[#1A2238] transition hover:text-white">
+            <a
+              href="/user/products"
+              className="px-6 py-2 border border-[#1A2238] font-bold rounded text-sm text-[#666666] dark:text-gray-300 hover:bg-[#1A2238] dark:hover:bg-[#17C3B2] transition hover:text-white"
+            >
               Return to Shop
-            </button>
+            </a>
             <button
               onClick={handleUpdateCart}
               disabled={updating}

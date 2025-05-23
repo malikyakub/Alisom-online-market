@@ -161,15 +161,17 @@ const UserAccount = () => {
         isOpen={alert.isOpen}
         onClose={() => setAlert((prev) => ({ ...prev, isOpen: false }))}
       />
-      <div className="p-4 sm:p-6 lg:p-8 h-full">
+      <div className="p-4 sm:p-6 lg:p-8 h-full text-gray-900 dark:text-gray-100">
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 space-y-2 sm:space-y-0">
-          <div className="text-sm text-gray-500">
+          <div className="text-sm text-gray-500 dark:text-gray-400">
             Home / User /{" "}
-            <span className="text-black font-semibold">My Account</span>
+            <span className="text-black dark:text-white font-semibold">
+              My Account
+            </span>
           </div>
           <div className="text-sm">
-            Welcome!{" "}
-            <span className="text-red-600 font-medium">
+            Welcome,{" "}
+            <span className="text-[#17C3B2] font-bold">
               {formData.firstName}!
             </span>
           </div>
@@ -179,99 +181,63 @@ const UserAccount = () => {
           <div className="w-full lg:w-1/4">
             <a
               href="#"
-              className="text-blue-600 font-medium hover:underline block mb-4 lg:mb-0"
+              className="text-blue-600 dark:text-blue-400 font-medium hover:underline block mb-4 lg:mb-0"
             >
               Manage My Account
             </a>
           </div>
 
-          <div className="bg-white shadow-md rounded p-4 sm:p-6 w-full lg:w-3/4">
-            <h2 className="text-xl font-semibold mb-6 text-teal-600">
+          <div className="bg-white dark:bg-gray-800 shadow-md rounded p-4 sm:p-6 w-full lg:w-3/4">
+            <h2 className="text-xl font-semibold mb-6 text-teal-600 dark:text-teal-400">
               Edit Your Profile
             </h2>
 
             <form className="flex flex-col gap-6" onSubmit={handleSubmit}>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div>
-                  <label className="block font-bold mb-1">First Name</label>
-                  <input
-                    type="text"
-                    name="firstName"
-                    placeholder="Enter your first name"
-                    value={formData.firstName}
-                    onChange={handleChange}
-                    className="w-full border border-gray-300 p-2 rounded bg-gray-50 focus:bg-white focus:border-blue-500 outline-none"
-                  />
-                </div>
-                <div>
-                  <label className="block font-bold mb-1">Last Name</label>
-                  <input
-                    type="text"
-                    name="lastName"
-                    placeholder="Enter your last name"
-                    value={formData.lastName}
-                    onChange={handleChange}
-                    className="w-full border border-gray-300 p-2 rounded bg-gray-50 focus:bg-white focus:border-blue-500 outline-none"
-                  />
-                </div>
-                <div>
-                  <label className="block font-bold mb-1">Email</label>
-                  <input
-                    type="email"
-                    name="email"
-                    placeholder="Enter your email"
-                    value={formData.email}
-                    onChange={handleChange}
-                    className="w-full border border-gray-300 p-2 rounded bg-gray-50 focus:bg-white focus:border-blue-500 outline-none"
-                  />
-                </div>
-                <div>
-                  <label className="block font-bold mb-1">Address</label>
-                  <input
-                    type="text"
-                    name="address"
-                    placeholder="Enter your address"
-                    value={formData.address}
-                    onChange={handleChange}
-                    className="w-full border border-gray-300 p-2 rounded bg-gray-50 focus:bg-white focus:border-blue-500 outline-none"
-                  />
-                </div>
+                {["firstName", "lastName", "email", "address"].map((field) => (
+                  <div key={field}>
+                    <label className="block font-bold mb-1 capitalize">
+                      {field.replace(/([A-Z])/g, " $1")}
+                    </label>
+                    <input
+                      type={field === "email" ? "email" : "text"}
+                      name={field}
+                      placeholder={`Enter your ${field}`}
+                      value={formData[field as keyof typeof formData] as string}
+                      onChange={handleChange}
+                      className="w-full border border-gray-300 dark:border-gray-600 p-2 rounded bg-gray-50 dark:bg-gray-700 focus:bg-white dark:focus:bg-gray-600 focus:border-blue-500 outline-none text-black dark:text-white"
+                    />
+                  </div>
+                ))}
               </div>
 
               <div>
                 <h3 className="font-bold mb-2">Password Changes</h3>
                 <div className="space-y-4">
-                  <input
-                    type="password"
-                    name="currentPassword"
-                    placeholder="Current Password"
-                    value={formData.currentPassword}
-                    onChange={handleChange}
-                    className="w-full border border-gray-300 p-2 rounded bg-gray-50 focus:bg-white focus:border-blue-500 outline-none"
-                  />
-                  <input
-                    type="password"
-                    name="newPassword"
-                    placeholder="New Password"
-                    value={formData.newPassword}
-                    onChange={handleChange}
-                    className="w-full border border-gray-300 p-2 rounded bg-gray-50 focus:bg-white focus:border-blue-500 outline-none"
-                  />
-                  <input
-                    type="password"
-                    name="confirmPassword"
-                    placeholder="Confirm New Password"
-                    value={formData.confirmPassword}
-                    onChange={handleChange}
-                    className="w-full border border-gray-300 p-2 rounded bg-gray-50 focus:bg-white focus:border-blue-500 outline-none"
-                  />
+                  {["currentPassword", "newPassword", "confirmPassword"].map(
+                    (field) => (
+                      <input
+                        key={field}
+                        type="password"
+                        name={field}
+                        placeholder={field
+                          .replace(/([A-Z])/g, " $1")
+                          .replace(/^./, (s) => s.toUpperCase())}
+                        value={
+                          formData[field as keyof typeof formData] as string
+                        }
+                        onChange={handleChange}
+                        className="w-full border border-gray-300 dark:border-gray-600 p-2 rounded bg-gray-50 dark:bg-gray-700 focus:bg-white dark:focus:bg-gray-600 focus:border-blue-500 outline-none text-black dark:text-white"
+                      />
+                    )
+                  )}
                 </div>
               </div>
 
               <div className="flex flex-col sm:flex-row justify-end gap-4 pt-4">
                 <button
                   type="button"
-                  className="text-black font-semibold"
+                  className="text-black dark:text-white font-semibold"
                   onClick={() => {
                     if (user) {
                       GetUserById(user.id).then(({ data }) => {
@@ -304,7 +270,7 @@ const UserAccount = () => {
                 </button>
                 <button
                   type="submit"
-                  className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
+                  className="bg-blue-600 dark:bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-700 dark:hover:bg-blue-600"
                 >
                   Save Changes
                 </button>

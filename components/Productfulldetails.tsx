@@ -31,7 +31,7 @@ const ProductFullDetails: React.FC<Props> = ({
   quantity,
   onQuantityChange,
 }) => {
-  const [viewingReviews, setViewingReviews] = useState(true);
+  const [viewingReviews, setViewingReviews] = useState(false);
   const [wishlistAlert, setWishlistAlert] = useState(false);
   const [cartAlert, setCartAlert] = useState(false);
   const [wishActive, setWishActive] = useState(false);
@@ -116,14 +116,16 @@ const ProductFullDetails: React.FC<Props> = ({
         onClose={() => setCartAlert(false)}
       />
 
-      <div className="space-y-6">
+      <div className="space-y-6 bg-white dark:bg-black/50 text-gray-800 dark:text-white rounded p-4">
         <div>
           <h1 className="text-2xl font-bold">{product.name}</h1>
-          <p className="text-sm text-gray-500">
+          <p className="text-sm text-gray-600 dark:text-gray-400">
             Brand:{" "}
-            <span className="font-medium text-black">{product.brand.name}</span>{" "}
+            <span className="font-medium text-gray-800 dark:text-white">
+              {product.brand.name}
+            </span>{" "}
             &bull; Category:{" "}
-            <span className="font-medium text-black">
+            <span className="font-medium text-gray-800 dark:text-white">
               {product.category.name}
             </span>
           </p>
@@ -131,29 +133,33 @@ const ProductFullDetails: React.FC<Props> = ({
           <div className="flex items-center space-x-2 mt-2">
             <div className="flex items-center space-x-1 text-yellow-400">
               {renderStars()}
-              <span className="ml-2 text-gray-600 text-sm">
+              <span className="ml-2 text-sm text-gray-600 dark:text-gray-300">
                 {ratings ? ratings.toFixed(1) : "0.0"}
               </span>
             </div>
             <button
               onClick={() => setViewingReviews(!viewingReviews)}
-              className="text-sm text-blue-600 hover:underline"
+              className="text-sm text-blue-600 dark:text-blue-400 hover:underline"
             >
               ({reviews} Reviews)
             </button>
             <span
               className={`text-sm font-medium ${
-                product.stock_quantity > 0 ? "text-green-600" : "text-red-600"
+                product.stock_quantity > 0
+                  ? "text-green-600 dark:text-green-400"
+                  : "text-red-600 dark:text-red-400"
               }`}
             >
               {product.stock_quantity > 0 ? "In Stock" : "Out of Stock"}
             </span>
           </div>
 
-          <p className="text-2xl font-semibold mt-2">
+          <p className="text-2xl font-semibold mt-2 text-gray-900 dark:text-white">
             ${product.price.toFixed(2)}
           </p>
-          <p className="text-sm text-gray-700 mt-2">{product.description}</p>
+          <p className="text-sm text-gray-700 dark:text-gray-300 mt-2">
+            {product.description}
+          </p>
         </div>
 
         {product.Specifications && product.Specifications.length > 0 && (
@@ -175,7 +181,7 @@ const ProductFullDetails: React.FC<Props> = ({
                   return (
                     <div
                       key={i}
-                      className="rounded border border-[#007BFF] bg-[#007BFF]/20 hover:bg-[#007BFF]/30 font-semibold text-[#1A2238] py-1 px-3"
+                      className="rounded border border-blue-500 bg-blue-100 dark:bg-blue-500/20 hover:bg-blue-200 dark:hover:bg-blue-500/30 font-semibold text-gray-900 dark:text-white py-1 px-3"
                     >
                       {cleaned}
                     </div>
@@ -189,14 +195,14 @@ const ProductFullDetails: React.FC<Props> = ({
         <div className="flex items-center space-x-3">
           <button
             onClick={() => onQuantityChange("dec")}
-            className="border rounded-md p-2"
+            className="border border-gray-400 dark:border-gray-600 text-gray-800 dark:text-white rounded-md p-2 hover:bg-gray-200 dark:hover:bg-gray-700"
           >
             <AiOutlineMinus size={16} />
           </button>
           <span className="text-lg font-medium">{quantity}</span>
           <button
             onClick={() => onQuantityChange("inc")}
-            className="border rounded-md p-2"
+            className="border border-gray-400 dark:border-gray-600 text-gray-800 dark:text-white rounded-md p-2 hover:bg-gray-200 dark:hover:bg-gray-700"
           >
             <AiOutlinePlus size={16} />
           </button>
@@ -208,10 +214,10 @@ const ProductFullDetails: React.FC<Props> = ({
             disabled={product.stock_quantity === 0}
             className={`w-full py-2 rounded-md font-semibold text-white transition-all duration-300 ${
               isInCart
-                ? "bg-[#17C3B2]"
+                ? "bg-green-600"
                 : product.stock_quantity === 0
-                ? "bg-[#007BFF]/60 cursor-not-allowed"
-                : "bg-[#007BFF]/80 hover:bg-[#007BFF]"
+                ? "bg-blue-400/60 cursor-not-allowed"
+                : "bg-blue-600 hover:bg-blue-700"
             }`}
           >
             {isInCart ? "Added" : "Buy Now"}
@@ -219,8 +225,10 @@ const ProductFullDetails: React.FC<Props> = ({
           <button
             onClick={handleAddToWishlist}
             className={`border rounded-md p-2 transition-colors ${
-              wishActive ? "text-red-500" : "text-black"
-            }`}
+              wishActive
+                ? "text-red-500 border-red-500"
+                : "text-gray-800 dark:text-white border-gray-400 dark:border-gray-600"
+            } hover:bg-gray-100 dark:hover:bg-gray-700`}
           >
             <AiOutlineHeart size={20} />
           </button>

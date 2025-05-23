@@ -132,22 +132,27 @@ const ProductReview: React.FC<ProductReviewProps> = ({ productId }) => {
             {!isLoading && reviews.length === 0 && (
               <p className="text-sm text-gray-500">No reviews yet.</p>
             )}
-            {reviews.map((review, idx) => (
-              <div key={idx} className="p-3 border rounded-md bg-gray-50">
-                <div className="flex justify-between items-center mb-1">
-                  <span className="font-medium text-gray-800">
-                    {review.user?.full_name ||
-                      review.user?.email ||
-                      "Anonymous"}
-                  </span>
-                  <div className="text-yellow-400 text-sm">
-                    {"★".repeat(review.rating_stars)}
-                    {"☆".repeat(5 - review.rating_stars)}
+            <div className="flex flex-col gap-2 py-2 [&::-webkit-scrollbar]:hidden overflow-scroll h-[200px]">
+              {reviews.map((review, idx) => (
+                <div
+                  key={idx}
+                  className="p-3 border rounded-md bg-white dark:bg-white/20 "
+                >
+                  <div className="flex justify-between items-center mb-1">
+                    <span className="font-medium text-[#1A2238] dark:text-[#F4F4F4]">
+                      {review.user?.fullname ||
+                        review.user?.email ||
+                        "Anonymous"}
+                    </span>
+                    <div className="text-yellow-400 text-sm">
+                      {"★".repeat(review.rating_stars)}
+                      {"☆".repeat(5 - review.rating_stars)}
+                    </div>
                   </div>
+                  <p className="text-sm text-gray-400">{review.comment}</p>
                 </div>
-                <p className="text-sm text-gray-600">{review.comment}</p>
-              </div>
-            ))}
+              ))}
+            </div>
           </div>
         ) : (
           <>

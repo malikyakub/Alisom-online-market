@@ -7,7 +7,7 @@ interface Product {
 }
 
 interface Props {
-  product?: Product; // product is now optional
+  product?: Product;
   quantity: number;
   onQuantityChange: (quantity: number) => void;
 }
@@ -36,19 +36,19 @@ const ProductDetailsCard: React.FC<Props> = ({
   };
 
   if (!product) {
-    // Skeleton Loading UI
+    // Skeleton loading UI
     return (
-      <div className="bg-white p-4 rounded-md shadow-sm w-full grid grid-cols-1 sm:grid-cols-2 gap-4 animate-pulse">
+      <div className="bg-white dark:bg-gray-800 p-4 rounded-md shadow-sm w-full grid grid-cols-1 sm:grid-cols-2 gap-4 animate-pulse">
         <div className="flex items-center gap-4">
-          <div className="w-16 h-16 bg-gray-200 rounded" />
+          <div className="w-16 h-16 bg-gray-200 dark:bg-gray-700 rounded" />
           <div className="flex flex-col gap-2">
-            <div className="w-24 h-4 bg-gray-200 rounded" />
-            <div className="w-16 h-3 bg-gray-200 rounded" />
+            <div className="w-24 h-4 bg-gray-200 dark:bg-gray-700 rounded" />
+            <div className="w-16 h-3 bg-gray-200 dark:bg-gray-700 rounded" />
           </div>
         </div>
         <div className="flex items-center justify-between sm:justify-end sm:gap-6">
-          <div className="w-24 h-8 bg-gray-200 rounded" />
-          <div className="w-16 h-4 bg-gray-200 rounded" />
+          <div className="w-24 h-8 bg-gray-200 dark:bg-gray-700 rounded" />
+          <div className="w-16 h-4 bg-gray-200 dark:bg-gray-700 rounded" />
         </div>
       </div>
     );
@@ -57,7 +57,7 @@ const ProductDetailsCard: React.FC<Props> = ({
   const totalPrice = product.price * localQty;
 
   return (
-    <div className="bg-white p-4 rounded-md shadow-sm w-full grid grid-cols-1 sm:grid-cols-2 gap-4">
+    <div className="bg-white dark:bg-gray-900 p-4 rounded-md shadow-sm w-full grid grid-cols-1 sm:grid-cols-2 gap-4">
       <div className="flex items-center gap-4">
         <img
           src={product.image}
@@ -65,30 +65,34 @@ const ProductDetailsCard: React.FC<Props> = ({
           className="w-16 h-16 object-cover rounded"
         />
         <div>
-          <div className="font-medium text-gray-800">{product.name}</div>
-          <div className="text-gray-700 text-sm font-semibold">
+          <div className="font-medium text-[#1A2238] dark:text-white">
+            {product.name}
+          </div>
+          <div className="text-gray-700 dark:text-gray-300 text-sm font-semibold">
             ${product.price.toFixed(2)}
           </div>
         </div>
       </div>
 
       <div className="flex items-center justify-between sm:justify-end sm:gap-6">
-        <div className="flex items-center border border-gray-300 rounded">
+        <div className="flex items-center border border-gray-300 dark:border-gray-600 rounded">
           <button
             onClick={decrement}
-            className="px-2 py-1 bg-gray-100 hover:bg-gray-200 font-bold"
+            className="px-2 py-1 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 font-bold text-black dark:text-white"
           >
             −
           </button>
-          <span className="px-3 text-sm">{localQty}</span>
+          <span className="px-3 text-sm text-black dark:text-white">
+            {localQty}
+          </span>
           <button
             onClick={increment}
-            className="px-2 py-1 bg-gray-100 hover:bg-gray-200 font-bold"
+            className="px-2 py-1 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 font-bold text-black dark:text-white"
           >
             +
           </button>
         </div>
-        <div className="font-bold text-[#28A745] text-sm w-20 text-right">
+        <div className="font-bold text-[#28A745] dark:text-green-400 text-sm w-20 text-right">
           ${totalPrice.toFixed(2)}
         </div>
       </div>

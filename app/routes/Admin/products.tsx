@@ -190,7 +190,7 @@ const ProductTable: React.FC = () => {
   };
 
   return (
-    <div>
+    <div className="text-[#1A2238] dark:text-[#F4F4F4] min-h-screen">
       <Alert
         title={alert.title}
         description={alert.description}
@@ -201,10 +201,10 @@ const ProductTable: React.FC = () => {
 
       <div className="flex flex-wrap flex-row justify-between items-start sm:items-center mb-6 gap-2">
         <div>
-          <h1 className="text-2xl font-bold text-[#1A2238]">
+          <h1 className="text-2xl font-bold">
             Products ({filteredProducts.length})
           </h1>
-          <p className="text-base text-[#666666]">
+          <p className="text-base text-[#666666] dark:text-[#CCCCCC]">
             Manage your products and track restocks here.
           </p>
         </div>
@@ -219,21 +219,19 @@ const ProductTable: React.FC = () => {
       </div>
 
       <div className="flex flex-col lg:flex-row lg:items-center gap-4 w-full">
-        {/* Search Input */}
         <div className="w-full lg:max-w-[350px]">
           <input
             type="text"
             placeholder="Search by name..."
-            className="w-full border border-[#A3A3A3] rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#007BFF] text-[#333333]"
+            className="w-full border border-[#A3A3A3] dark:border-white/20 bg-white dark:bg-white/10 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#007BFF] text-[#333333] dark:text-white"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
           />
         </div>
 
-        {/* Select Inputs */}
         <div className="flex flex-wrap lg:flex-nowrap gap-3 flex-1">
           <select
-            className="flex-grow min-w-[8rem] border border-[#A3A3A3] rounded-md px-3 py-2 text-sm focus:outline-none text-[#333333]"
+            className="flex-grow min-w-[8rem] border border-[#A3A3A3] dark:border-white/20 bg-white dark:bg-white/10 rounded-md px-3 py-2 text-sm text-[#333333] dark:text-white"
             value={featuredFilter}
             onChange={(e) => setFeaturedFilter(e.target.value)}
           >
@@ -243,7 +241,7 @@ const ProductTable: React.FC = () => {
           </select>
 
           <select
-            className="flex-grow min-w-[8rem] border border-[#A3A3A3] rounded px-3 py-2 text-sm text-[#333333]"
+            className="flex-grow min-w-[8rem] border border-[#A3A3A3] dark:border-white/20 bg-white dark:bg-white/10 rounded-md px-3 py-2 text-sm text-[#333333] dark:text-white"
             value={categoryFilter}
             onChange={(e) => setCategoryFilter(e.target.value)}
           >
@@ -256,7 +254,7 @@ const ProductTable: React.FC = () => {
           </select>
 
           <select
-            className="flex-grow min-w-[8rem] border border-[#A3A3A3] rounded px-3 py-2 text-sm text-[#333333]"
+            className="flex-grow min-w-[8rem] border border-[#A3A3A3] dark:border-white/20 bg-white dark:bg-white/10 rounded-md px-3 py-2 text-sm text-[#333333] dark:text-white"
             value={brandFilter}
             onChange={(e) => setBrandFilter(e.target.value)}
           >
@@ -270,9 +268,9 @@ const ProductTable: React.FC = () => {
         </div>
       </div>
 
-      <div className="w-full overflow-x-auto bg-white rounded mt-6 relative z-0">
+      <div className="w-full overflow-x-auto bg-white dark:bg-[#2C2C2C]/20 rounded mt-6 relative z-0">
         <table className="w-full text-sm">
-          <thead className="bg-[#F4F4F4] text-[#333]">
+          <thead className="bg-[#F4F4F4] text-[#333] dark:bg-[#2C2C2C]/50 dark:text-white">
             <tr>
               <th className="px-4 py-3 text-left">
                 <input
@@ -309,8 +307,8 @@ const ProductTable: React.FC = () => {
                 key={product.product_id}
                 className={`border-t transition-colors ${
                   selectedProducts.includes(product.product_id)
-                    ? "bg-[#E6F0FF]"
-                    : "hover:bg-[#F9FAFB]"
+                    ? "bg-[#E6F0FF] dark:bg-[#2B3C55]"
+                    : "hover:bg-[#F9FAFB] dark:hover:bg-[#1F2937]"
                 }`}
               >
                 <td className="px-4 py-3">
@@ -347,7 +345,7 @@ const ProductTable: React.FC = () => {
                         prev === product.product_id ? null : product.product_id
                       )
                     }
-                    className="text-xl text-[#666] hover:text-[#000] transition"
+                    className="text-xl text-[#666] dark:text-[#CCCCCC] hover:text-[#000] dark:hover:text-white transition"
                   >
                     ⋯
                   </button>
@@ -359,14 +357,14 @@ const ProductTable: React.FC = () => {
                         animate={{ opacity: 1, scale: 1, y: 0 }}
                         exit={{ opacity: 0, scale: 0.95, y: -5 }}
                         transition={{ duration: 0.15 }}
-                        className="absolute z-10 right-0 mt-2 w-44 bg-white border border-gray-200 rounded-lg shadow-md p-2"
+                        className="absolute z-10 right-0 mt-2 w-44 bg-white dark:bg-[#F4F4F4]/10 backdrop-blur-2xl border border-gray-200 dark:border-white/20 rounded-lg shadow-md p-2"
                         style={{ maxWidth: "calc(100vw - 2rem)" }}
                       >
                         <button
                           onClick={() =>
                             handleAction("edit", product.product_id)
                           }
-                          className="block w-full text-left px-4 py-2 text-sm text-[#333] hover:bg-gray-100 rounded"
+                          className="block w-full text-left px-4 py-2 text-sm text-[#333] dark:text-white hover:bg-gray-100 dark:hover:bg-white/10 rounded"
                         >
                           Edit
                         </button>
@@ -374,7 +372,7 @@ const ProductTable: React.FC = () => {
                           onClick={() =>
                             handleAction("copy-id", product.product_id)
                           }
-                          className="block w-full text-left px-4 py-2 text-sm text-[#333] hover:bg-gray-100 rounded"
+                          className="block w-full text-left px-4 py-2 text-sm text-[#333] dark:text-white hover:bg-gray-100 dark:hover:bg-white/10 rounded"
                         >
                           Copy ID
                         </button>
@@ -403,7 +401,7 @@ const ProductTable: React.FC = () => {
         </table>
       </div>
 
-      <div className="p-4 bg-[#F4F4F4] flex flex-col sm:flex-row justify-between items-center text-sm text-[#333] gap-2 border-t">
+      <div className="p-4 bg-[#F4F4F4] dark:bg-[#2C2C2C] flex flex-col sm:flex-row justify-between items-center text-sm text-[#333] dark:text-white gap-2 border-t border-gray-200 dark:border-white/10">
         <p>
           {selectedProducts.length > 0
             ? `${selectedProducts.length} of ${filteredProducts.length} selected`
@@ -417,14 +415,14 @@ const ProductTable: React.FC = () => {
             <button
               onClick={() => setCurrentPage((p) => Math.max(p - 1, 1))}
               disabled={currentPage === 1}
-              className="px-3 py-1 hover:bg-white disabled:opacity-50"
+              className="px-3 py-1 hover:bg-white dark:hover:bg-white/10 disabled:opacity-50"
             >
               &lt;
             </button>
             <button
               onClick={() => setCurrentPage((p) => Math.min(p + 1, totalPages))}
               disabled={currentPage === totalPages}
-              className="px-3 py-1 hover:bg-white disabled:opacity-50"
+              className="px-3 py-1 hover:bg-white dark:hover:bg-white/10 disabled:opacity-50"
             >
               &gt;
             </button>

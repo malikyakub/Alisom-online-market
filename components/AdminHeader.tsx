@@ -25,7 +25,7 @@ const AdminHeader: React.FC<AdminHeaderProps> = ({ onToggleTheme }) => {
   }, []);
 
   return (
-    <header className="w-full backdrop-blur-md max-w-[1170px] mx-auto text-gray-800">
+    <header className="w-full backdrop-blur-md max-w-[1170px] mx-auto text-[#1A2238] dark:text-gray-100">
       <div className="mx-auto max-w-7xl px-4 py-4 flex items-center justify-between">
         <div className="flex items-center gap-6">
           <div className="w-10 h-10">
@@ -43,9 +43,9 @@ const AdminHeader: React.FC<AdminHeaderProps> = ({ onToggleTheme }) => {
               <li key={item.name}>
                 <a
                   href={item.link}
-                  className={`hover:text-[#007BFF] transition-colors duration-150 ${
+                  className={`hover:text-[#007BFF] dark:hover:text-blue-400 transition-colors duration-150 ${
                     currentPath === item.link
-                      ? "text-[#007BFF] underline underline-offset-4"
+                      ? "text-[#007BFF] dark:text-blue-400 underline underline-offset-4"
                       : ""
                   }`}
                 >
@@ -57,33 +57,26 @@ const AdminHeader: React.FC<AdminHeaderProps> = ({ onToggleTheme }) => {
         </div>
 
         <div className="flex items-center gap-4">
-          <div className="hidden sm:flex bg-white border border-gray-200 hover:shadow-md transition-shadow duration-200 p-2 px-4 rounded-lg items-center gap-3">
+          <div className="hidden sm:flex bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 hover:shadow-md transition-shadow duration-200 p-2 px-4 rounded-lg items-center gap-3">
             <input
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               type="text"
               placeholder="Search product"
-              className="bg-transparent focus:outline-none border-none text-sm"
+              className="bg-transparent focus:outline-none border-none text-sm text-gray-800 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400"
               aria-label="Search products"
             />
             <button
-              className="text-gray-600 hover:text-[#007BFF] transition-colors"
+              className="text-gray-600 dark:text-gray-300 hover:text-[#007BFF] dark:hover:text-blue-400 transition-colors"
               aria-label="Search"
             >
               <BiSearch size={20} />
             </button>
           </div>
 
-          <button
-            onClick={onToggleTheme}
-            className="text-gray-600 hover:text-[#007BFF] transition-colors"
-            aria-label="Toggle theme"
-          >
-            <BsMoon size={20} />
-          </button>
 
           <button
-            className="md:hidden text-gray-600"
+            className="md:hidden text-gray-600 dark:text-gray-300"
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
             aria-label="Toggle menu"
           >
@@ -92,7 +85,6 @@ const AdminHeader: React.FC<AdminHeaderProps> = ({ onToggleTheme }) => {
         </div>
       </div>
 
-      {/* Mobile nav */}
       {isMobileMenuOpen && (
         <div className="md:hidden px-4 pb-4">
           <ul className="flex flex-col gap-2 text-sm font-medium">
@@ -101,9 +93,9 @@ const AdminHeader: React.FC<AdminHeaderProps> = ({ onToggleTheme }) => {
                 <a
                   href={item.link}
                   onClick={() => setIsMobileMenuOpen(false)}
-                  className={`block px-2 py-1 rounded hover:bg-gray-100 transition ${
+                  className={`block px-2 py-1 rounded hover:bg-gray-100 dark:hover:bg-gray-700 transition ${
                     currentPath === item.link
-                      ? "text-[#007BFF] underline underline-offset-4"
+                      ? "text-[#007BFF] dark:text-blue-400 underline underline-offset-4"
                       : ""
                   }`}
                 >
@@ -113,21 +105,15 @@ const AdminHeader: React.FC<AdminHeaderProps> = ({ onToggleTheme }) => {
             ))}
           </ul>
 
-          <div className="mt-4 bg-white border border-gray-200 p-2 px-4 rounded-lg flex items-center gap-3">
+          <div className="mt-4 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 p-2 px-4 rounded-lg flex items-center gap-3">
             <input
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               type="text"
               placeholder="Search product"
-              className="bg-transparent flex-1 focus:outline-none text-sm"
+              className="bg-transparent flex-1 focus:outline-none text-sm text-gray-800 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400"
               aria-label="Search products"
             />
-            <button
-              className="text-gray-600 hover:text-[#007BFF] transition-colors"
-              aria-label="Search"
-            >
-              <BiSearch size={20} />
-            </button>
           </div>
         </div>
       )}

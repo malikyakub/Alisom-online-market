@@ -24,7 +24,7 @@ const ServiceBookCard = () => {
 
   return (
     <div className="w-full rounded-lg shadow-md p-4 flex-1 border border-blue-500">
-      <h2 className="text-xl font-semibold text-gray-800 mb-2">
+      <h2 className="text-xl font-semibold text-[#1A2238] mb-2">
         Services Booked
       </h2>
       <p className="text-gray-500 text-sm mb-4">
@@ -34,7 +34,7 @@ const ServiceBookCard = () => {
         {displayedBookings.map((booking, index) => (
           <li key={index} className="flex justify-between items-center py-2">
             <div>
-              <div className="font-medium text-gray-800">{booking.name}</div>
+              <div className="font-medium text-[#1A2238] dark:text-[#F4F4F4]">{booking.name}</div>
               <div className="text-sm text-gray-500">{booking.email}</div>
             </div>
             <button className="bg-blue-500 text-white py-1 px-3 rounded hover:bg-blue-600">

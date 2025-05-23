@@ -31,7 +31,8 @@ const useProductReviews = () => {
         .from("product_reviews")
         .select("*, user:user_id(fullname, email)")
         .eq("product_id", productId)
-        .order("created_at", { ascending: false });
+        .order("created_at", { ascending: false })
+        .limit(4);
 
       if (error) throw error;
       return { data, err: null };

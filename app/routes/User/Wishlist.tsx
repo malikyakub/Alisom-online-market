@@ -143,7 +143,7 @@ const WishlistPage = () => {
   };
 
   return (
-    <div className="px-4 sm:px-8">
+    <div className="p-4 sm:p-6 lg:p-8 h-full">
       <div className="text-sm text-gray-500 mb-6">
         Home / User / <span className="text-black font-semibold">Wishlist</span>
       </div>

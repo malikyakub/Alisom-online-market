@@ -24,14 +24,14 @@ const MyOrders = () => {
   }, [user]);
 
   return (
-    <div className="pb-10">
+    <div className="pb-10 px-4">
       <ProductsAndOrdersHero
         title="My Orders"
         subtitle="Track & view all your orders in one place."
         imageSrc="/assets/images/order-carboard.png"
-        gradient="from-gray-900 via-gray-800 to-gray-900"
+        gradient="from-gray-900 via-[#1A2238] to-gray-900"
       />
-      <div>
+      <div className="">
         {!user ? (
           <div className="w-full h-screen flex py-4">
             <p className="text-lg text-[#FFC107]">
@@ -45,7 +45,7 @@ const MyOrders = () => {
             <p className="text-lg text-[#DC3545]">No orders found.</p>
           </div>
         ) : (
-          <div className="flex flex-col my-6">
+          <div className="flex flex-col my-4 gap-2">
             {orders.map((order) => (
               <OrderCard key={order.Order_id} order={order} />
             ))}
