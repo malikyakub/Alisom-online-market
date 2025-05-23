@@ -296,7 +296,7 @@ const AddProduct: React.FC = () => {
               value={form.name}
               onChange={handleChange}
               placeholder="Product name"
-              className="mt-1 block w-full rounded-md border border-gray-300 shadow-sm px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-white/10 dark:text-white"
+              className="mt-1 block w-full rounded border border-gray-300 shadow-sm px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-white/10 dark:text-white"
             />
           </div>
 
@@ -308,7 +308,7 @@ const AddProduct: React.FC = () => {
               name="category_id"
               value={form.category_id}
               onChange={handleChange}
-              className="mt-1 block w-full rounded-md border border-gray-300 shadow-sm px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-white/10 dark:text-white"
+              className="mt-1 block w-full rounded border border-gray-300 shadow-sm px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-white/10 dark:text-white"
             >
               <option value="">Select Category</option>
               {categories.map((cat) => (
@@ -327,7 +327,7 @@ const AddProduct: React.FC = () => {
               name="brand_id"
               value={form.brand_id}
               onChange={handleChange}
-              className="mt-1 block w-full rounded-md border border-gray-300 shadow-sm px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-white/10 dark:text-white"
+              className="mt-1 block w-full rounded border border-gray-300 shadow-sm px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-white/10 dark:text-white"
             >
               <option value="">Select Brand</option>
               {brands.map((brand) => (
@@ -348,7 +348,7 @@ const AddProduct: React.FC = () => {
               value={form.specification}
               onChange={handleChange}
               placeholder="Product specification"
-              className="mt-1 block w-full rounded-md border border-gray-300 shadow-sm px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-white/10 dark:text-white"
+              className="mt-1 block w-full rounded border border-gray-300 shadow-sm px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-white/10 dark:text-white"
             />
           </div>
 
@@ -362,7 +362,7 @@ const AddProduct: React.FC = () => {
               value={form.sale_price}
               onChange={handleChange}
               placeholder="$0.00"
-              className="mt-1 block w-full rounded-md border border-gray-300 shadow-sm px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-white/10 dark:text-white"
+              className="mt-1 block w-full rounded border border-gray-300 shadow-sm px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-white/10 dark:text-white"
             />
           </div>
 
@@ -376,7 +376,7 @@ const AddProduct: React.FC = () => {
               value={form.purchase_price}
               onChange={handleChange}
               placeholder="$0.00"
-              className="mt-1 block w-full rounded-md border border-gray-300 shadow-sm px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-white/10 dark:text-white"
+              className="mt-1 block w-full rounded border border-gray-300 shadow-sm px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-white/10 dark:text-white"
             />
           </div>
 
@@ -390,7 +390,7 @@ const AddProduct: React.FC = () => {
               value={form.description}
               onChange={handleChange}
               placeholder="Product description..."
-              className="mt-1 block w-full rounded-md border border-gray-300 shadow-sm px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-white/10 dark:text-white"
+              className="mt-1 block w-full rounded border border-gray-300 shadow-sm px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-white/10 dark:text-white"
             />
           </div>
         </div>
@@ -404,7 +404,7 @@ const AddProduct: React.FC = () => {
               name="isFeatured"
               value={form.isFeatured ? "true" : "false"}
               onChange={handleChange}
-              className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-white/10 dark:text-white"
+              className="mt-1 block w-full rounded border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-white/10 dark:text-white"
             >
               <option value="false">No</option>
               <option value="true">Yes</option>
