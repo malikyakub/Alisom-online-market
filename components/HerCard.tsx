@@ -98,13 +98,13 @@ const HerCard: React.FC = () => {
         <div className="flex justify-center md:justify-start space-x-4 pt-4">
           <button
             onClick={prevSlide}
-            className="p-2 bg-gray-800 rounded-full hover:bg-gray-700"
+            className="p-2 bg-[#1A2238] rounded-full hover:bg-gray-700"
           >
             <ArrowLeft className="w-4 h-4" />
           </button>
           <button
             onClick={nextSlide}
-            className="p-2 bg-gray-800 rounded-full hover:bg-gray-700"
+            className="p-2 bg-[#1A2238] rounded-full hover:bg-gray-700"
           >
             <ArrowRight className="w-4 h-4" />
           </button>

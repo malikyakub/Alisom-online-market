@@ -39,9 +39,9 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <Meta />
         <Links />
       </head>
-      <body className="text-gray-900 font-sans min-h-screen flex flex-col">
+      <body className="text-gray-900 font-sans min-h-screen flex flex-col dark:bg-[#1A2238]">
         {!isAdmin && (
-          <div className="w-full mx-auto px-4 sm:px-6 sticky top-0 z-50 bg-[#F4F4F4b3] backdrop-blur-md">
+          <div className="w-full mx-auto px-4 sm:px-6 sticky top-0 z-50 bg-[#F4F4F4]/10 backdrop-blur-md">
             <Header />
           </div>
         )}

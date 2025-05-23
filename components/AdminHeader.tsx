@@ -25,7 +25,7 @@ const AdminHeader: React.FC<AdminHeaderProps> = ({ onToggleTheme }) => {
   }, []);
 
   return (
-    <header className="w-full backdrop-blur-md max-w-[1170px] mx-auto text-gray-800">
+    <header className="w-full backdrop-blur-md max-w-[1170px] mx-auto text-[#1A2238]">
       <div className="mx-auto max-w-7xl px-4 py-4 flex items-center justify-between">
         <div className="flex items-center gap-6">
           <div className="w-10 h-10">

@@ -11,7 +11,7 @@ import supabase from "utils/supabase";
 import useOrders from "hooks/useOrders";
 
 type Product = {
-  title: string;
+  name: string;
   price: number;
   image?: string;
   quantity?: number;
@@ -138,13 +138,7 @@ const Checkout: React.FC = () => {
   const handleFormSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!user && saveInfo) {
-      const formData = {
-        fullname,
-        address,
-        city,
-        phone,
-        email,
-      };
+      const formData = { fullname, address, city, phone, email };
       localStorage.setItem("checkout_form_data", JSON.stringify(formData));
     }
     setShowAccountPopup(true);
@@ -189,7 +183,7 @@ const Checkout: React.FC = () => {
   }, 0);
 
   return (
-    <div className="relative py-10 px-4">
+    <div className="relative py-10 px-4 text-gray-800 dark:text-gray-100 min-h-screen">
       <Alert
         title={alertTitle}
         description={alertDesc}
@@ -202,7 +196,7 @@ const Checkout: React.FC = () => {
         <AccountNumberModal
           total={totalAmount}
           accountNumber={
-            selectedPayment == "EVC Plus" ? "613673734" : "622675734"
+            selectedPayment === "EVC Plus" ? "613673734" : "622675734"
           }
           onClose={handleAfterAccountModal}
         />
@@ -212,16 +206,18 @@ const Checkout: React.FC = () => {
         <OrderPlacedModal onClose={() => setShowOrderPlaced(false)} />
       )}
 
-      <div className="text-sm text-gray-500 mb-6">
+      <div className="text-sm text-gray-500 dark:text-gray-400 mb-6">
         Home / Shop /{" "}
-        <span className="text-gray-800 font-semibold">Checkout</span>
+        <span className="text-[#1A2238] dark:text-white font-semibold">
+          Checkout
+        </span>
       </div>
 
       {!isLoading && purchasedProducts.length === 0 ? (
         <div className="flex flex-col items-center justify-center py-16">
           <svg
             xmlns="http://www.w3.org/2000/svg"
-            className="h-24 w-24 text-gray-300 mb-4"
+            className="h-24 w-24 text-gray-300 dark:text-gray-600 mb-4"
             fill="none"
             viewBox="0 0 24 24"
             stroke="currentColor"
@@ -233,14 +229,14 @@ const Checkout: React.FC = () => {
               d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 7M7 13l-1.5 7.5M17 13l1.5 7.5M9 21h6"
             />
           </svg>
-          <p className="text-gray-500 text-center text-lg">
+          <p className="text-gray-500 dark:text-gray-400 text-center text-lg">
             Your cart is empty. Add some products to continue.
           </p>
         </div>
       ) : (
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 max-w-6xl mx-auto">
           <div>
-            <h2 className="text-3xl font-bold mb-8 text-[#1F2937]">
+            <h2 className="text-3xl font-bold mb-8 text-[#1F2937] dark:text-white">
               Billing Details
             </h2>
             <form className="space-y-5" onSubmit={handleFormSubmit}>
@@ -277,21 +273,21 @@ const Checkout: React.FC = () => {
                 },
               ].map(({ label, value, setValue, type }, idx) => (
                 <div key={idx} className="flex flex-col space-y-1">
-                  <label className="text-sm font-medium text-gray-700">
+                  <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
                     {label}
-                    <span className="text-red-500">*</span>
+                    <span className="text-red-500"> *</span>
                   </label>
                   <input
                     type={type}
                     value={value}
                     onChange={(e) => setValue(e.target.value)}
                     required
-                    className="w-full bg-white border border-gray-300 rounded-md p-2 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 transition"
+                    className="w-full bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-md p-2 text-sm text-gray-700 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500 transition"
                   />
                 </div>
               ))}
 
-              <label className="inline-flex items-center mt-2 text-sm text-gray-600">
+              <label className="inline-flex items-center mt-2 text-sm text-gray-600 dark:text-gray-300">
                 <input
                   type="checkbox"
                   className="mr-2 accent-green-500"

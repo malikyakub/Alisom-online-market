@@ -58,7 +58,7 @@ const PaymentApprovalModal: React.FC<PaymentApprovalModalProps> = ({
           </svg>
         </button>
 
-        <h2 className="text-xl font-semibold text-gray-800 mb-6 text-center">
+        <h2 className="text-xl font-semibold text-[#1A2238] mb-6 text-center">
           Approve payment for {customerName}'s order
         </h2>
 

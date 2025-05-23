@@ -31,6 +31,17 @@ const getStatusStyles = (status: string) => {
   }
 };
 
+const formatOrderDateTitle = (createdAt: string | null | undefined) => {
+  if (!createdAt) return "Order";
+  const date = new Date(createdAt);
+  const options: Intl.DateTimeFormatOptions = {
+    month: "short",
+    day: "numeric",
+  };
+  const formatted = date.toLocaleDateString(undefined, options); // e.g., May 2
+  return `Order-${formatted.replace(" ", "-")}`; // e.g., Order-May-2
+};
+
 const OrderCard = ({ order }: OrderCardProps) => {
   const [showAccountModal, setShowAccountModal] = useState(false);
   const [showAlert, setShowAlert] = useState(false);
@@ -59,10 +70,10 @@ const OrderCard = ({ order }: OrderCardProps) => {
 
   return (
     <>
-      <div className="flex hover:bg-[#F4F4F4] transition rounded shadow-md p-4 w-full items-center">
-        <div className="flex-1">
-          <h3 className="text-lg font-semibold mb-1">
-            Order ID: {order.Order_id}
+      <div className="flex flex-col sm:flex-row hover:bg-gray-100 dark:hover:bg-gray-800 transition rounded shadow-md p-3 sm:p-4 w-full items-start sm:items-center bg-white dark:bg-gray-900 text-black dark:text-white space-y-2 sm:space-y-0 sm:space-x-4">
+        <div className="flex-1 text-sm sm:text-base">
+          <h3 className="text-base sm:text-lg font-semibold mb-1">
+            {formatOrderDateTitle(order.created_at)}
           </h3>
           {order.Status === "Denied" ? (
             <button
@@ -71,7 +82,7 @@ const OrderCard = ({ order }: OrderCardProps) => {
               className="cursor-pointer"
             >
               <span
-                className={`inline-block font-semibold text-sm rounded px-3 py-2 mb-2 ${getStatusStyles(
+                className={`inline-block font-semibold text-xs sm:text-sm rounded px-2 sm:px-3 py-1 sm:py-2 mb-2 ${getStatusStyles(
                   order.Status
                 )}`}
               >
@@ -80,7 +91,7 @@ const OrderCard = ({ order }: OrderCardProps) => {
             </button>
           ) : (
             <span
-              className={`inline-block font-semibold text-sm rounded px-3 py-2 mb-2 ${getStatusStyles(
+              className={`inline-block font-semibold text-xs sm:text-sm rounded px-2 sm:px-3 py-1 sm:py-2 mb-2 ${getStatusStyles(
                 order.Status
               )}`}
             >
@@ -102,7 +113,7 @@ const OrderCard = ({ order }: OrderCardProps) => {
             </p>
           )}
         </div>
-        <div className="flex-1">
+        <div className="flex-1 text-sm sm:text-base">
           {order.Full_name && (
             <p>
               <strong>Name:</strong> {order.Full_name}

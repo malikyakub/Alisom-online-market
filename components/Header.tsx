@@ -150,7 +150,12 @@ const Header = () => {
           <img
             src="/assets/images/logo.svg"
             alt="Company Logo"
-            className="w-10 h-10 object-contain"
+            className="w-10 h-10 object-contain dark:hidden"
+          />
+          <img
+            src="/assets/images/logo.svg"
+            alt="Company Logo"
+            className="w-10 h-10 object-contain hidden dark:block"
           />
         </a>
         <nav className="hidden md:flex flex-1 justify-center">
@@ -169,7 +174,7 @@ const Header = () => {
                   className={`cursor-pointer hover:text-[#007BFF] transition-colors ${
                     currentPath === item.link
                       ? "text-[#007BFF] underline underline-offset-4"
-                      : "text-gray-700"
+                      : "text-gray-700 dark:text-white"
                   }`}
                 >
                   {item.tab}
@@ -179,18 +184,18 @@ const Header = () => {
           </ul>
         </nav>
         <div className="hidden sm:flex items-center gap-6 relative">
-          <div className="bg-white/20 hover:shadow-md transition-shadow duration-200 p-2 px-4 rounded-lg flex items-center gap-3">
+          <div className="bg-white/20 dark:bg-gray-700 hover:shadow-md transition-shadow duration-200 p-2 px-4 rounded-lg flex items-center gap-3">
             <input
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               type="text"
               placeholder="Search product"
-              className="flex-1 bg-transparent focus:outline-none text-sm"
+              className="flex-1 bg-transparent focus:outline-none text-sm text-black dark:text-white"
               aria-label="Search products"
             />
             <button
               onClick={handleSearch}
-              className="text-gray-600 hover:text-[#007BFF] transition-colors"
+              className="text-gray-600 dark:text-white hover:text-[#007BFF] transition-colors"
               aria-label="Search"
             >
               <BiSearch size={20} />
@@ -199,7 +204,7 @@ const Header = () => {
           <div className="flex items-center gap-4">
             <a
               href="/user/wishlist"
-              className="text-gray-600 hover:text-[#007BFF] relative"
+              className="text-gray-600 dark:text-white hover:text-[#007BFF] relative"
               aria-label="Wishlist"
             >
               <BiHeart size={24} />
@@ -211,7 +216,7 @@ const Header = () => {
             </a>
             <a
               href="/user/cart"
-              className="text-gray-600 hover:text-[#007BFF] relative"
+              className="text-gray-600 dark:text-white hover:text-[#007BFF] relative"
               aria-label="Cart"
             >
               <LuShoppingCart size={24} />
@@ -223,7 +228,7 @@ const Header = () => {
             </a>
             <div className="relative" ref={profileRef}>
               <button
-                className="text-gray-600 hover:text-[#007BFF]"
+                className="text-gray-600 dark:text-white hover:text-[#007BFF]"
                 aria-label="Profile"
                 onClick={() => setShowProfilePopup(!showProfilePopup)}
               >
@@ -240,10 +245,11 @@ const Header = () => {
             </div>
           </div>
         </div>
-        <div className="md:hidden">
+        <div className="md:hidden flex items-center gap-4">
           <button
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
             aria-label="Toggle menu"
+            className="text-gray-700 dark:text-white"
           >
             {mobileMenuOpen ? (
               <HiOutlineX size={28} />
@@ -251,12 +257,30 @@ const Header = () => {
               <HiOutlineMenuAlt3 size={28} />
             )}
           </button>
+          <div className="relative" ref={profileRef}>
+            <button
+              className="text-gray-600 dark:text-white hover:text-[#007BFF]"
+              aria-label="Profile"
+              onClick={() => setShowProfilePopup(!showProfilePopup)}
+            >
+              <CgProfile size={24} />
+            </button>
+            {showProfilePopup && (
+              <div className="absolute top-10 right-0 z-50">
+                <ProfilePopup
+                  isOpen={showProfilePopup}
+                  onClose={() => setShowProfilePopup(false)}
+                />
+              </div>
+            )}
+          </div>
         </div>
       </div>
+
       {mobileMenuOpen && (
         <>
-          <div className="md:hidden px-6 pb-4">
-            <ul className="flex flex-col gap-4 text-gray-700 text-sm font-medium">
+          <div className="md:hidden px-0 pb-4">
+            <ul className="flex flex-col gap-4 text-gray-700 dark:text-white text-sm font-medium">
               {navItems.map((item) => (
                 <li key={item.tab}>
                   <a
@@ -281,24 +305,24 @@ const Header = () => {
             </ul>
           </div>
           <div className="sm:hidden px-6 my-4 flex flex-col gap-4">
-            <div className="bg-white/20 hover:shadow-md transition-shadow duration-200 p-2 px-4 rounded flex border items-center gap-3">
+            <div className="bg-white/20 dark:bg-gray-700 hover:shadow-md transition-shadow duration-200 p-2 px-4 rounded flex border dark:border-white/20 items-center gap-3">
               <input
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 type="text"
                 placeholder="Search product"
-                className="flex-1 bg-transparent focus:outline-none text-sm"
+                className="flex-1 bg-transparent focus:outline-none text-sm text-black dark:text-white"
                 aria-label="Search products"
               />
               <button
                 onClick={handleSearch}
-                className="text-gray-600 hover:text-[#007BFF] transition-colors"
+                className="text-gray-600 dark:text-white hover:text-[#007BFF] transition-colors"
                 aria-label="Search"
               >
                 <BiSearch size={25} />
               </button>
             </div>
-            <div className="flex items-center justify-around text-gray-600 relative">
+            <div className="flex items-center justify-around text-gray-600 dark:text-white relative">
               <a
                 href="/user/wishlist"
                 className="relative"
@@ -319,22 +343,6 @@ const Header = () => {
                   </span>
                 )}
               </a>
-              <div className="relative" ref={profileRef}>
-                <button
-                  onClick={() => setShowProfilePopup(!showProfilePopup)}
-                  aria-label="Profile"
-                >
-                  <CgProfile size={24} />
-                </button>
-                {showProfilePopup && (
-                  <div className="absolute top-10 right-0 z-50">
-                    <ProfilePopup
-                      isOpen={showProfilePopup}
-                      onClose={() => setShowProfilePopup(false)}
-                    />
-                  </div>
-                )}
-              </div>
             </div>
           </div>
         </>

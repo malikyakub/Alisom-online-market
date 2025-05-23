@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import useAuth from "hooks/useAuth";
 import useProductReviews from "hooks/useProductReviews";
 import ReviewCard from "components/ReviewCard";
@@ -22,6 +22,7 @@ const MyReviews = () => {
   const { getUserReviews, UpdateReview, isLoading } = useProductReviews();
   const [reviews, setReviews] = useState<Review[]>([]);
   const [error, setError] = useState<string | null>(null);
+  const [searchQuery, setSearchQuery] = useState("");
 
   useEffect(() => {
     if (!user?.id) return;
@@ -62,6 +63,12 @@ const MyReviews = () => {
     }
   };
 
+  const filteredReviews = useMemo(() => {
+    return reviews.filter((review) =>
+      review.product.name.toLowerCase().includes(searchQuery.toLowerCase())
+    );
+  }, [searchQuery, reviews]);
+
   if (!user) {
     return (
       <div className="w-full h-screen flex py-4">
@@ -85,23 +92,45 @@ const MyReviews = () => {
   }
 
   if (reviews.length === 0) {
-    <div className="w-full h-screen flex py-4">
-      return <p className="text-lg">You have not posted any reviews yet.</p>;
-    </div>;
+    return (
+      <div className="w-full h-screen flex py-4">
+        <p className="text-lg">You have not posted any reviews yet.</p>
+      </div>
+    );
   }
+
   return (
     <div className="w-full p-4">
-      <h2 className="text-2xl font-bold mb-6">My Reviews</h2>
-      <div className="flex justify-start flex-wrap gap-4">
-        {reviews.map((review) => (
-          <ReviewCard
-            isLoading={isLoading}
-            key={review.review_id}
-            review={review}
-            onSave={handleSave}
-          />
-        ))}
+      <h2 className="text-2xl font-bold mb-6 dark:text-[#F4F4F4]">
+        My Reviews
+      </h2>
+
+      <div className="w-full lg:max-w-[350px] mb-6">
+        <input
+          type="text"
+          placeholder="Search by name..."
+          className="w-full border border-[#A3A3A3] rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#007BFF] text-[#333333] dark:bg-gray-800 dark:text-gray-100 dark:border-gray-600"
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+        />
       </div>
+
+      {filteredReviews.length === 0 ? (
+        <p className="text-md text-gray-500 dark:text-gray-400">
+          No matching reviews found.
+        </p>
+      ) : (
+        <div className="flex justify-start flex-wrap gap-4">
+          {filteredReviews.map((review) => (
+            <ReviewCard
+              isLoading={isLoading}
+              key={review.review_id}
+              review={review}
+              onSave={handleSave}
+            />
+          ))}
+        </div>
+      )}
     </div>
   );
 };

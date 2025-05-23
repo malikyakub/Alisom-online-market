@@ -326,7 +326,7 @@ export default function Home() {
         </a>
       </div>
 
-      <hr />
+      <hr className="dark:text-white" />
 
       <div className="flex flex-col sm:flex-row flex-wrap gap-4 sm:gap-8 my-5 justify-center items-center">
         {features.map((feature, index) => (

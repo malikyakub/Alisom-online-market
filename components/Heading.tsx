@@ -20,13 +20,13 @@ const Heading: React.FC<HeadingProps> = ({
   return (
     <div className="flex justify-between sm:flex-row sm:items-end sm:justify-between py-2 gap-4 sm:gap-0">
       <div className="flex flex-row gap-2 items-end">
-        <span className="w-6 h-12 sm:w-8 sm:h-16 bg-[#17C3B2] rounded"></span>
+        <span className="w-4 h-12 sm:w-8 sm:h-16 bg-[#17C3B2] rounded-xs"></span>
         <div className="flex flex-col gap-1">
           <p className="text-xs sm:text-sm text-[#17C3B2] font-semibold">
             {title}
           </p>
           {subtitle && (
-            <h1 className="text-lg sm:text-2xl font-bold text-[#1A2238] capitalize">
+            <h1 className="text-lg sm:text-2xl font-bold text-[#1A2238] dark:text-[#007BFF] capitalize">
               {subtitle}
             </h1>
           )}

@@ -52,7 +52,7 @@ const Login: React.FC = () => {
   };
 
   return (
-    <div className="p-5 flex flex-col gap-10 justify-center items-center">
+    <div className="p-4 flex flex-col gap-10 justify-center items-center">
       <Alert
         title={alertTitle}
         description={alertMessage}
@@ -61,7 +61,7 @@ const Login: React.FC = () => {
         onClose={() => setAlertOpen(false)}
       />
 
-      <div className="relative flex flex-col lg:flex-row justify-between items-center px-5 w-full max-w-7xl">
+      <div className="relative flex flex-col lg:flex-row justify-between items-center w-full max-w-7xl">
         <div className="w-full lg:w-1/2 overflow-hidden hidden lg:block">
           <img src={LoginIllustrator} alt="login illustrator" />
         </div>

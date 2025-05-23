@@ -41,7 +41,7 @@ const Footer = () => {
   };
 
   return (
-    <div className="bg-[#1A2238] text-white p-8">
+    <div className="bg-[#1A2238] dark:bg-black/50 text-white p-8">
       <Alert
         isOpen={alertInfo.isOpen}
         type={alertInfo.type}

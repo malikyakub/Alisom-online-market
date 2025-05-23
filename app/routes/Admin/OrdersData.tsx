@@ -122,7 +122,7 @@ const OrdersData = () => {
       </h1>
 
       <div className="overflow-x-auto bg-white rounded-xl shadow-sm border border-gray-200">
-        <table className="min-w-full text-sm text-gray-800">
+        <table className="min-w-full text-sm text-[#1A2238]">
           <thead className="bg-[#F4F4F4] text-[#333]">
             <tr>
               {["Product Name", "Price", "Quantity", "Total", "Actions"].map(

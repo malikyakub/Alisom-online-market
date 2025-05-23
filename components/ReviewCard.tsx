@@ -37,16 +37,14 @@ const ReviewCard: React.FC<ReviewCardProps> = ({
   };
 
   return (
-    <div className="bg-white rounded-xl w-[300px] shadow p-4">
+    <div className="bg-white dark:bg-gray-900 rounded-xl w-[300px] shadow p-4 text-gray-900 dark:text-gray-100">
       <img
         src={review.product.image ?? "/assets/images/no-product-image.jpg"}
         alt={review.product.name}
         className="w-full h-48 object-cover rounded-md"
       />
 
-      <h3 className="mt-4 text-lg font-semibold text-gray-900">
-        {review.product.name}
-      </h3>
+      <h3 className="mt-4 text-lg font-semibold">{review.product.name}</h3>
 
       {isEditing ? (
         <textarea
@@ -54,10 +52,12 @@ const ReviewCard: React.FC<ReviewCardProps> = ({
           onChange={(e) => setTempComment(e.target.value)}
           disabled={isLoading}
           rows={3}
-          className="w-full mt-3 p-2 border border-gray-300 rounded-md resize-none text-sm"
+          className="w-full mt-3 p-2 border border-gray-300 dark:border-gray-700 rounded-md resize-none text-sm bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100"
         />
       ) : (
-        <p className="mt-3 text-sm text-gray-700">{review.comment}</p>
+        <p className="mt-3 text-sm text-gray-700 dark:text-gray-300">
+          {review.comment}
+        </p>
       )}
 
       <div className="mt-3 flex items-center space-x-1">
@@ -69,7 +69,9 @@ const ReviewCard: React.FC<ReviewCardProps> = ({
               key={i}
               onClick={() => isEditing && !isLoading && setTempRating(i + 1)}
               className={`w-5 h-5 cursor-pointer ${
-                starFilled ? "text-yellow-500" : "text-gray-300"
+                starFilled
+                  ? "text-yellow-500"
+                  : "text-gray-300 dark:text-gray-600"
               }`}
               fill="currentColor"
               viewBox="0 0 20 20"
@@ -95,7 +97,7 @@ const ReviewCard: React.FC<ReviewCardProps> = ({
         ) : (
           <button
             onClick={() => !isLoading && setIsEditing(true)}
-            className="flex items-center gap-1 px-4 py-2 text-sm border border-gray-300 rounded hover:bg-gray-100 text-gray-700"
+            className="flex items-center gap-1 px-4 py-2 text-sm border border-gray-300 dark:border-gray-700 rounded hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-700 dark:text-gray-200"
           >
             <Pencil size={14} />
             Edit

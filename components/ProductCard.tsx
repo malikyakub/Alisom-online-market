@@ -92,7 +92,7 @@ const ProductCard = ({
         isOpen={wishlistAlertOpen}
         onClose={() => setWishlistAlertOpen(false)}
       />
-      <div className="relative bg-white w-full sm:w-[230px] h-[340px] sm:h-[360px] rounded shadow hover:shadow-md transition overflow-hidden group flex flex-col">
+      <div className="relative bg-white dark:bg-white/20 w-full sm:w-[230px] h-[340px] sm:h-[360px] rounded shadow hover:shadow-md dark:shadow-[0_2px_10px_rgba(255,255,255,0.15)] transition overflow-hidden group flex flex-col">
         {featured && (
           <>
             {badge && (
@@ -111,15 +111,15 @@ const ProductCard = ({
                 onClick={handleAddToWishlist}
                 className={`p-1.5 rounded-full transition-transform duration-300 ${
                   isInWishlist
-                    ? "bg-[#DC3545]"
-                    : "bg-[#007BFF]/20 hover:bg-[#007BFF]/30"
+                    ? "bg-[#DC3545]/80 hover:bg-[#DC3545]/90"
+                    : "bg-[#007BFF]/10 hover:bg-[#007BFF]/20"
                 }`}
               >
                 <BiHeart className="text-white text-xl" />
               </button>
               <a
                 href={productLink}
-                className="p-1.5 rounded-full bg-[#007BFF]/20 hover:bg-[#007BFF]/30 transition"
+                className="p-1.5 rounded-full bg-[#007BFF]/10 hover:bg-[#007BFF]/20 transition"
               >
                 <BiShow className="text-white text-xl" />
               </a>
@@ -133,7 +133,7 @@ const ProductCard = ({
           <img src={image} alt={name} className="w-full h-full object-cover" />
         </a>
         <div className="flex flex-col p-2">
-          <h1 className="text-lg font-bold text-[#1A2238] truncate">{name}</h1>
+          <h1 className="text-lg font-bold text-[#1A2238] dark:text-[#F4F4F4] truncate">{name}</h1>
           <div className="flex flex-row gap-2 items-center">
             <p className="text-sm text-[#28A745] font-bold">${price}</p>
             {oldPrice && (
