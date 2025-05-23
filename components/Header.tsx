@@ -257,26 +257,8 @@ const Header = () => {
               <HiOutlineMenuAlt3 size={28} />
             )}
           </button>
-          <div className="relative" ref={profileRef}>
-            <button
-              className="text-gray-600 dark:text-white hover:text-[#007BFF]"
-              aria-label="Profile"
-              onClick={() => setShowProfilePopup(!showProfilePopup)}
-            >
-              <CgProfile size={24} />
-            </button>
-            {showProfilePopup && (
-              <div className="absolute top-10 right-0 z-50">
-                <ProfilePopup
-                  isOpen={showProfilePopup}
-                  onClose={() => setShowProfilePopup(false)}
-                />
-              </div>
-            )}
-          </div>
         </div>
       </div>
-
       {mobileMenuOpen && (
         <>
           <div className="md:hidden px-0 pb-4">
@@ -343,6 +325,22 @@ const Header = () => {
                   </span>
                 )}
               </a>
+              <div className="relative" ref={profileRef}>
+                <button
+                  onClick={() => setShowProfilePopup(!showProfilePopup)}
+                  aria-label="Profile"
+                >
+                  <CgProfile size={24} />
+                </button>
+                {showProfilePopup && (
+                  <div className="absolute top-10 right-0 z-50">
+                    <ProfilePopup
+                      isOpen={showProfilePopup}
+                      onClose={() => setShowProfilePopup(false)}
+                    />
+                  </div>
+                )}
+              </div>
             </div>
           </div>
         </>
