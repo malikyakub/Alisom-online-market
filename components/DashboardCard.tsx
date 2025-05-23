@@ -15,13 +15,13 @@ const DashboardCard = ({
 }) => {
   return (
     <div
-      className={`bg-white rounded-lg shadow-md border ${borderColor} p-5 w-full flex flex-col gap-1 relative`}
+      className={`bg-white/10 rounded-lg shadow-md border ${borderColor} p-5 w-full flex flex-col gap-1 relative`}
     >
       <div className="flex justify-between items-start mb-2">
         <span className="text-blue-600 text-sm font-medium">{title}</span>
         <Icon className="text-gray-400" />
       </div>
-      <h2 className="text-2xl font-bold text-black">{amount}</h2>
+      <h2 className="text-2xl font-bold text-black dark:text-[#F4F4F4]">{amount}</h2>
       <p className="text-sm text-gray-500">{growth}</p>
     </div>
   );

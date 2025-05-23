@@ -34,7 +34,7 @@ const ServiceBookCard = () => {
         {displayedBookings.map((booking, index) => (
           <li key={index} className="flex justify-between items-center py-2">
             <div>
-              <div className="font-medium text-[#1A2238]">{booking.name}</div>
+              <div className="font-medium text-[#1A2238] dark:text-[#F4F4F4]">{booking.name}</div>
               <div className="text-sm text-gray-500">{booking.email}</div>
             </div>
             <button className="bg-blue-500 text-white py-1 px-3 rounded hover:bg-blue-600">

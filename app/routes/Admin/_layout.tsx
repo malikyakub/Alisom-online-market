@@ -62,15 +62,15 @@ export default function AdminLayout() {
 
   if (loading || checkingAuth) {
     return (
-      <div className="flex min-h-screen mt-2 w-full mx-auto max-w-[1170px] px-4 sm:px-6 flex-col gap-4">
+      <div className="flex mt-2 w-full mx-auto max-w-[1170px] px-4 sm:px-6 flex-col gap-4">
         <LoadingProgressBar />
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen flex flex-col">
-      <header className="w-full sticky top-0 z-50 bg-[#F4F4F4b3] backdrop-blur-md">
+    <div className="flex flex-col">
+      <header className="w-full sticky top-0 z-50 bg-[#F4F4F4]/10 backdrop-blur-md">
         <AdminHeader />
       </header>
 

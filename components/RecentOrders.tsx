@@ -46,7 +46,7 @@ const RecentOrders: React.FC<RecentOrdersProps> = ({
       {displayedOrders.map((order, index) => (
         <div key={index} className="mb-4 flex justify-between items-center">
           <div className="flex flex-col">
-            <div className="font-medium text-[#1A2238]">
+            <div className="font-medium text-[#1A2238] dark:text-white capitalize">
               {order.Full_name || "Guest User"}
             </div>
             <div className="text-sm text-gray-500">{order.Email}</div>

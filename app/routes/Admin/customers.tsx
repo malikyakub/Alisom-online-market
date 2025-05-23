@@ -93,28 +93,28 @@ const CustomerTable: React.FC = () => {
   const totalPages = Math.ceil(filteredCustomers.length / rowsPerPage);
 
   return (
-    <div className="">
+    <div className="text-[#1A2238] dark:text-[#F4F4F4] min-h-screen">
       <div className="flex flex-wrap justify-between items-start sm:items-center mb-6 gap-2">
         <div>
-          <h1 className="text-2xl font-bold text-[#1A2238]">
+          <h1 className="text-2xl font-bold">
             Customers ({filteredCustomers.length})
           </h1>
-          <p className="text-lg text-[#666666]">
+          <p className="text-lg text-[#666666] dark:text-[#CCCCCC]">
             Manage your customer profiles and order stats.
           </p>
         </div>
         <input
           type="text"
           placeholder="Search by name..."
-          className="border border-[#A3A3A3] rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className="border border-[#A3A3A3] dark:border-white/20 bg-white dark:bg-white/10 rounded-lg px-3 py-2 text-sm text-[#333] dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
         />
       </div>
 
-      <div className="overflow-x-auto bg-white rounded-xl shadow-sm">
+      <div className="overflow-x-auto bg-white dark:bg-[#2C2C2C]/20 rounded-xl shadow-sm">
         <table className="min-w-full text-sm">
-          <thead className="bg-[#F4F4F4] text-[#333] py-2">
+          <thead className="bg-[#F4F4F4] dark:bg-[#2C2C2C]/50 text-[#333] dark:text-white py-2">
             <tr>
               <th className="px-4 py-3 text-left whitespace-nowrap">
                 <input
@@ -147,8 +147,10 @@ const CustomerTable: React.FC = () => {
             {paginatedCustomers.map((customer) => (
               <tr
                 key={customer.id}
-                className={`border-t transition ${
-                  isSelected(customer.id) ? "bg-blue-50" : "hover:bg-gray-50"
+                className={`border-t transition-colors ${
+                  isSelected(customer.id)
+                    ? "bg-blue-50 dark:bg-[#2B3C55]"
+                    : "hover:bg-gray-50 dark:hover:bg-[#1F2937]"
                 }`}
               >
                 <td className="px-4 py-3 whitespace-nowrap">
@@ -159,76 +161,42 @@ const CustomerTable: React.FC = () => {
                     onChange={() => toggleSelect(customer.id)}
                   />
                 </td>
-                <td className="px-4 py-3 font-bold text-[#333] whitespace-nowrap">
+                <td className="px-4 py-3 font-bold text-[#333] dark:text-white whitespace-nowrap">
                   {customer.fullName}
                 </td>
-                <td className="px-4 py-3 text-[#333] whitespace-nowrap">
+                <td className="px-4 py-3 text-[#333] dark:text-white whitespace-nowrap">
                   {customer.phone}
                 </td>
-                <td className="px-4 py-3 text-[#333] whitespace-nowrap overflow-hidden text-ellipsis max-w-[200px]">
+                <td className="px-4 py-3 text-[#333] dark:text-white whitespace-nowrap overflow-hidden text-ellipsis max-w-[200px]">
                   {customer.email}
                 </td>
-                <td className="px-4 py-3 text-[#333] whitespace-nowrap overflow-hidden text-ellipsis max-w-[200px]">
+                <td className="px-4 py-3 text-[#333] dark:text-white whitespace-nowrap overflow-hidden text-ellipsis max-w-[200px]">
                   {customer.address}
                 </td>
-                <td className="px-4 py-3 text-[#333] whitespace-nowrap">
+                <td className="px-4 py-3 text-[#333] dark:text-white whitespace-nowrap">
                   {customer.repeat}
                 </td>
-                <td className="px-4 py-3 text-[#333] whitespace-nowrap">
+                <td className="px-4 py-3 text-[#333] dark:text-white whitespace-nowrap">
                   {customer.highestOrder}
                 </td>
-                <td className="px-4 py-3 text-[#333] whitespace-nowrap">
+                <td className="px-4 py-3 text-[#333] dark:text-white whitespace-nowrap">
                   {customer.since}
                 </td>
                 <td className="px-4 py-3 relative whitespace-nowrap">
                   <button
-                    onClick={() =>
-                      // setDropdownOpenId((prev) =>
-                      //   prev === customer.id ? null : customer.id
-                      // )
-                      console.log("You can't change this")
-                    }
-                    className="text-xl text-[#666] hover:text-black transition"
+                    onClick={() => console.log("You can't change this")}
+                    className="text-xl text-[#666] dark:text-[#CCCCCC] hover:text-black dark:hover:text-white transition"
                   >
                     ⋯
                   </button>
-                  {/* <AnimatePresence>
-                    {dropdownOpenId === customer.id && (
-                      <motion.div
-                        initial={{ opacity: 0, scale: 0.95, y: -5 }}
-                        animate={{ opacity: 1, scale: 1, y: 0 }}
-                        exit={{ opacity: 0, scale: 0.95, y: -5 }}
-                        transition={{ duration: 0.15 }}
-                        className="absolute z-20 right-0 mt-2 w-44 bg-white border border-gray-200 rounded-xl shadow-md p-2"
-                      >
-                        <button
-                          onClick={() => handleAction("edit", customer.id)}
-                          className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded"
-                        >
-                          Edit
-                        </button>
-                        <button
-                          onClick={() => handleAction("copy-id", customer.id)}
-                          className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded"
-                        >
-                          Copy ID
-                        </button>
-                        <button
-                          onClick={() => handleAction("delete", customer.id)}
-                          className="block w-full text-left px-4 py-2 text-sm text-white bg-red-500 hover:bg-red-600 rounded"
-                        >
-                          Delete
-                        </button>
-                      </motion.div>
-                    )}
-                  </AnimatePresence> */}
                 </td>
               </tr>
             ))}
           </tbody>
         </table>
       </div>
-      <div className="p-4 bg-[#F4F4F4] flex flex-col sm:flex-row justify-between items-center text-sm text-[#333] gap-2 border-t">
+
+      <div className="p-4 bg-[#F4F4F4] dark:bg-[#2C2C2C] flex flex-col sm:flex-row justify-between items-center text-sm text-[#333] dark:text-white gap-2 border-t border-gray-200 dark:border-white/10">
         <p>
           {selectedCustomerIds.size > 0
             ? `${selectedCustomerIds.size} of ${filteredCustomers.length} selected`
@@ -242,14 +210,14 @@ const CustomerTable: React.FC = () => {
             <button
               onClick={() => setCurrentPage((p) => Math.max(p - 1, 1))}
               disabled={currentPage === 1}
-              className="px-3 py-1 hover:bg-white disabled:opacity-50"
+              className="px-3 py-1 hover:bg-white dark:hover:bg-white/10 disabled:opacity-50"
             >
               &lt;
             </button>
             <button
               onClick={() => setCurrentPage((p) => Math.min(p + 1, totalPages))}
               disabled={currentPage === totalPages}
-              className="px-3 py-1 hover:bg-white disabled:opacity-50"
+              className="px-3 py-1 hover:bg-white dark:hover:bg-white/10 disabled:opacity-50"
             >
               &gt;
             </button>

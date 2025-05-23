@@ -83,10 +83,12 @@ const Dashboard = () => {
   ];
 
   return (
-    <div className="flex flex-col w-full">
-      <div className="">
-        <h1 className="text-2xl font-bold text-[#1A2238]">Dashboard</h1>
-        <p className="text-lg text-[#666666]">
+    <div className="flex flex-col w-full text-[#1A2238] dark:text-gray-100">
+      <div>
+        <h1 className="text-2xl font-bold text-[#1A2238] dark:text-white">
+          Dashboard
+        </h1>
+        <p className="text-lg text-[#666666] dark:text-gray-400">
           This is an overview of your store and its performance.
         </p>
       </div>
@@ -105,10 +107,7 @@ const Dashboard = () => {
       </div>
 
       <div className="flex flex-col lg:flex-row gap-2">
-        <div
-          className="lg:w-2/3 rounded-lg border"
-          style={{ borderColor: "#007BFF" }}
-        >
+        <div className="lg:w-2/3 rounded-lg border border-[#007BFF] dark:border-blue-500">
           <DashboardChart />
         </div>
 

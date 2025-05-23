@@ -179,16 +179,23 @@ const CategoryTable: React.FC = () => {
   };
 
   return (
-    <div>
+    <div className="text-[#1A2238] dark:text-[#F4F4F4] min-h-screen">
+      <Alert
+        title={alert.title}
+        description={alert.description}
+        type={alert.type}
+        isOpen={alert.isOpen}
+        onClose={() => setAlert((prev) => ({ ...prev, isOpen: false }))}
+      />
+
       <div className="flex flex-wrap flex-row justify-between items-start sm:items-center mb-6 gap-2">
         <div>
-          <h1 className="text-2xl font-bold text-[#1A2238]">
-            Categories ({filtered.length})
-          </h1>
-          <p className="text-lg text-[#666666]">
+          <h1 className="text-2xl font-bold">Categories ({filtered.length})</h1>
+          <p className="text-base text-[#666666] dark:text-[#CCCCCC]">
             Manage your product categories.
           </p>
         </div>
+
         <button
           onClick={handleAddCategory}
           className="inline-flex items-center gap-2 text-white bg-[#007BFF] hover:bg-[#0056b3] px-4 py-2 rounded text-sm font-medium"
@@ -198,21 +205,23 @@ const CategoryTable: React.FC = () => {
         </button>
       </div>
 
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
-        <input
-          type="text"
-          placeholder="Search by name..."
-          className="border border-[#A3A3A3] rounded px-3 py-2 text-sm focus:outline-none focus:ring text-[#333333]"
-          value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
-        />
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4 w-full">
+        <div className="w-full sm:max-w-xs">
+          <input
+            type="text"
+            placeholder="Search by name..."
+            className="w-full border border-[#A3A3A3] dark:border-white/20 bg-white dark:bg-white/10 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#007BFF] text-[#333333] dark:text-white"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+          />
+        </div>
       </div>
 
-      <div className="overflow-x-auto bg-white rounded">
-        <table className="min-w-full text-sm table-fixed">
-          <thead className="bg-[#F4F4F4] text-[#333] py-2">
+      <div className="w-full overflow-x-auto bg-white dark:bg-[#2C2C2C]/20 rounded relative z-0">
+        <table className="w-full text-sm table-fixed">
+          <thead className="bg-[#F4F4F4] text-[#333] dark:bg-[#2C2C2C]/50 dark:text-white">
             <tr>
-              <th className="px-4 py-3 text-left w-fit whitespace-nowrap">
+              <th className="px-4 py-3 text-left">
                 <input
                   type="checkbox"
                   className="accent-[#007BFF]"
@@ -220,16 +229,11 @@ const CategoryTable: React.FC = () => {
                   onChange={toggleSelectAll}
                 />
               </th>
-              <th className="px-4 py-3 text-left w-fit whitespace-nowrap">
-                Name
-              </th>
-              <th className="px-4 py-3 text-left w-fit whitespace-nowrap">
-                Products
-              </th>
-              <th className="px-4 py-3 text-left w-fit whitespace-nowrap">
-                Date Added
-              </th>
-              <th className="px-4 py-3 text-right w-fit whitespace-nowrap"></th>
+              {["Name", "Products", "Date Added", ""].map((header, idx) => (
+                <th key={idx} className="px-4 py-3 text-left whitespace-nowrap">
+                  {header}
+                </th>
+              ))}
             </tr>
           </thead>
           <tbody>
@@ -238,11 +242,11 @@ const CategoryTable: React.FC = () => {
                 key={category.id}
                 className={`border-t transition-colors ${
                   isSelected(category.id)
-                    ? "bg-[#E6F0FF]"
-                    : "hover:bg-[#F9FAFB]"
+                    ? "bg-[#E6F0FF] dark:bg-[#2B3C55]"
+                    : "hover:bg-[#F9FAFB] dark:hover:bg-[#1F2937]"
                 }`}
               >
-                <td className="px-4 py-3 w-fit whitespace-nowrap">
+                <td className="px-4 py-3">
                   <input
                     type="checkbox"
                     className="accent-[#007BFF]"
@@ -250,29 +254,30 @@ const CategoryTable: React.FC = () => {
                     onChange={() => toggleSelect(category.id)}
                   />
                 </td>
-                <td className="px-4 py-3 font-semibold text-[#333] w-fit whitespace-nowrap">
+                <td className="px-4 py-3 font-semibold whitespace-nowrap">
                   {category.name}
                 </td>
-                <td className="px-4 py-3 text-[#333] w-fit whitespace-nowrap">
+                <td className="px-4 py-3 whitespace-nowrap">
                   <span className="font-bold">{category.products}</span>
                   <span className="ml-1">
                     {category.products === 1 ? "product" : "products"}
                   </span>
                 </td>
-                <td className="px-4 py-3 text-[#333] w-fit whitespace-nowrap">
+                <td className="px-4 py-3 whitespace-nowrap">
                   {category.dateAdded}
                 </td>
-                <td className="px-4 py-3 relative w-fit text-right whitespace-nowrap">
+                <td className="px-4 py-3 relative text-right whitespace-nowrap">
                   <button
                     onClick={() =>
                       setDropdownOpenId((prev) =>
                         prev === category.id ? null : category.id
                       )
                     }
-                    className="text-xl text-[#666] hover:text-[#000] transition"
+                    className="text-xl text-[#666] dark:text-[#CCCCCC] hover:text-[#000] dark:hover:text-white transition"
                   >
                     ⋯
                   </button>
+
                   <AnimatePresence>
                     {dropdownOpenId === category.id && (
                       <motion.div
@@ -280,17 +285,17 @@ const CategoryTable: React.FC = () => {
                         animate={{ opacity: 1, scale: 1, y: 0 }}
                         exit={{ opacity: 0, scale: 0.95, y: -5 }}
                         transition={{ duration: 0.15 }}
-                        className="absolute z-10 right-0 mt-2 w-44 bg-white border border-gray-200 rounded-lg shadow-md p-2"
+                        className="absolute z-10 right-0 mt-2 w-44 bg-white dark:bg-[#F4F4F4]/10 backdrop-blur-2xl border border-gray-200 dark:border-white/20 rounded-lg shadow-md p-2"
                       >
                         <button
                           onClick={() => handleAction("edit", category.id)}
-                          className="block w-full text-left px-4 py-2 text-sm text-[#333] hover:bg-gray-100 rounded"
+                          className="block w-full text-left px-4 py-2 text-sm text-[#333] dark:text-white hover:bg-gray-100 dark:hover:bg-white/10 rounded"
                         >
                           Edit
                         </button>
                         <button
                           onClick={() => handleAction("copy-id", category.id)}
-                          className="block w-full text-left px-4 py-2 text-sm text-[#333] hover:bg-gray-100 rounded"
+                          className="block w-full text-left px-4 py-2 text-sm text-[#333] dark:text-white hover:bg-gray-100 dark:hover:bg-white/10 rounded"
                         >
                           Copy ID
                         </button>
@@ -317,35 +322,33 @@ const CategoryTable: React.FC = () => {
             ))}
           </tbody>
         </table>
+      </div>
 
-        <div className="p-4 bg-[#F4F4F4] flex flex-col sm:flex-row justify-between items-center text-sm text-[#333] gap-2 border-t">
-          <p>
-            {selectedIds.size > 0
-              ? `${selectedIds.size} of ${filtered.length} selected`
-              : "No selection"}
-          </p>
-          <div className="flex items-center gap-3">
-            <span>
-              Page {currentPage} of {totalPages}
-            </span>
-            <div className="flex items-center border rounded overflow-hidden">
-              <button
-                onClick={() => setCurrentPage((p) => Math.max(p - 1, 1))}
-                disabled={currentPage === 1}
-                className="px-3 py-1 hover:bg-white disabled:opacity-50"
-              >
-                &lt;
-              </button>
-              <button
-                onClick={() =>
-                  setCurrentPage((p) => Math.min(p + 1, totalPages))
-                }
-                disabled={currentPage === totalPages}
-                className="px-3 py-1 hover:bg-white disabled:opacity-50"
-              >
-                &gt;
-              </button>
-            </div>
+      <div className="p-4 bg-[#F4F4F4] dark:bg-[#2C2C2C] flex flex-col sm:flex-row justify-between items-center text-sm text-[#333] dark:text-white gap-2 border-t border-gray-200 dark:border-white/10">
+        <p>
+          {selectedIds.size > 0
+            ? `${selectedIds.size} of ${filtered.length} selected`
+            : "No selection"}
+        </p>
+        <div className="flex items-center gap-3">
+          <span>
+            Page {currentPage} of {totalPages}
+          </span>
+          <div className="flex items-center border rounded overflow-hidden">
+            <button
+              onClick={() => setCurrentPage((p) => Math.max(p - 1, 1))}
+              disabled={currentPage === 1}
+              className="px-3 py-1 hover:bg-white dark:hover:bg-white/10 disabled:opacity-50"
+            >
+              &lt;
+            </button>
+            <button
+              onClick={() => setCurrentPage((p) => Math.min(p + 1, totalPages))}
+              disabled={currentPage === totalPages}
+              className="px-3 py-1 hover:bg-white dark:hover:bg-white/10 disabled:opacity-50"
+            >
+              &gt;
+            </button>
           </div>
         </div>
       </div>
@@ -364,14 +367,6 @@ const CategoryTable: React.FC = () => {
           />
         )}
       </AnimatePresence>
-
-      <Alert
-        title={alert.title}
-        description={alert.description}
-        type={alert.type}
-        isOpen={alert.isOpen}
-        onClose={() => setAlert((prev) => ({ ...prev, isOpen: false }))}
-      />
     </div>
   );
 };
