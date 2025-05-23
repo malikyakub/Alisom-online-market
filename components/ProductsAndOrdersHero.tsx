@@ -15,23 +15,23 @@ const ProductsAndOrdersHero: React.FC<ProductsAndOrdersHeroProps> = ({
 }) => {
   return (
     <section
-      className={`bg-gradient-to-r ${gradient} text-white px-4 py-6 h-[200px]`}
+      className={`bg-gradient-to-r ${gradient} text-white px-4 py-6 min-h-[200px]`}
     >
-      <div className="mx-auto h-full flex flex-row items-center justify-between gap-4 md:gap-6">
-        <div className="flex flex-col justify-center space-y-2 text-left">
-          <h1 className="text-xl sm:text-lg md:text-xl lg:text-2xl font-bold leading-snug">
+      <div className="mx-auto h-full flex flex-col-reverse sm:flex-row items-center justify-between gap-4 md:gap-6">
+        <div className="flex flex-col justify-center space-y-2 text-center sm:text-left mt-4 sm:mt-0">
+          <h1 className="text-lg sm:text-xl md:text-2xl font-bold leading-snug">
             {title}
           </h1>
-          <p className="text-sm sm:text-xs md:text-sm text-gray-300 leading-snug md:leading-normal">
+          <p className="text-sm sm:text-base text-gray-300 leading-snug md:leading-normal">
             {subtitle}
           </p>
         </div>
 
-        <div className="h-[60%] sm:h-[70%] md:h-full flex justify-center items-center">
+        <div className="w-full sm:w-auto flex justify-center items-center">
           <img
             src={imageSrc}
             alt="Hero"
-            className="h-full max-h-[140px] sm:max-h-[160px] md:max-h-[200px] lg:max-h-[230px] w-auto rounded object-contain"
+            className="h-32 sm:h-40 md:h-48 lg:h-56 max-h-[230px] w-auto rounded object-contain"
           />
         </div>
       </div>

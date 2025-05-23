@@ -45,7 +45,7 @@ export default function Home() {
   const [canProdPrev, setCanProdPrev] = useState(false);
   const [prodVisibleCards, setProdVisibleCards] = useState(3);
 
-  const { GetFeaturedProducts, getFirstTen, isLoading, GetAverageRating } =
+  const { GetFeaturedProducts, getFirstEight, isLoading, GetAverageRating } =
     useProducts();
   const [featuredProducts, setFeaturedProducts] = useState<any[]>([]);
   const [allProducts, setAllProducts] = useState<any[]>([]);
@@ -182,7 +182,7 @@ export default function Home() {
     (async () => {
       const [featuredRes, allRes] = await Promise.all([
         GetFeaturedProducts(),
-        getFirstTen(),
+        getFirstEight(),
       ]);
 
       if (!featuredRes.err && featuredRes.data) {
@@ -293,7 +293,7 @@ export default function Home() {
               .map((_, i) => (
                 <div
                   key={i}
-                  className="w-[calc(50%-8px)] sm:w-[calc(50%-8px)] md:w-[calc(33.333%-11px)] lg:w-[calc(25%-12px)]"
+                  className="w-full xs:w-[calc(50%-8px)] sm:w-[calc(50%-8px)] md:w-[calc(33.333%-11px)] lg:w-[calc(25%-12px)]"
                 >
                   <ProductCardSkeleton />
                 </div>
@@ -301,7 +301,7 @@ export default function Home() {
           : allProducts.map((product) => (
               <div
                 key={product.id}
-                className="w-[calc(50%-8px)] sm:w-[calc(50%-8px)] md:w-[calc(33.333%-11px)] lg:w-[calc(25%-12px)]"
+                className="w-full xs:w-[calc(50%-8px)] sm:w-[calc(50%-8px)] md:w-[calc(33.333%-11px)] lg:w-[calc(25%-12px)]"
               >
                 <ProductCard
                   featured={false}
@@ -316,15 +316,19 @@ export default function Home() {
               </div>
             ))}
       </div>
+
       <div className="flex justify-center my-6">
         <a
           href="/user/products"
-          className="bg-[#007BFF] text-white w-52 text-center py-3 font-bold rounded hover:bg-blue-700 transition"
+          className="w-full sm:w-52 bg-[#007BFF] text-white text-center py-3 font-bold rounded hover:bg-blue-700 transition"
         >
           View all
         </a>
       </div>
-      <div className="flex flex-col sm:flex-row flex-wrap gap-8 my-5 justify-center">
+
+      <hr />
+
+      <div className="flex flex-col sm:flex-row flex-wrap gap-4 sm:gap-8 my-5 justify-center items-center">
         {features.map((feature, index) => (
           <FeatureCard key={index} {...feature} />
         ))}

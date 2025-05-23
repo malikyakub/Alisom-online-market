@@ -44,8 +44,8 @@ const RegisterForm: React.FC<RegisterFormProps> = ({
   };
 
   return (
-    <div className="flex items-center justify-center p-4 sm:p-6 lg:p-8">
-      <div className="w-full lg:max-w-md">
+    <div className="flex items-center justify-center w-full">
+      <div className="w-full max-w-md">
         <h2 className="text-2xl font-bold mb-1">
           {isLogin ? "Welcome back" : "Create an account"}
         </h2>

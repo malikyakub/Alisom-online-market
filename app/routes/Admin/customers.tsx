@@ -96,7 +96,7 @@ const CustomerTable: React.FC = () => {
     <div className="">
       <div className="flex flex-wrap justify-between items-start sm:items-center mb-6 gap-2">
         <div>
-          <h1 className="text-3xl font-bold text-[#1A2238]">
+          <h1 className="text-2xl font-bold text-[#1A2238]">
             Customers ({filteredCustomers.length})
           </h1>
           <p className="text-lg text-[#666666]">
@@ -183,15 +183,16 @@ const CustomerTable: React.FC = () => {
                 <td className="px-4 py-3 relative whitespace-nowrap">
                   <button
                     onClick={() =>
-                      setDropdownOpenId((prev) =>
-                        prev === customer.id ? null : customer.id
-                      )
+                      // setDropdownOpenId((prev) =>
+                      //   prev === customer.id ? null : customer.id
+                      // )
+                      console.log("You can't change this")
                     }
                     className="text-xl text-[#666] hover:text-black transition"
                   >
                     ⋯
                   </button>
-                  <AnimatePresence>
+                  {/* <AnimatePresence>
                     {dropdownOpenId === customer.id && (
                       <motion.div
                         initial={{ opacity: 0, scale: 0.95, y: -5 }}
@@ -220,7 +221,7 @@ const CustomerTable: React.FC = () => {
                         </button>
                       </motion.div>
                     )}
-                  </AnimatePresence>
+                  </AnimatePresence> */}
                 </td>
               </tr>
             ))}

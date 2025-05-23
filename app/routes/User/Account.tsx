@@ -5,7 +5,7 @@ import useAuth from "hooks/useAuth";
 import Alert from "components/Alert";
 
 const UserAccount = () => {
-  const { user, loading, login, updatePassword } = useAuth();
+  const { user, loading, updatePassword } = useAuth();
   const { GetUserById, UpdateUser } = useUsers();
   const navigate = useNavigate();
 
@@ -35,14 +35,14 @@ const UserAccount = () => {
     } else if (user && !loaded) {
       GetUserById(user.id).then(({ data, err }) => {
         if (data) {
-          const [firstName, ...lastNameParts] = data.fullname?.split(" ") ?? [
-            "",
-            "",
-          ];
+          const nameParts = (data.fullname ?? "").trim().split(" ");
+          const firstName = nameParts[0] || "";
+          const lastName =
+            nameParts.length > 1 ? nameParts.slice(1).join(" ") : "";
           setFormData({
             user_id: data.user_id,
             firstName,
-            lastName: lastNameParts.join(" "),
+            lastName,
             email: data.email,
             address: data.address,
             currentPassword: "",
@@ -200,7 +200,7 @@ const UserAccount = () => {
                     placeholder="Enter your first name"
                     value={formData.firstName}
                     onChange={handleChange}
-                    className="w-full border p-2 rounded bg-gray-200 focus:bg-[#007BFF33] focus:border-[#007BFF] outline-none"
+                    className="w-full border border-gray-300 p-2 rounded bg-gray-50 focus:bg-white focus:border-blue-500 outline-none"
                   />
                 </div>
                 <div>
@@ -211,7 +211,7 @@ const UserAccount = () => {
                     placeholder="Enter your last name"
                     value={formData.lastName}
                     onChange={handleChange}
-                    className="w-full border p-2 rounded bg-gray-200 focus:bg-[#007BFF33] focus:border-[#007BFF] outline-none"
+                    className="w-full border border-gray-300 p-2 rounded bg-gray-50 focus:bg-white focus:border-blue-500 outline-none"
                   />
                 </div>
                 <div>
@@ -222,7 +222,7 @@ const UserAccount = () => {
                     placeholder="Enter your email"
                     value={formData.email}
                     onChange={handleChange}
-                    className="w-full border p-2 rounded bg-gray-200 focus:bg-[#007BFF33] focus:border-[#007BFF] outline-none"
+                    className="w-full border border-gray-300 p-2 rounded bg-gray-50 focus:bg-white focus:border-blue-500 outline-none"
                   />
                 </div>
                 <div>
@@ -233,7 +233,7 @@ const UserAccount = () => {
                     placeholder="Enter your address"
                     value={formData.address}
                     onChange={handleChange}
-                    className="w-full border p-2 rounded bg-gray-200 focus:bg-[#007BFF33] focus:border-[#007BFF] outline-none"
+                    className="w-full border border-gray-300 p-2 rounded bg-gray-50 focus:bg-white focus:border-blue-500 outline-none"
                   />
                 </div>
               </div>
@@ -247,7 +247,7 @@ const UserAccount = () => {
                     placeholder="Current Password"
                     value={formData.currentPassword}
                     onChange={handleChange}
-                    className="w-full border p-2 rounded bg-gray-200 focus:bg-[#007BFF33] focus:border-[#007BFF] outline-none"
+                    className="w-full border border-gray-300 p-2 rounded bg-gray-50 focus:bg-white focus:border-blue-500 outline-none"
                   />
                   <input
                     type="password"
@@ -255,7 +255,7 @@ const UserAccount = () => {
                     placeholder="New Password"
                     value={formData.newPassword}
                     onChange={handleChange}
-                    className="w-full border p-2 rounded bg-gray-200 focus:bg-[#007BFF33] focus:border-[#007BFF] outline-none"
+                    className="w-full border border-gray-300 p-2 rounded bg-gray-50 focus:bg-white focus:border-blue-500 outline-none"
                   />
                   <input
                     type="password"
@@ -263,7 +263,7 @@ const UserAccount = () => {
                     placeholder="Confirm New Password"
                     value={formData.confirmPassword}
                     onChange={handleChange}
-                    className="w-full border p-2 rounded bg-gray-200 focus:bg-[#007BFF33] focus:border-[#007BFF] outline-none"
+                    className="w-full border border-gray-300 p-2 rounded bg-gray-50 focus:bg-white focus:border-blue-500 outline-none"
                   />
                 </div>
               </div>
@@ -276,12 +276,18 @@ const UserAccount = () => {
                     if (user) {
                       GetUserById(user.id).then(({ data }) => {
                         if (data) {
-                          const [firstName, ...lastNameParts] =
-                            data.fullname?.split(" ") ?? ["", ""];
+                          const nameParts = (data.fullname ?? "")
+                            .trim()
+                            .split(" ");
+                          const firstName = nameParts[0] || "";
+                          const lastName =
+                            nameParts.length > 1
+                              ? nameParts.slice(1).join(" ")
+                              : "";
                           setFormData({
                             user_id: data.user_id,
                             firstName,
-                            lastName: lastNameParts.join(" "),
+                            lastName,
                             email: data.email,
                             address: data.address,
                             currentPassword: "",

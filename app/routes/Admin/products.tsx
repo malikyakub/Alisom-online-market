@@ -201,7 +201,7 @@ const ProductTable: React.FC = () => {
 
       <div className="flex flex-wrap flex-row justify-between items-start sm:items-center mb-6 gap-2">
         <div>
-          <h1 className="text-2xl sm:text-3xl font-bold text-[#1A2238]">
+          <h1 className="text-2xl font-bold text-[#1A2238]">
             Products ({filteredProducts.length})
           </h1>
           <p className="text-base text-[#666666]">

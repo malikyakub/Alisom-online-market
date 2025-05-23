@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { ArrowRight, ArrowLeft } from "lucide-react";
-import iPhoneImage from "/assets/images/iphone.png"; // Update these paths as needed
+import iPhoneImage from "/assets/images/iphone.png";
 import Airpods from "/assets/images/airpods.png";
 import appleWatch from "/assets/images/apple-watch.png";
 
@@ -60,10 +60,10 @@ const HerCard: React.FC = () => {
   }, [currentIndex]);
 
   return (
-    <div className="w-full bg-black text-white p-8 py-10 flex flex-col md:flex-row items-center justify-between transition-all duration-500 ease-in-out md:h-[344px] overflow-hidden">
+    <div className="w-full bg-black text-white px-4 py-10 flex flex-col md:flex-row items-center justify-between transition-all duration-500 ease-in-out md:h-[344px] overflow-hidden">
       {/* Content Section */}
-      <div className="w-[400px] flex-shrink-0 space-y-4">
-        <div className="flex items-center space-x-2">
+      <div className="w-full md:w-[400px] flex-shrink-0 space-y-4 text-center md:text-left">
+        <div className="flex justify-center md:justify-start items-center space-x-2">
           <img
             src={currentProduct.logo}
             alt={`${currentProduct.title} Logo`}
@@ -74,14 +74,16 @@ const HerCard: React.FC = () => {
         <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold leading-tight transition-all duration-500 ease-in-out">
           {currentProduct.offer}
         </h1>
-        <a
-          href={currentProduct.link || "#"}
-          className="inline-flex items-center px-4 py-2 bg-blue-600 text-white font-semibold rounded hover:bg-blue-700 transition-colors"
-        >
-          Shop Now <ArrowRight className="ml-2 w-5 h-5" />
-        </a>
+        <div className="flex justify-center md:justify-start">
+          <a
+            href={currentProduct.link || "#"}
+            className="inline-flex items-center px-4 py-2 bg-blue-600 text-white font-semibold rounded hover:bg-blue-700 transition-colors"
+          >
+            Shop Now <ArrowRight className="ml-2 w-5 h-5" />
+          </a>
+        </div>
 
-        <div className="flex space-x-2 pt-6">
+        <div className="flex justify-center md:justify-start space-x-2 pt-6">
           {HeroProducts.map((_, index) => (
             <span
               key={index}
@@ -93,7 +95,7 @@ const HerCard: React.FC = () => {
           ))}
         </div>
 
-        <div className="flex space-x-4 pt-4">
+        <div className="flex justify-center md:justify-start space-x-4 pt-4">
           <button
             onClick={prevSlide}
             className="p-2 bg-gray-800 rounded-full hover:bg-gray-700"
@@ -110,11 +112,11 @@ const HerCard: React.FC = () => {
       </div>
 
       {/* Image Section */}
-      <div className="flex-1 flex items-center justify-center mt-8 md:mt-0 transition-all duration-500 ease-in-out">
+      <div className="w-full mt-8 md:mt-0 md:flex-1 flex items-center justify-center transition-all duration-500 ease-in-out">
         <img
           src={currentProduct.image}
           alt={currentProduct.title}
-          className="object-contain w-full h-full max-h-[300px]"
+          className="object-contain w-full h-full max-h-[200px] sm:max-h-[250px] md:max-h-[300px]"
         />
       </div>
     </div>

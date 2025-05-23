@@ -211,7 +211,7 @@ const AddProduct: React.FC = () => {
   };
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+    <div className="mx-auto lg:px-8">
       <Alert
         isOpen={alert.isOpen}
         title={alert.title}
@@ -465,7 +465,7 @@ const AddProduct: React.FC = () => {
             <button
               type="submit"
               disabled={isLoading}
-              className="flex items-center gap-2 px-4 py-2 bg-[#007BFF] text-white rounded-md hover:brightness-90 disabled:opacity-70"
+              className="flex items-center text-center justify-center gap-2 px-4 py-2 bg-[#007BFF] text-white rounded-md hover:brightness-90 disabled:opacity-70"
             >
               {isLoading && <ClipLoader color="#fff" size={16} />}
               {isLoading

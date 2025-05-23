@@ -92,7 +92,7 @@ const ProductCard = ({
         isOpen={wishlistAlertOpen}
         onClose={() => setWishlistAlertOpen(false)}
       />
-      <div className="relative bg-white w-[230px] h-[360px] rounded shadow hover:shadow-md transition overflow-hidden group flex flex-col">
+      <div className="relative bg-white w-full sm:w-[230px] h-[340px] sm:h-[360px] rounded shadow hover:shadow-md transition overflow-hidden group flex flex-col">
         {featured && (
           <>
             {badge && (
@@ -126,7 +126,10 @@ const ProductCard = ({
             </div>
           </>
         )}
-        <a href={productLink} className="w-full h-[240px] overflow-hidden">
+        <a
+          href={productLink}
+          className="w-full h-[200px] sm:h-[240px] overflow-hidden"
+        >
           <img src={image} alt={name} className="w-full h-full object-cover" />
         </a>
         <div className="flex flex-col p-2">
