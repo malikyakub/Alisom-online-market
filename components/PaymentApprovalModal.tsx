@@ -73,7 +73,7 @@ const PaymentApprovalModal: React.FC<PaymentApprovalModalProps> = ({
           <button
             type="button"
             onClick={handleApprove}
-            className="flex-1/2 bg-[#007BFF] text-white font-bold py-2 px-4 rounded hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="flex-1/2 bg-[#007BFF] text-white font-bold py-2 px-4 rounded hover:bg-blue-700 disabled:opacity-50"
             disabled={isLoading}
           >
             {isLoading && clickedButton === "approve" ? (
@@ -86,7 +86,7 @@ const PaymentApprovalModal: React.FC<PaymentApprovalModalProps> = ({
           <button
             type="button"
             onClick={handleDeny}
-            className="flex-1/2 bg-[#DC3545] text-white font-bold py-2 px-4 rounded hover:bg-red-700 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="flex-1/2 bg-[#DC3545] text-white font-bold py-2 px-4 rounded hover:bg-red-700 disabled:opacity-50"
             disabled={isLoading}
           >
             {isLoading && clickedButton === "deny" ? (

@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import supabase from "utils/supabase";
 import useProducts from "./useProducts";
 
@@ -79,6 +79,11 @@ const useCart = () => {
     setIsLoading(true);
     try {
       const quantityToAdd = item.quantity ?? 1;
+      const { err, data: product } = await GetProductById(item.product_id);
+      if (err || !product) {
+        return { data: null, err: err || "Product not found" };
+      }
+
       if (item.user_id) {
         const { data: existingItem, error: fetchError } = await supabase
           .from("cart")
@@ -89,14 +94,23 @@ const useCart = () => {
 
         if (fetchError && fetchError.code !== "PGRST116") throw fetchError;
 
+        const currentQty = existingItem?.quantity ?? 0;
+        const newTotal = currentQty + quantityToAdd;
+
+        if (newTotal > product.stock_quantity) {
+          return {
+            data: null,
+            err: `Only ${product.stock_quantity} units of ${product.title} in stock`,
+          };
+        }
+
         if (existingItem) {
           const { data, error: updateError } = await supabase
             .from("cart")
-            .update({ quantity: existingItem.quantity + quantityToAdd })
+            .update({ quantity: newTotal })
             .eq("user_id", item.user_id)
             .eq("product_id", item.product_id)
             .select();
-
           if (updateError) throw updateError;
           return { data, err: null };
         } else {
@@ -112,11 +126,21 @@ const useCart = () => {
         const existing = localCart.find(
           (i) => i.product_id === item.product_id
         );
+        const newTotal = (existing?.quantity ?? 0) + quantityToAdd;
+
+        if (newTotal > product.stock_quantity) {
+          return {
+            data: null,
+            err: `Only ${product.stock_quantity} units of ${product.title} in stock`,
+          };
+        }
+
         if (existing) {
-          existing.quantity += quantityToAdd;
+          existing.quantity = newTotal;
         } else {
           localCart.push({ ...item, quantity: quantityToAdd });
         }
+
         setLocalCart(localCart);
         return { data: localCart, err: null };
       }
@@ -138,6 +162,18 @@ const useCart = () => {
 
     setIsLoading(true);
     try {
+      const { data: product, err } = await GetProductById(product_id);
+      if (err || !product) {
+        return { data: null, err: err || "Product not found" };
+      }
+
+      if (quantity > product.stock_quantity) {
+        return {
+          data: null,
+          err: `Only ${product.stock_quantity} units of ${product.title} in stock`,
+        };
+      }
+
       if (user_id) {
         const { data, error } = await supabase
           .from("cart")

@@ -33,11 +33,17 @@ const ProductFullDetails: React.FC<Props> = ({
 }) => {
   const [viewingReviews, setViewingReviews] = useState(false);
   const [wishlistAlert, setWishlistAlert] = useState(false);
-  const [cartAlert, setCartAlert] = useState(false);
   const [wishActive, setWishActive] = useState(false);
   const [isInCart, setIsInCart] = useState(false);
   const [ratings, setRatings] = useState<number>(0);
   const [reviews, setReviews] = useState<number>(0);
+  const [cartAlertOpen, setCartAlertOpen] = useState(false);
+  const [cartAlertContent, setCartAlertContent] = useState({
+    title: "",
+    description: "",
+    type: "success" as "success" | "warning" | "info" | "danger",
+  });
+
   const { GetAverageRating } = useProducts();
   const { addToCart } = useCart();
   const { user } = useAuth();
@@ -55,15 +61,31 @@ const ProductFullDetails: React.FC<Props> = ({
 
   const handleBuyNow = async () => {
     setIsInCart(true);
-    await addToCart({
+    const result = await addToCart({
       product_id: product.product_id,
       quantity,
       ...(user?.id ? { user_id: user.id } : {}),
     });
-    setCartAlert(true);
+
+    if (result.err) {
+      setCartAlertContent({
+        title: "Error Adding to Cart",
+        description: result.err,
+        type: "danger",
+      });
+    } else {
+      setCartAlertContent({
+        title: "Added to Cart",
+        description: `${product.name} has been added to your cart.`,
+        type: "success",
+      });
+    }
+
+    setCartAlertOpen(true);
+
     setTimeout(() => {
       setIsInCart(false);
-      window.location.href = "/user/cart";
+      if (!result.err) window.location.href = "/user/cart";
     }, 2000);
   };
 
@@ -82,10 +104,6 @@ const ProductFullDetails: React.FC<Props> = ({
   useEffect(() => {
     if (wishlistAlert) setTimeout(() => setWishlistAlert(false), 3000);
   }, [wishlistAlert]);
-
-  useEffect(() => {
-    if (cartAlert) setTimeout(() => setCartAlert(false), 3000);
-  }, [cartAlert]);
 
   const renderStars = () => {
     return Array.from({ length: 5 }).map((_, i) => {
@@ -109,11 +127,11 @@ const ProductFullDetails: React.FC<Props> = ({
       />
 
       <Alert
-        title="Added to Cart"
-        description={`${product.name} has been added to your cart.`}
-        type="success"
-        isOpen={cartAlert}
-        onClose={() => setCartAlert(false)}
+        title={cartAlertContent.title}
+        description={cartAlertContent.description}
+        type={cartAlertContent.type}
+        isOpen={cartAlertOpen}
+        onClose={() => setCartAlertOpen(false)}
       />
 
       <div className="space-y-6 bg-white dark:bg-black/50 text-gray-800 dark:text-white rounded p-4">
@@ -211,17 +229,24 @@ const ProductFullDetails: React.FC<Props> = ({
         <div className="flex space-x-3">
           <button
             onClick={handleBuyNow}
-            disabled={product.stock_quantity === 0}
-            className={`w-full py-2 rounded-md font-semibold text-white transition-all duration-300 ${
-              isInCart
-                ? "bg-green-600"
-                : product.stock_quantity === 0
-                ? "bg-blue-400/60 cursor-not-allowed"
-                : "bg-blue-600 hover:bg-blue-700"
-            }`}
+            disabled={product.stock_quantity === 0 || isInCart}
+            className={`w-full py-2 rounded-md font-semibold text-white transition-all duration-300
+    ${
+      product.stock_quantity === 0
+        ? "bg-blue-400/60"
+        : isInCart
+        ? "bg-green-600"
+        : "bg-blue-600 hover:bg-blue-700"
+    }
+  `}
           >
-            {isInCart ? "Added" : "Buy Now"}
+            {isInCart
+              ? "Adding..."
+              : product.stock_quantity === 0
+              ? "Out of Stock"
+              : "Buy Now"}
           </button>
+
           <button
             onClick={handleAddToWishlist}
             className={`border rounded-md p-2 transition-colors ${

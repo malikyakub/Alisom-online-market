@@ -32,18 +32,30 @@ const ProductCard = ({
   const [isInCart, setIsInCart] = useState(false);
   const [isInWishlist, setIsInWishlist] = useState(false);
   const [alertOpen, setAlertOpen] = useState(false);
+  const [alertMessage, setAlertMessage] = useState("");
+  const [alertType, setAlertType] = useState<"success" | "danger">("success");
   const [wishlistAlertOpen, setWishlistAlertOpen] = useState(false);
+
   const { addToCart } = useCart();
   const { addToWishlist } = useWishlist();
   const { user } = useAuth();
 
   const handleAddToCart = async () => {
     setIsInCart(true);
-    await addToCart({
+    const result = await addToCart({
       product_id: productId,
       quantity: 1,
       ...(user?.id ? { user_id: user.id } : {}),
     });
+
+    if (result.err) {
+      setAlertType("danger");
+      setAlertMessage(result.err);
+    } else {
+      setAlertType("success");
+      setAlertMessage(`"${name}" has been added to your cart.`);
+    }
+
     setAlertOpen(true);
     setTimeout(() => setIsInCart(false), 2000);
   };
@@ -79,9 +91,9 @@ const ProductCard = ({
   return (
     <>
       <Alert
-        title="Added to Cart"
-        description={`"${name}" has been added to your cart.`}
-        type="success"
+        title={alertType === "success" ? "Success" : "Error"}
+        description={alertMessage}
+        type={alertType}
         isOpen={alertOpen}
         onClose={() => setAlertOpen(false)}
       />
@@ -133,7 +145,9 @@ const ProductCard = ({
           <img src={image} alt={name} className="w-full h-full object-cover" />
         </a>
         <div className="flex flex-col p-2">
-          <h1 className="text-lg font-bold text-[#1A2238] dark:text-[#F4F4F4] truncate">{name}</h1>
+          <h1 className="text-lg font-bold text-[#1A2238] dark:text-[#F4F4F4] truncate">
+            {name}
+          </h1>
           <div className="flex flex-row gap-2 items-center">
             <p className="text-sm text-[#28A745] font-bold">${price}</p>
             {oldPrice && (
