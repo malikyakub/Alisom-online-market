@@ -9,7 +9,7 @@ export function meta() {
 }
 
 const Login: React.FC = () => {
-  const { login } = useAuth();
+  const { login, continueWithGoogle } = useAuth();
   const [loading, setLoading] = useState(false);
 
   const [alertOpen, setAlertOpen] = useState(false);
@@ -51,6 +51,24 @@ const Login: React.FC = () => {
     }
   };
 
+  const handleGoogleSignIn = async () => {
+    try {
+      setLoading(true);
+      await continueWithGoogle();
+      setAlertTitle("Google Sign-In Successful");
+      setAlertMessage("You have successfully signed in with Google.");
+      setAlertType("success");
+      setAlertOpen(true);
+    } catch (error: any) {
+      setLoading(false);
+      console.error("Google sign-in failed:", error.message || error);
+      setAlertTitle("Google Sign-In Failed");
+      setAlertMessage(error.message || "Unexpected error");
+      setAlertType("danger");
+      setAlertOpen(true);
+    }
+  };
+
   return (
     <div className="p-4 flex flex-col gap-10 justify-center items-center h-dvh">
       <Alert
@@ -71,6 +89,7 @@ const Login: React.FC = () => {
             isLogin={true}
             onSubmit={handleSubmit}
             isLoading={loading}
+            onGoogleSignIn={handleGoogleSignIn}
           />
         </div>
       </div>

@@ -145,7 +145,7 @@ const RegisterForm: React.FC<RegisterFormProps> = ({
           onClick={async () => {
             if (onGoogleSignIn) await onGoogleSignIn();
           }}
-          className="w-full border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-black dark:text-white rounded px-4 py-2 flex items-center justify-center gap-2"
+          className="w-full border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-black dark:text-white rounded px-4 py-2 flex items-center justify-center gap-2 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
         >
           <img
             src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg"

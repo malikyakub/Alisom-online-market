@@ -19,6 +19,7 @@ interface UseAuthReturn {
     currentPassword: string,
     newPassword: string
   ) => Promise<{ success: boolean; error?: string }>;
+  continueWithGoogle: () => Promise<void>;
 }
 
 const useAuth = (): UseAuthReturn => {
@@ -144,6 +145,17 @@ const useAuth = (): UseAuthReturn => {
     }
   };
 
+  const continueWithGoogle = async (): Promise<void> => {
+    const { error } = await supabase.auth.signInWithOAuth({
+      provider: "google",
+      options: {
+        redirectTo: window.location.origin,
+      },
+    });
+    if (error) throw error;
+    // The user will be set after redirect and auth state change
+  };
+
   return {
     user,
     loading,
@@ -151,6 +163,7 @@ const useAuth = (): UseAuthReturn => {
     signup,
     logout,
     updatePassword,
+    continueWithGoogle,
   };
 };
 
