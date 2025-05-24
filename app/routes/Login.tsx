@@ -54,11 +54,16 @@ const Login: React.FC = () => {
   const handleGoogleSignIn = async () => {
     try {
       setLoading(true);
-      await continueWithGoogle();
-      setAlertTitle("Google Sign-In Successful");
-      setAlertMessage("You have successfully signed in with Google.");
-      setAlertType("success");
+      // await continueWithGoogle();
+      setAlertTitle("Google Sign-In In progress");
+      setAlertMessage(
+        "This feature is still in developmet please login manually."
+      );
+      setAlertType("warning");
       setAlertOpen(true);
+      setTimeout(() => {
+        setLoading(false);
+      }, 3000);
     } catch (error: any) {
       setLoading(false);
       console.error("Google sign-in failed:", error.message || error);
