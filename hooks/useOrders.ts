@@ -117,7 +117,6 @@ const useOrders = () => {
 
       if (statusError) throw statusError;
 
-      // Only adjust stock if status is "Approved"
       if (action === "Approved") {
         const { data: orderItems, error: itemsError } = await supabase
           .from("Order_items")
@@ -155,14 +154,26 @@ const useOrders = () => {
     }
   }
 
-  async function getOrdersByUserId(user_id: string): Promise<ReturnType> {
+  async function getOrdersByUserOrEmail(
+    user_id?: string,
+    email?: string
+  ): Promise<{ data: any[] | null; err: string | null }> {
     setIsLoading(true);
+
     try {
-      const { data, error } = await supabase
-        .from("Orders")
-        .select("*")
-        .eq("user_id", user_id)
-        .order("created_at", { ascending: false });
+      let query = supabase.from("Orders").select("*").order("created_at", {
+        ascending: false,
+      });
+
+      if (user_id) {
+        query = query.eq("user_id", user_id);
+      } else if (email) {
+        query = query.eq("Email", email);
+      } else {
+        throw new Error("No user_id or email provided");
+      }
+
+      const { data, error } = await query;
 
       if (error) throw error;
       return { data, err: null };
@@ -335,14 +346,36 @@ const useOrders = () => {
     }
   }
 
+  async function SetOrderShippingData(
+    order_id: string,
+    tracking_number: string
+  ): Promise<ReturnType> {
+    setIsLoading(true);
+    try {
+      const { error: statusError } = await supabase
+        .from("Orders")
+        .update({ tracking_number: tracking_number, shipping_status : "Shipped" })
+        .eq("Order_id", order_id);
+
+      if (statusError) throw statusError;
+
+      return { data: true, err: null };
+    } catch (error) {
+      return { data: null, err: String(error) };
+    } finally {
+      setIsLoading(false);
+    }
+  }
+
   return {
     createOrder,
     updateOrderStatusAndAdjustStock,
-    getOrdersByUserId,
+    getOrdersByUserOrEmail,
     getOrder,
     returnItem,
     AllOrders,
     deleteOrderAndRestockItems,
+    SetOrderShippingData,
     isLoading,
   };
 };

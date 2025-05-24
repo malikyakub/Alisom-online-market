@@ -1,4 +1,5 @@
 import React from "react";
+import { Truck, Store } from "lucide-react";
 
 type Product = {
   name: string;
@@ -34,13 +35,21 @@ const PlaceOrderSummary: React.FC<Props> = ({
   setSelectedPayment,
   selectedShippingType,
   setSelectedShippingType,
-  onPlaceOrder,
 }) => {
   const total = products.reduce((sum, product) => sum + product.price, 0);
 
+  const shippingOptions = [
+    { value: "Delivery", label: "Delivery", icon: <Truck size={16} /> },
+    { value: "Pickup", label: "Pickup", icon: <Store size={16} /> },
+  ];
+
+  const paymentOptions = [
+    { value: "EVC Plus", label: "EVC Plus" },
+    { value: "E-dahab", label: "E-dahab" },
+  ];
+
   return (
-    <div className="w-full md:max-w-sm space-y-6 p-4 text-gray-100 shadow-lg bg-gray-900 rounded-xl">
-      {/* Product List */}
+    <div className="w-full md:max-w-sm space-y-6 p-4 text-gray-100 shadow-lg dark:bg-gray-900 rounded">
       <div className="bg-gray-800 p-3 rounded-md shadow-inner max-h-64 overflow-y-auto space-y-4 pr-2">
         {loading || products.length === 0
           ? Array.from({ length: 3 }).map((_, idx) => (
@@ -92,59 +101,52 @@ const PlaceOrderSummary: React.FC<Props> = ({
         </div>
       </div>
 
-      {/* Shipping Type */}
       <div className="space-y-2 pt-4">
         <h4 className="text-sm font-medium text-gray-200">Shipping Type</h4>
-        {["Delivery", "Pickup"].map((type) => (
-          <label
-            key={type}
-            className="flex items-center space-x-3 cursor-pointer"
-          >
-            <input
-              type="radio"
-              name="shippingType"
-              checked={selectedShippingType === type}
-              onChange={() =>
-                setSelectedShippingType(type as "Delivery" | "Pickup")
-              }
-              className="w-4 h-4 text-blue-500 bg-gray-800 border-gray-600 focus:ring-blue-500 rounded-full"
-            />
-            <span className="text-sm text-gray-300">{type}</span>
-          </label>
-        ))}
+        <div className="flex space-x-2">
+          {shippingOptions.map((opt) => {
+            const isSelected = selectedShippingType === opt.value;
+            return (
+              <div
+                key={opt.value}
+                className={`flex items-center space-x-1 px-3 py-1 text-sm rounded cursor-pointer border transition ${
+                  isSelected
+                    ? "text-[#17C3B2] border-[#17C3B2] bg-[#17C3B222] dark:bg-[#17C3B233]"
+                    : "text-[#666666] dark:text-gray-300 border-[#A3A3A3] dark:border-gray-600 hover:bg-gray-100 dark:hover:bg-gray-700"
+                }`}
+                onClick={() =>
+                  setSelectedShippingType(opt.value as "Delivery" | "Pickup")
+                }
+              >
+                {opt.icon}
+                <span>{opt.label}</span>
+              </div>
+            );
+          })}
+        </div>
       </div>
 
-      {/* Payment Method */}
       <div className="space-y-2 pt-2">
         <h4 className="text-sm font-medium text-gray-200">Payment Method</h4>
-        {["EVC Plus", "E-dahab"].map((method) => (
-          <label
-            key={method}
-            className="flex items-center space-x-3 cursor-pointer"
-          >
-            <input
-              type="radio"
-              name="payment"
-              checked={selectedPayment === method}
-              onChange={() => setSelectedPayment(method)}
-              className="w-4 h-4 text-blue-500 bg-gray-800 border-gray-600 focus:ring-blue-500 rounded-full"
-            />
-            <span className="text-sm text-gray-300">{method}</span>
-          </label>
-        ))}
+        <div className="flex space-x-2">
+          {paymentOptions.map((opt) => {
+            const isSelected = selectedPayment === opt.value;
+            return (
+              <div
+                key={opt.value}
+                className={`px-3 py-1 text-sm rounded cursor-pointer border transition ${
+                  isSelected
+                    ? "text-[#17C3B2] border-[#17C3B2] bg-[#17C3B222] dark:bg-[#17C3B233]"
+                    : "text-[#666666] dark:text-gray-300 border-[#A3A3A3] dark:border-gray-600 hover:bg-gray-100 dark:hover:bg-gray-700"
+                }`}
+                onClick={() => setSelectedPayment(opt.value)}
+              >
+                {opt.label}
+              </div>
+            );
+          })}
+        </div>
       </div>
-
-      <button
-        onClick={onPlaceOrder}
-        disabled={loading || products.length === 0}
-        className={`w-full py-2 text-sm font-semibold rounded-md transition duration-150 ${
-          loading || products.length === 0
-            ? "bg-gray-700 text-gray-500 cursor-not-allowed"
-            : "bg-blue-600 hover:bg-blue-700 text-white"
-        }`}
-      >
-        {loading ? "Processing..." : "Place Order"}
-      </button>
     </div>
   );
 };

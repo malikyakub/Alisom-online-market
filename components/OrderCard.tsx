@@ -1,51 +1,57 @@
 import React, { useState } from "react";
-import Alert from "components/Alert";
 import AccountNumberModal from "components/AccountNumberPopup";
+import Alert from "components/Alert";
 import useOrders from "hooks/useOrders";
 
 type OrderCardProps = {
   order: {
     Order_id: string;
-    Status: string;
+    Status: "Pending" | "Approved" | "Denied";
+    shipping_status?: "Delivered" | "Canceled" | "Pickup" | "Shipped" | null;
+    Shipping?: string | null;
     total_price?: string | null;
     created_at?: string | null;
-    Shipping?: string | null;
     Full_name?: string | null;
+    Email?: string | null;
     Address?: string | null;
     City?: string | null;
-    Phone?: string | null;
-    Email?: string | null;
+    tracking_number?: string | null;
   };
 };
 
 const getStatusStyles = (status: string) => {
   switch (status) {
     case "Approved":
+    case "Delivered":
       return "bg-[#28A745]/40 text-[#28A745]";
     case "Pending":
+    case "Pickup":
       return "bg-[#FFC107]/40 text-[#FFC107]";
     case "Denied":
+    case "Canceled":
       return "bg-[#DC3545]/40 text-[#DC3545]";
+    case "Shipped":
+      return "bg-[#007BFF]/40 text-[#007BFF]";
     default:
-      return "bg-gray-400/40 text-gray-400";
+      return "bg-gray-300 text-gray-700";
   }
 };
 
-const formatOrderDateTitle = (createdAt: string | null | undefined) => {
-  if (!createdAt) return "Order";
-  const date = new Date(createdAt);
-  const options: Intl.DateTimeFormatOptions = {
-    month: "short",
-    day: "numeric",
-  };
-  const formatted = date.toLocaleDateString(undefined, options); // e.g., May 2
-  return `Order-${formatted.replace(" ", "-")}`; // e.g., Order-May-2
+const formatDateDDMMYYYY = (dateStr: string) => {
+  const date = new Date(dateStr);
+  return `${date.getDate().toString().padStart(2, "0")}/${(date.getMonth() + 1)
+    .toString()
+    .padStart(2, "0")}/${date.getFullYear()}`;
 };
 
 const OrderCard = ({ order }: OrderCardProps) => {
   const [showAccountModal, setShowAccountModal] = useState(false);
   const [showAlert, setShowAlert] = useState(false);
   const { updateOrderStatusAndAdjustStock, isLoading } = useOrders();
+
+  const displayStatus = order.shipping_status ?? order.Status;
+  const statusClass = getStatusStyles(displayStatus);
+  const isPickup = order.Shipping === "Pickup";
 
   const handleDeniedClick = async () => {
     const { data, err } = await updateOrderStatusAndAdjustStock(
@@ -70,76 +76,66 @@ const OrderCard = ({ order }: OrderCardProps) => {
 
   return (
     <>
-      <div className="flex flex-col sm:flex-row hover:bg-gray-100 dark:hover:bg-gray-800 transition rounded shadow-md p-3 sm:p-4 w-full items-start sm:items-center bg-white dark:bg-gray-900 text-black dark:text-white space-y-2 sm:space-y-0 sm:space-x-4">
-        <div className="flex-1 text-sm sm:text-base">
-          <h3 className="text-base sm:text-lg font-semibold mb-1">
-            {formatOrderDateTitle(order.created_at)}
-          </h3>
-          {order.Status === "Denied" ? (
-            <button
-              onClick={handleDeniedClick}
-              disabled={isLoading}
-              className="cursor-pointer"
-            >
-              <span
-                className={`inline-block font-semibold text-xs sm:text-sm rounded px-2 sm:px-3 py-1 sm:py-2 mb-2 ${getStatusStyles(
-                  order.Status
-                )}`}
-              >
-                {order.Status}
-              </span>
-            </button>
-          ) : (
-            <span
-              className={`inline-block font-semibold text-xs sm:text-sm rounded px-2 sm:px-3 py-1 sm:py-2 mb-2 ${getStatusStyles(
-                order.Status
-              )}`}
-            >
-              {order.Status}
-            </span>
-          )}
-          <p>
-            <strong>Total:</strong> ${order.total_price ?? "N/A"}
-          </p>
-          <p>
-            <strong>Date:</strong>{" "}
+      <div className="flex flex-col hover:bg-gray-100 dark:hover:bg-gray-800 transition rounded shadow-md p-4 w-full bg-white dark:bg-gray-900 text-black dark:text-white space-y-2">
+        <div className="flex justify-between items-center">
+          <h3 className="text-lg font-semibold">
             {order.created_at
-              ? new Date(order.created_at).toLocaleDateString()
-              : "N/A"}
+              ? formatDateDDMMYYYY(order.created_at)
+              : "Date N/A"}
+          </h3>
+          <div className="flex items-center space-x-2">
+            {displayStatus === "Denied" ? (
+              <button onClick={handleDeniedClick} disabled={isLoading}>
+                <span
+                  className={`inline-block font-semibold text-sm rounded px-3 py-2 ${statusClass}`}
+                >
+                  {displayStatus}
+                </span>
+              </button>
+            ) : (
+              <span
+                className={`inline-block font-semibold text-sm rounded px-3 py-2 ${statusClass}`}
+              >
+                {displayStatus}
+              </span>
+            )}
+            {isPickup && (
+              <span className="inline-block font-semibold text-sm rounded px-3 py-2 bg-[#FFC107]/40 text-[#FFC107]">
+                Pickup
+              </span>
+            )}
+          </div>
+        </div>
+
+        {order.Full_name && (
+          <p>
+            <strong>Name:</strong> {order.Full_name}
           </p>
-          {order.Shipping && (
-            <p>
-              <strong>Shipping:</strong> {order.Shipping}
-            </p>
-          )}
-        </div>
-        <div className="flex-1 text-sm sm:text-base">
-          {order.Full_name && (
-            <p>
-              <strong>Name:</strong> {order.Full_name}
-            </p>
-          )}
-          {order.Address && (
-            <p>
-              <strong>Address:</strong> {order.Address}
-            </p>
-          )}
-          {order.City && (
-            <p>
-              <strong>City:</strong> {order.City}
-            </p>
-          )}
-          {order.Phone && (
-            <p>
-              <strong>Phone:</strong> {order.Phone}
-            </p>
-          )}
-          {order.Email && (
-            <p>
-              <strong>Email:</strong> {order.Email}
-            </p>
-          )}
-        </div>
+        )}
+        {order.Email && (
+          <p>
+            <strong>Email:</strong> {order.Email}
+          </p>
+        )}
+        {(order.Address || order.City) && (
+          <p>
+            <strong>Address:</strong> {order.Address}, {order.City}
+          </p>
+        )}
+        {order.total_price && (
+          <p>
+            <strong>Total:</strong>{" "}
+            <span className="text-[#17C3B2]">
+              ${parseFloat(order.total_price).toFixed(2)}
+            </span>
+          </p>
+        )}
+
+        {order.tracking_number && (
+          <div className="pt-2 mt-2 border-t border-gray-300 dark:border-gray-700 text-sm text-gray-600 dark:text-gray-300">
+            For delivery info contact: <strong>{order.tracking_number}</strong>
+          </div>
+        )}
       </div>
 
       {showAccountModal && (

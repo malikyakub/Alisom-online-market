@@ -35,8 +35,10 @@ const RecentOrders: React.FC<RecentOrdersProps> = ({
   const displayedOrders = isMobile ? orders : orders.slice(0, 2);
 
   return (
-    <div className="w-full rounded-lg shadow-md p-4 flex-1 border border-blue-500">
-      <h2 className="font-semibold text-xl text-[#1A2238]">Recent Orders</h2>
+    <div className="w-full rounded-lg shadow-md p-4 flex-1 border border-blue-500 relative">
+      <h2 className="font-semibold text-xl text-[#1A2238] dark:text-[#F4F4F4]">
+        Recent Orders
+      </h2>
       <p className="text-gray-500 text-sm mb-4">
         {isLoading
           ? "Loading recent orders..."
@@ -60,7 +62,7 @@ const RecentOrders: React.FC<RecentOrdersProps> = ({
         </div>
       ))}
 
-      <div className="mt-4 text-blue-500">
+      <div className="mt-4 text-blue-500 absolute bottom-4">
         <a href={ordersLink} className="hover:underline">
           View more orders
         </a>

@@ -23,8 +23,8 @@ const ServiceBookCard = () => {
   const displayedBookings = isMobile ? bookings : bookings.slice(0, 2);
 
   return (
-    <div className="w-full rounded-lg shadow-md p-4 flex-1 border border-blue-500">
-      <h2 className="text-xl font-semibold text-[#1A2238] mb-2">
+    <div className="w-full rounded-lg shadow-md p-4 flex-1 border border-blue-500 relative">
+      <h2 className="text-xl font-semibold text-[#1A2238] dark:text-[#F4F4F4]">
         Services Booked
       </h2>
       <p className="text-gray-500 text-sm mb-4">
@@ -34,7 +34,9 @@ const ServiceBookCard = () => {
         {displayedBookings.map((booking, index) => (
           <li key={index} className="flex justify-between items-center py-2">
             <div>
-              <div className="font-medium text-[#1A2238] dark:text-[#F4F4F4]">{booking.name}</div>
+              <div className="font-medium text-[#1A2238] dark:text-[#F4F4F4]">
+                {booking.name}
+              </div>
               <div className="text-sm text-gray-500">{booking.email}</div>
             </div>
             <button className="bg-blue-500 text-white py-1 px-3 rounded hover:bg-blue-600">
@@ -44,7 +46,7 @@ const ServiceBookCard = () => {
         ))}
       </ul>
 
-      <div className="mt-4 text-blue-500">
+      <div className="mt-4 text-blue-500 absolute bottom-4">
         <a href="/bookings" className="hover:underline">
           View more bookings
         </a>

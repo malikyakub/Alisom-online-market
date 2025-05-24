@@ -71,7 +71,7 @@ const MyReviews = () => {
 
   if (!user) {
     return (
-      <div className="w-full h-screen flex py-4">
+      <div className="w-full h-screen flex p-4">
         <p className="text-lg text-yellow-500">
           Please log in to see your reviews.
         </p>
@@ -85,7 +85,7 @@ const MyReviews = () => {
 
   if (error) {
     return (
-      <div className="w-full h-screen flex py-4">
+      <div className="w-full h-screen flex p-4">
         <p className="text-lg text-red-600">Error loading reviews: {error}</p>
       </div>
     );
@@ -93,7 +93,7 @@ const MyReviews = () => {
 
   if (reviews.length === 0) {
     return (
-      <div className="w-full h-screen flex py-4">
+      <div className="w-full h-screen flex p-4">
         <p className="text-lg">You have not posted any reviews yet.</p>
       </div>
     );

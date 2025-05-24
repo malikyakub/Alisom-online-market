@@ -169,6 +169,28 @@ const Checkout: React.FC = () => {
       setAlertDesc("There was an issue placing your order. Please try again.");
     } else {
       setShowOrderPlaced(true);
+
+      if (!user) {
+        const guestOrderData = {
+          fullname,
+          address,
+          city,
+          phone,
+          email,
+          total_price: totalAmount,
+          shipping: selectedShippingType,
+          items: cartItems.map((item) => ({
+            product_id: item.product_id,
+            quantity: item.quantity,
+          })),
+          created_at: new Date().toISOString(),
+        };
+        localStorage.setItem(
+          "guest_order_data",
+          JSON.stringify(guestOrderData)
+        );
+      }
+
       await clearCart(user?.id);
     }
 
@@ -234,88 +256,91 @@ const Checkout: React.FC = () => {
           </p>
         </div>
       ) : (
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 max-w-6xl mx-auto">
-          <div>
-            <h2 className="text-3xl font-bold mb-8 text-[#1F2937] dark:text-white">
-              Billing Details
-            </h2>
-            <form className="space-y-5" onSubmit={handleFormSubmit}>
-              {[
-                {
-                  label: "Full Name",
-                  value: fullname,
-                  setValue: setFullname,
-                  type: "text",
-                },
-                {
-                  label: "Street Address",
-                  value: address,
-                  setValue: setAddress,
-                  type: "text",
-                },
-                {
-                  label: "Town/City",
-                  value: city,
-                  setValue: setCity,
-                  type: "text",
-                },
-                {
-                  label: "Phone Number",
-                  value: phone,
-                  setValue: setPhone,
-                  type: "tel",
-                },
-                {
-                  label: "Email Address",
-                  value: email,
-                  setValue: setEmail,
-                  type: "email",
-                },
-              ].map(({ label, value, setValue, type }, idx) => (
-                <div key={idx} className="flex flex-col space-y-1">
-                  <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
-                    {label}
-                    <span className="text-red-500"> *</span>
-                  </label>
+        <div className="max-w-6xl mx-auto">
+          <h2 className="text-3xl font-bold mb-8 text-[#1F2937] dark:text-white">
+            Billing Details
+          </h2>
+
+          <div className="flex flex-col-reverse lg:flex-row gap-10">
+            <div className="w-full">
+              <form className="space-y-5" onSubmit={handleFormSubmit}>
+                {[
+                  {
+                    label: "Full Name",
+                    value: fullname,
+                    setValue: setFullname,
+                    type: "text",
+                  },
+                  {
+                    label: "Street Address",
+                    value: address,
+                    setValue: setAddress,
+                    type: "text",
+                  },
+                  {
+                    label: "Town/City",
+                    value: city,
+                    setValue: setCity,
+                    type: "text",
+                  },
+                  {
+                    label: "Phone Number",
+                    value: phone,
+                    setValue: setPhone,
+                    type: "tel",
+                  },
+                  {
+                    label: "Email Address",
+                    value: email,
+                    setValue: setEmail,
+                    type: "email",
+                  },
+                ].map(({ label, value, setValue, type }, idx) => (
+                  <div key={idx} className="flex flex-col space-y-1">
+                    <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                      {label}
+                      <span className="text-red-500"> *</span>
+                    </label>
+                    <input
+                      type={type}
+                      value={value}
+                      onChange={(e) => setValue(e.target.value)}
+                      required
+                      className="w-full bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-md p-2 text-sm text-gray-700 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500 transition"
+                    />
+                  </div>
+                ))}
+
+                <label className="inline-flex items-center mt-2 text-sm text-gray-600 dark:text-gray-300">
                   <input
-                    type={type}
-                    value={value}
-                    onChange={(e) => setValue(e.target.value)}
-                    required
-                    className="w-full bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-md p-2 text-sm text-gray-700 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500 transition"
+                    type="checkbox"
+                    className="mr-2 accent-green-500"
+                    checked={saveInfo}
+                    onChange={(e) => setSaveInfo(e.target.checked)}
                   />
-                </div>
-              ))}
+                  Save this information for faster check-out next time
+                </label>
 
-              <label className="inline-flex items-center mt-2 text-sm text-gray-600 dark:text-gray-300">
-                <input
-                  type="checkbox"
-                  className="mr-2 accent-green-500"
-                  checked={saveInfo}
-                  onChange={(e) => setSaveInfo(e.target.checked)}
-                />
-                Save this information for faster check-out next time
-              </label>
+                <button
+                  type="submit"
+                  className="mt-6 w-full bg-blue-600 text-white py-2 rounded-md font-semibold text-sm hover:bg-blue-700 transition"
+                >
+                  Confirm and Continue
+                </button>
+              </form>
+            </div>
 
-              <button
-                type="submit"
-                className="mt-6 w-full bg-blue-600 text-white py-2 rounded-md font-semibold text-sm hover:bg-blue-700 transition"
-              >
-                Confirm and Continue
-              </button>
-            </form>
-          </div>
-
-          <div className="w-full flex justify-center lg:justify-end">
-            <PlaceOrderSummary
-              products={purchasedProducts}
-              selectedPayment={selectedPayment}
-              setSelectedPayment={setSelectedPayment}
-              selectedShippingType={selectedShippingType}
-              setSelectedShippingType={setSelectedShippingType}
-              onPlaceOrder={() => setShowAccountPopup(true)}
-              loading={isLoading}
-            />
+            <div className="w-full flex justify-center lg:justify-end h-full">
+              <PlaceOrderSummary
+                products={purchasedProducts}
+                selectedPayment={selectedPayment}
+                setSelectedPayment={setSelectedPayment}
+                selectedShippingType={selectedShippingType}
+                setSelectedShippingType={setSelectedShippingType}
+                onPlaceOrder={() => {}}
+                loading={isLoading}
+              />
+            </div>
           </div>
         </div>
       )}

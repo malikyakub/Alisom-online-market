@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import type { User } from "@supabase/supabase-js";
 import supabase from "utils/supabase";
-import useUsers from "./useUsers"; // adjust path as needed
+import useUsers from "./useUsers";
 
 interface UseAuthReturn {
   user: User | null;
@@ -98,9 +98,15 @@ const useAuth = (): UseAuthReturn => {
   };
 
   const logout = async (): Promise<void> => {
+    setLoading(true);
     const { error } = await supabase.auth.signOut();
     if (error) throw error;
+    localStorage.removeItem("guest_wishlist");
+    localStorage.removeItem("checkout_form_data");
+    localStorage.removeItem("guest_cart");
+    localStorage.removeItem("guest_order_data");
     setUser(null);
+    setLoading(false);
   };
 
   const updatePassword = async (

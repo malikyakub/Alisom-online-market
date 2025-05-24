@@ -3,8 +3,15 @@ import { AnimatePresence, motion } from "framer-motion";
 import PaymentApprovalModal from "components/PaymentApprovalModal";
 import useOrders from "hooks/useOrders";
 import Alert from "components/Alert";
+import ShippingInfoModel from "components/ShippingInfoModel";
 
 type OrderStatus = "Paid" | "Pending" | "Not-paid";
+type OrderStatusWithShipping =
+  | OrderStatus
+  | "Shipped"
+  | "Delivered"
+  | "Pickup"
+  | "Canceled";
 
 type Order = {
   Order_id: string;
@@ -16,13 +23,20 @@ type Order = {
   total_price: string;
   Shipping: string;
   Status: OrderStatus;
+  shipping_status?: OrderStatusWithShipping;
 };
+
+interface HandleDeliverParams {
+  order_id: string;
+  tracking_number: string;
+}
 
 const OrdersTable: React.FC = () => {
   const {
     AllOrders,
     updateOrderStatusAndAdjustStock,
     deleteOrderAndRestockItems,
+    SetOrderShippingData,
     isLoading,
   } = useOrders();
 
@@ -34,6 +48,8 @@ const OrdersTable: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [showPaymentModal, setShowPaymentModal] = useState(false);
+  const [showShippingModal, setShowShippingModal] = useState(false);
+
   const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
   const [alert, setAlert] = useState<{
     isOpen: boolean;
@@ -149,19 +165,31 @@ const OrdersTable: React.FC = () => {
           return newSet;
         });
 
-  const getStatusStyles = (status: OrderStatus) => {
+  const getStatusStyles = (status: OrderStatus | string) => {
     switch (status) {
       case "Paid":
+      case "Delivered":
         return "bg-[#28A745]/40 text-[#28A745]";
+
       case "Pending":
+      case "Pickup":
         return "bg-[#FFC107]/40 text-[#FFC107]";
+
       case "Not-paid":
-      default:
+      case "Canceled":
         return "bg-[#DC3545]/40 text-[#DC3545]";
+
+      case "Shipped":
+        return "bg-[#007BFF]/40 text-[#007BFF]";
+
+      default:
+        return "bg-gray-300 text-gray-700";
     }
   };
 
-  const StatusBadge: React.FC<{ status: OrderStatus }> = ({ status }) => (
+  const StatusBadge: React.FC<{ status: OrderStatusWithShipping }> = ({
+    status,
+  }) => (
     <span
       className={`inline-flex items-center justify-center px-3 py-2 rounded text-xs font-semibold whitespace-nowrap ${getStatusStyles(
         status
@@ -215,6 +243,34 @@ const OrdersTable: React.FC = () => {
     setSelectedOrder(null);
   };
 
+  const handleDelivery = async ({
+    order_id,
+    tracking_number,
+  }: HandleDeliverParams): Promise<void> => {
+    const { err, data } = await SetOrderShippingData(order_id, tracking_number);
+    if (err) {
+      setAlert({
+        isOpen: true,
+        title: "Shipping Update Failed",
+        description: String(err),
+        type: "danger",
+      });
+    } else {
+      setOrders((prev) =>
+        prev.map((o) =>
+          o.Order_id === order_id ? { ...o, shipping_status: "Shipped" } : o
+        )
+      );
+      setAlert({
+        isOpen: true,
+        title: "Shipping Info Updated",
+        description: `Order shipped with ${tracking_number}.`,
+        type: "success",
+      });
+    }
+    setShowShippingModal(false);
+    setSelectedOrder(null);
+  };
   return (
     <div className="text-[#1A2238] dark:text-[#F4F4F4] min-h-screen">
       <Alert
@@ -294,7 +350,9 @@ const OrdersTable: React.FC = () => {
                     onChange={() => toggleSelect(order.Order_id)}
                   />
                 </td>
-                <td className="px-4 py-3 font-bold">{order.Full_name}</td>
+                <td className="px-4 py-3 font-bold whitespace-nowrap">
+                  {order.Full_name}
+                </td>
                 <td className="px-4 py-3">{order.Phone}</td>
                 <td className="px-4 py-3">{order.Email}</td>
                 <td className="px-4 py-3">{order.City}</td>
@@ -314,10 +372,25 @@ const OrdersTable: React.FC = () => {
                     >
                       <StatusBadge status={order.Status} />
                     </button>
+                  ) : order.Status === "Paid" &&
+                    order.Shipping != "Pickup" &&
+                    order.shipping_status == null ? (
+                    <button
+                      onClick={() => {
+                        setSelectedOrder(order);
+                        setShowShippingModal(true);
+                      }}
+                      className="focus:outline-none hover:opacity-80"
+                    >
+                      <StatusBadge status={order.Status} />
+                    </button>
                   ) : (
-                    <StatusBadge status={order.Status} />
+                    <StatusBadge
+                      status={order.shipping_status ?? order.Status}
+                    />
                   )}
                 </td>
+
                 <td className="px-4 py-3 relative">
                   <button
                     onClick={() =>
@@ -406,6 +479,21 @@ const OrdersTable: React.FC = () => {
           customerName={selectedOrder.Full_name}
           amount={selectedOrder.total_price}
           phone={selectedOrder.Phone}
+        />
+      )}
+      {showShippingModal && selectedOrder && (
+        <ShippingInfoModel
+          orderId={selectedOrder.Order_id}
+          onClose={() => {
+            setShowShippingModal(false);
+            setSelectedOrder(null);
+          }}
+          onSave={(trackingNumber, orderId) =>
+            handleDelivery({
+              order_id: orderId,
+              tracking_number: trackingNumber,
+            })
+          }
         />
       )}
     </div>
