@@ -101,10 +101,10 @@ const useAuth = (): UseAuthReturn => {
     setLoading(true);
     const { error } = await supabase.auth.signOut();
     if (error) throw error;
-    localStorage.removeItem("guest_wishlist");
+    // localStorage.removeItem("guest_wishlist");
     localStorage.removeItem("checkout_form_data");
-    localStorage.removeItem("guest_cart");
-    localStorage.removeItem("guest_order_data");
+    // localStorage.removeItem("guest_cart");
+    // localStorage.removeItem("guest_order_data");
     setUser(null);
     setLoading(false);
   };
