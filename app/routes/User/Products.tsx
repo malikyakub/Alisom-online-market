@@ -97,7 +97,7 @@ const Products = () => {
           ) : (
             <div className="w-full py-8 flex items-center justify-center">
               <p className="text-yellow-500 dark:text-yellow-400 text-center">
-                That’s why you’re single.
+                No product mathched your filter.
               </p>
             </div>
           )}

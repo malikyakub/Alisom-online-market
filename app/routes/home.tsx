@@ -25,6 +25,9 @@ import {
 import { MdHome, MdWork, MdWifi, MdSecurity } from "react-icons/md";
 import { GiCookingPot, GiWashingMachine } from "react-icons/gi";
 import FeatureCard from "components/FeatureCard";
+import useAuth from "hooks/useAuth";
+import useUsers from "hooks/useUsers";
+import supabase from "utils/supabase";
 
 const CARD_WIDTH = 180;
 const GAP = 16;
@@ -33,6 +36,9 @@ const PRODUCT_CARD_WIDTH = 230;
 export default function Home() {
   const categoryRef = useRef<HTMLDivElement>(null);
   const productRef = useRef<HTMLDivElement>(null);
+
+  const { user } = useAuth();
+  const { NewUser } = useUsers();
 
   const [catX, setCatX] = useState(0);
   const [prodX, setProdX] = useState(0);
@@ -197,6 +203,49 @@ export default function Home() {
       }
     })();
   }, []);
+
+  useEffect(() => {
+    const checkAndRegisterUser = async () => {
+      if (!user?.user_metadata?.name) return;
+
+      try {
+        const { data, error } = await supabase
+          .from("users")
+          .select("*")
+          .eq("user_id", user.id)
+          .single();
+
+        if (error && error.code !== "PGRST116") {
+          console.error("Failed to fetch user data:", error);
+          return;
+        }
+
+        if (data) {
+          return;
+        }
+
+        const newUserData = {
+          user_id: user.id,
+          fullname: user.user_metadata.name,
+          email: user.email,
+          phone: user.user_metadata.phone || "",
+          address: user.user_metadata.address || "",
+          avatar_url: user.user_metadata.avatar_url || "",
+        };
+
+        const { data: registeredData, err } = await NewUser(newUserData);
+        if (err) {
+          console.error("Failed to register user:", err);
+        } else {
+          console.log("User registered successfully:");
+        }
+      } catch (err) {
+        console.error("Unexpected error:", err);
+      }
+    };
+
+    checkAndRegisterUser();
+  }, [user]);
 
   return (
     <div className="p-5 flex flex-col gap-10">
