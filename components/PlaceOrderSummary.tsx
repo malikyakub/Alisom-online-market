@@ -36,7 +36,10 @@ const PlaceOrderSummary: React.FC<Props> = ({
   selectedShippingType,
   setSelectedShippingType,
 }) => {
-  const total = products.reduce((sum, product) => sum + product.price, 0);
+  const total = products.reduce(
+    (sum, product) => sum + product.price * (product.quantity ?? 1),
+    0
+  );
 
   const shippingOptions = [
     { value: "Delivery", label: "Delivery", icon: <Truck size={16} /> },
@@ -60,7 +63,7 @@ const PlaceOrderSummary: React.FC<Props> = ({
                 key={idx}
                 className="flex items-start justify-between border-b border-gray-700 pb-3"
               >
-                <div className="flex items-center space-x-4">
+                <div className="flex items-end space-x-2">
                   {product.image && (
                     <img
                       src={product.image}
@@ -68,19 +71,22 @@ const PlaceOrderSummary: React.FC<Props> = ({
                       className="w-14 h-14 object-cover rounded-lg"
                     />
                   )}
-                  <div className="flex flex-col gap-1">
+                  <div className="flex flex-col">
                     <h3 className="text-sm font-bold text-gray-100">
                       {product.name}
                     </h3>
-                    {product.quantity && (
-                      <span className="text-xs text-gray-400">
-                        x{product.quantity}
-                      </span>
-                    )}
+                    <div className="flex flex-row gap-2 items-center">
+                      {product.price}{" "}
+                      {product.quantity && (
+                        <span className="text-xs text-gray-400 ml-2">
+                          x{product.quantity}
+                        </span>
+                      )}
+                    </div>
                   </div>
                 </div>
                 <p className="text-sm font-semibold text-white">
-                  ${product.price}
+                  ${(product.price * (product.quantity ?? 1)).toFixed(2)}
                 </p>
               </div>
             ))}
@@ -89,7 +95,9 @@ const PlaceOrderSummary: React.FC<Props> = ({
       <div className="text-sm space-y-3">
         <div className="flex items-start justify-between">
           <span className="text-gray-400">Subtotal:</span>
-          <span className="text-gray-100 font-semibold">${total}</span>
+          <span className="text-gray-100 font-semibold">
+            ${total.toFixed(2)}
+          </span>
         </div>
         <div className="flex justify-between">
           <span className="text-gray-400">Shipping:</span>
@@ -97,7 +105,7 @@ const PlaceOrderSummary: React.FC<Props> = ({
         </div>
         <div className="flex justify-between text-base font-bold pt-3 border-t border-gray-700">
           <span className="text-gray-100">Total:</span>
-          <span className="text-gray-100">${total}</span>
+          <span className="text-gray-100">${total.toFixed(2)}</span>
         </div>
       </div>
 

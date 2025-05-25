@@ -20,7 +20,8 @@ export type Product = {
 };
 
 export type CategoriesWithBrands = {
-  id: string;
+  category_id?: string;
+  brand_id?: string;
   name: string;
 };
 
@@ -247,7 +248,7 @@ const ProductTable: React.FC = () => {
           >
             <option value="">All Categories</option>
             {categories.map((cat) => (
-              <option key={cat.id} value={cat.name}>
+              <option key={cat.category_id} value={cat.name}>
                 {cat.name}
               </option>
             ))}
@@ -260,7 +261,7 @@ const ProductTable: React.FC = () => {
           >
             <option value="">All Brands</option>
             {brands.map((brand) => (
-              <option key={brand.id} value={brand.name}>
+              <option key={brand.brand_id} value={brand.name}>
                 {brand.name}
               </option>
             ))}

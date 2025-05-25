@@ -9,6 +9,7 @@ import useProducts from "hooks/useProducts";
 import useCart from "hooks/useCart";
 import supabase from "utils/supabase";
 import useOrders from "hooks/useOrders";
+import ClipLoader from "react-spinners/ClipLoader";
 
 type Product = {
   name: string;
@@ -21,11 +22,11 @@ const Checkout: React.FC = () => {
   const [showAccountPopup, setShowAccountPopup] = useState(false);
   const [showOrderPlaced, setShowOrderPlaced] = useState(false);
   const [selectedPayment, setSelectedPayment] = useState("EVC Plus");
-  const { createOrder } = useOrders();
+  const { createOrder, isLoading } = useOrders();
   const { user } = useAuth();
   const { GetUserById } = useUsers();
   const { GetProductById } = useProducts();
-  const { getCart, isLoading, clearCart } = useCart();
+  const { getCart, clearCart } = useCart();
   const [selectedShippingType, setSelectedShippingType] = useState<
     "Delivery" | "Pickup"
   >("Delivery");
@@ -263,7 +264,7 @@ const Checkout: React.FC = () => {
 
           <div className="flex flex-col-reverse lg:flex-row gap-10">
             <div className="w-full">
-              <form className="space-y-5" onSubmit={handleFormSubmit}>
+              <form className="space-y-3" onSubmit={handleFormSubmit}>
                 {[
                   {
                     label: "Full Name",
@@ -306,26 +307,40 @@ const Checkout: React.FC = () => {
                       value={value}
                       onChange={(e) => setValue(e.target.value)}
                       required
-                      className="w-full bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-md p-2 text-sm text-gray-700 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500 transition"
+                      className="w-full bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded p-2 text-sm text-gray-700 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500 transition"
                     />
                   </div>
                 ))}
 
-                <label className="inline-flex items-center mt-2 text-sm text-gray-600 dark:text-gray-300">
+                <div className="flex items-center mt-2">
                   <input
+                    id="save-info"
                     type="checkbox"
-                    className="mr-2 accent-green-500"
+                    className="h-4 w-4 rounded border-gray-600 text-blue-600 focus:ring-blue-500 transition"
                     checked={saveInfo}
                     onChange={(e) => setSaveInfo(e.target.checked)}
                   />
-                  Save this information for faster check-out next time
-                </label>
+                  <label
+                    htmlFor="save-info"
+                    className="ml-2 text-sm text-gray-700 dark:text-gray-300 select-none cursor-pointer"
+                  >
+                    Save this information for faster check-out next time
+                  </label>
+                </div>
 
                 <button
                   type="submit"
-                  className="mt-6 w-full bg-blue-600 text-white py-2 rounded-md font-semibold text-sm hover:bg-blue-700 transition"
+                  className="mt-6 w-full bg-blue-600 text-white py-2 rounded-md font-semibold text-sm hover:bg-blue-700 transition flex items-center justify-center"
+                  disabled={isLoading}
                 >
-                  Confirm and Continue
+                  {isLoading ? (
+                    <>
+                      <ClipLoader size={20} color="#fff" />
+                      <span className="ml-2">Placing Order...</span>
+                    </>
+                  ) : (
+                    "Confirm and Continue"
+                  )}
                 </button>
               </form>
             </div>

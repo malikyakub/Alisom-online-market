@@ -189,6 +189,19 @@ const useOrders = () => {
   ): Promise<ReturnType> {
     setIsLoading(true);
     try {
+      // ✅ Get order to check its status
+      const { data: orderData, error: orderError } = await supabase
+        .from("Orders")
+        .select("Status")
+        .eq("Order_id", order_id)
+        .single();
+
+      if (orderError || !orderData)
+        throw orderError || new Error("Order not found");
+
+      const isOrderApproved = orderData.Status === "Approved";
+
+      // ✅ Fetch all items in the order
       const { data: orderItems, error: itemsError } = await supabase
         .from("Order_items")
         .select("product_id, quantity")
@@ -196,26 +209,30 @@ const useOrders = () => {
 
       if (itemsError) throw itemsError;
 
-      for (const item of orderItems || []) {
-        const quantity = parseInt(item.quantity);
-        if (isNaN(quantity)) continue;
+      // ✅ Restock only if order is approved
+      if (isOrderApproved) {
+        for (const item of orderItems || []) {
+          const quantity = parseInt(item.quantity);
+          if (isNaN(quantity)) continue;
 
-        const { data: product, error: productError } = await supabase
-          .from("products")
-          .select("stock_quantity")
-          .eq("product_id", item.product_id)
-          .single();
+          const { data: product, error: productError } = await supabase
+            .from("products")
+            .select("stock_quantity")
+            .eq("product_id", item.product_id)
+            .single();
 
-        if (productError || !product) continue;
+          if (productError || !product) continue;
 
-        const newStock = product.stock_quantity + quantity;
+          const newStock = product.stock_quantity + quantity;
 
-        await supabase
-          .from("products")
-          .update({ stock_quantity: newStock })
-          .eq("product_id", item.product_id);
+          await supabase
+            .from("products")
+            .update({ stock_quantity: newStock })
+            .eq("product_id", item.product_id);
+        }
       }
 
+      // ✅ Always delete the order and its items
       const { error: deleteError } = await supabase
         .from("Orders")
         .delete()
@@ -283,6 +300,14 @@ const useOrders = () => {
   ): Promise<ReturnType> {
     setIsLoading(true);
     try {
+      const { data, err } = await getOrder(order_id);
+      if (err) {
+        console.log(err);
+        return { data: null, err };
+      }
+
+      const isOrderApproved = data.Status === "Approved";
+
       const { data: orderItem, error: itemError } = await supabase
         .from("Order_items")
         .select("product_id, quantity")
@@ -322,14 +347,16 @@ const useOrders = () => {
 
       if (updateOrderError) throw updateOrderError;
 
-      const newStockQty = product.stock_quantity + quantity;
+      if (isOrderApproved) {
+        const newStockQty = product.stock_quantity + quantity;
 
-      const { error: updateStockError } = await supabase
-        .from("products")
-        .update({ stock_quantity: newStockQty })
-        .eq("product_id", orderItem.product_id);
+        const { error: updateStockError } = await supabase
+          .from("products")
+          .update({ stock_quantity: newStockQty })
+          .eq("product_id", orderItem.product_id);
 
-      if (updateStockError) throw updateStockError;
+        if (updateStockError) throw updateStockError;
+      }
 
       const { error: deleteItemError } = await supabase
         .from("Order_items")
@@ -354,7 +381,10 @@ const useOrders = () => {
     try {
       const { error: statusError } = await supabase
         .from("Orders")
-        .update({ tracking_number: tracking_number, shipping_status : "Shipped" })
+        .update({
+          tracking_number: tracking_number,
+          shipping_status: "Shipped",
+        })
         .eq("Order_id", order_id);
 
       if (statusError) throw statusError;
