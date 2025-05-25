@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import useDashboard from "hooks/useDashboard";
 
 type Order = {
   Order_id: string;
@@ -32,7 +31,7 @@ const RecentOrders: React.FC<RecentOrdersProps> = ({
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  const displayedOrders = isMobile ? orders : orders.slice(0, 2);
+  const displayedOrders = isMobile ? orders : orders.slice(0, 6);
 
   return (
     <div className="w-full rounded-lg shadow-md p-4 flex-1 border border-blue-500 relative">

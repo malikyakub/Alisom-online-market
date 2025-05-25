@@ -20,6 +20,17 @@ const Products = () => {
   const { FilterProducts, isLoading } = useFilterProducts();
   const [products, setProducts] = useState<any[]>([]);
 
+  useEffect(() => {
+    const productToSearch =
+      typeof window !== "undefined"
+        ? localStorage.getItem("productToSearch") || ""
+        : "";
+    if (productToSearch && productToSearch.length > 3) {
+      setFilters((prev) => ({ ...prev, query: productToSearch }));
+      localStorage.removeItem("productToSearch");
+    }
+  }, []);
+
   const handleApplyFilters = (appliedFilters: FilterValues) => {
     setFilters((prev) => ({ ...prev, ...appliedFilters }));
   };
@@ -95,9 +106,9 @@ const Products = () => {
               />
             ))
           ) : (
-            <div className="w-full py-8 flex items-center justify-center">
+            <div className="w-full py-2 flex">
               <p className="text-yellow-500 dark:text-yellow-400 text-center">
-                No product mathched your filter.
+                No product matched your filter.
               </p>
             </div>
           )}

@@ -113,7 +113,7 @@ const Dashboard = () => {
 
         <div className="lg:w-1/3 w-full flex flex-col gap-2">
           <RecentOrders orders={recentOrders} isLoading={isLoading} />
-          <ServiceBookCard />
+          {/* <ServiceBookCard /> //? still under development */}
         </div>
       </div>
     </div>

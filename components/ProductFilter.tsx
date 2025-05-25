@@ -75,7 +75,6 @@ export default function ProductFilter({
       if (!err) setBrandsData(data ?? []);
       setIsLoadingBrands(false);
     };
-
     getCategories();
     getBrands();
   }, []);
@@ -170,7 +169,6 @@ export default function ProductFilter({
 
   const categorySelected = categories.length > 0 ? categories[0] : null;
   const brandSelected = brands.length > 0 ? brands[0] : null;
-
   const [mobileOpen, setMobileOpen] = useState(false);
   const toggleMobile = () => setMobileOpen((prev) => !prev);
 

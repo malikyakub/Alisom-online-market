@@ -88,6 +88,7 @@ const useAuth = (): UseAuthReturn => {
       email: userData.email,
       phone: userData.phone,
       address: userData.address,
+      password: userData.password,
     });
 
     if (newUserError) {

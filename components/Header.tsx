@@ -9,6 +9,7 @@ import useAuth from "hooks/useAuth";
 import useCart from "hooks/useCart";
 import supabase from "utils/supabase";
 import useWishlist from "hooks/useWishlist";
+import { useNavigate } from "react-router";
 
 const Header = () => {
   const { user, logout } = useAuth();
@@ -25,6 +26,8 @@ const Header = () => {
   const [alertType, setAlertType] = useState<
     "success" | "info" | "danger" | "warning"
   >("info");
+
+  const navigate = useNavigate();
 
   const [showProfilePopupDesktop, setShowProfilePopupDesktop] = useState(false);
   const [showProfilePopupMobile, setShowProfilePopupMobile] = useState(false);
@@ -118,7 +121,11 @@ const Header = () => {
   }, []);
 
   const handleSearch = () => {
-    if (searchQuery.trim()) console.log("Searching for:", searchQuery);
+    const trimmedQuery = searchQuery.trim();
+    if (trimmedQuery.length > 3) {
+      localStorage.setItem("productToSearch", trimmedQuery);
+      navigate(`/user/products?query=${encodeURIComponent(trimmedQuery)}`);
+    }
   };
 
   const handleSignOut = async () => {
