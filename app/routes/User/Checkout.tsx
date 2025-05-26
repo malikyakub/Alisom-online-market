@@ -10,6 +10,7 @@ import useCart from "hooks/useCart";
 import supabase from "utils/supabase";
 import useOrders from "hooks/useOrders";
 import ClipLoader from "react-spinners/ClipLoader";
+import useEmails from "hooks/useEmails";
 
 type Product = {
   name: string;
@@ -27,6 +28,7 @@ const Checkout: React.FC = () => {
   const { GetUserById } = useUsers();
   const { GetProductById } = useProducts();
   const { getCart, clearCart } = useCart();
+  const { ApprovePayment } = useEmails();
   const [selectedShippingType, setSelectedShippingType] = useState<
     "Delivery" | "Pickup"
   >("Delivery");
@@ -44,6 +46,7 @@ const Checkout: React.FC = () => {
   const [alertDesc, setAlertDesc] = useState("");
   const tempQuantitiesRef = useRef<number[]>([]);
 
+  // Fetch full user data on mount or user change
   useEffect(() => {
     const fetchUserData = async () => {
       if (!user) return;
@@ -72,6 +75,7 @@ const Checkout: React.FC = () => {
     }
   }, [user]);
 
+  // Fetch cart and detailed products
   useEffect(() => {
     const fetchCart = async (userId: string) => {
       const { data, err } = await getCart(userId);
@@ -136,6 +140,7 @@ const Checkout: React.FC = () => {
     }
   }, [user]);
 
+  // Save form data locally if user chooses to save info
   const handleFormSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!user && saveInfo) {
@@ -145,6 +150,27 @@ const Checkout: React.FC = () => {
     setShowAccountPopup(true);
   };
 
+  // Helper to fetch full order including items & product info
+  async function getOrder(order_id: string) {
+    const { data: order, error: orderError } = await supabase
+      .from("Orders")
+      .select("*")
+      .eq("Order_id", order_id)
+      .single();
+
+    if (orderError) throw new Error(orderError.message);
+
+    const { data: items, error: itemsError } = await supabase
+      .from("Order_items")
+      .select("*, products(name, price)")
+      .eq("order_id", order_id);
+
+    if (itemsError) throw new Error(itemsError.message);
+
+    return { ...order, items };
+  }
+
+  // After user confirms account/payment, create order and send approval email
   const handleAfterAccountModal = async () => {
     const orderItems = cartItems.map((item) => ({
       product_id: item.product_id,
@@ -168,7 +194,25 @@ const Checkout: React.FC = () => {
       setAlertType("danger");
       setAlertTitle("Order Failed");
       setAlertDesc("There was an issue placing your order. Please try again.");
+      setAlertOpen(true);
     } else {
+      try {
+        const orderId = data.Order_id;
+        if (orderId) {
+          // Fetch full order with items & product details
+          const fullOrder = await getOrder(orderId);
+          // Pass full order object to ApprovePayment
+          const { data: emailHtml, err: emailErr } = await ApprovePayment(
+            fullOrder
+          );
+          if (!emailErr && emailHtml) {
+            console.log("Payment Approval Email HTML:\n", emailHtml);
+          }
+        }
+      } catch (e) {
+        console.log("Error in sending email: ", e);
+      }
+
       setShowOrderPlaced(true);
 
       if (!user) {
@@ -197,7 +241,7 @@ const Checkout: React.FC = () => {
 
     setShowAccountPopup(false);
     setTimeout(() => {
-      window.history.back();
+      // window.history.back();
     }, 3000);
   };
 
@@ -296,67 +340,66 @@ const Checkout: React.FC = () => {
                     setValue: setEmail,
                     type: "email",
                   },
-                ].map(({ label, value, setValue, type }, idx) => (
-                  <div key={idx} className="flex flex-col space-y-1">
-                    <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                ].map(({ label, value, setValue, type }) => (
+                  <div key={label} className="flex flex-col">
+                    <label
+                      htmlFor={label}
+                      className="font-medium text-gray-900 dark:text-gray-200"
+                    >
                       {label}
-                      <span className="text-red-500"> *</span>
                     </label>
                     <input
                       type={type}
+                      id={label}
                       value={value}
                       onChange={(e) => setValue(e.target.value)}
+                      className="border rounded p-2 focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:bg-gray-700 dark:text-gray-100"
                       required
-                      className="w-full bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded p-2 text-sm text-gray-700 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500 transition"
                     />
                   </div>
                 ))}
 
-                <div className="flex items-center mt-2">
-                  <input
-                    id="save-info"
-                    type="checkbox"
-                    className="h-4 w-4 rounded border-gray-600 text-blue-600 focus:ring-blue-500 transition"
-                    checked={saveInfo}
-                    onChange={(e) => setSaveInfo(e.target.checked)}
-                  />
-                  <label
-                    htmlFor="save-info"
-                    className="ml-2 text-sm text-gray-700 dark:text-gray-300 select-none cursor-pointer"
-                  >
-                    Save this information for faster check-out next time
-                  </label>
-                </div>
+                {!user && (
+                  <div className="flex items-center space-x-2 mt-2">
+                    <input
+                      type="checkbox"
+                      checked={saveInfo}
+                      onChange={(e) => setSaveInfo(e.target.checked)}
+                      id="save-info"
+                    />
+                    <label
+                      htmlFor="save-info"
+                      className="text-gray-700 dark:text-gray-300"
+                    >
+                      Save my information for next time
+                    </label>
+                  </div>
+                )}
 
                 <button
                   type="submit"
-                  className="mt-6 w-full bg-blue-600 text-white py-2 rounded-md font-semibold text-sm hover:bg-blue-700 transition flex items-center justify-center"
-                  disabled={isLoading}
+                  className="bg-indigo-600 text-white py-3 px-6 rounded mt-4 hover:bg-indigo-700 focus:outline-none"
                 >
-                  {isLoading ? (
-                    <>
-                      <ClipLoader size={20} color="#fff" />
-                      <span className="ml-2">Placing Order...</span>
-                    </>
-                  ) : (
-                    "Confirm and Continue"
-                  )}
+                  Place Order
                 </button>
               </form>
             </div>
 
-            <div className="w-full flex justify-center lg:justify-end h-full">
-              <PlaceOrderSummary
-                products={purchasedProducts}
-                selectedPayment={selectedPayment}
-                setSelectedPayment={setSelectedPayment}
-                selectedShippingType={selectedShippingType}
-                setSelectedShippingType={setSelectedShippingType}
-                onPlaceOrder={() => {}}
-                loading={isLoading}
-              />
-            </div>
+            <PlaceOrderSummary
+              loading={isLoading}
+              products={purchasedProducts}
+              selectedShippingType={selectedShippingType}
+              setSelectedShippingType={setSelectedShippingType}
+              selectedPayment={selectedPayment}
+              setSelectedPayment={setSelectedPayment}
+            />
           </div>
+        </div>
+      )}
+
+      {isLoading && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <ClipLoader color="#fff" size={50} />
         </div>
       )}
     </div>
