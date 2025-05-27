@@ -7,10 +7,7 @@ interface ReturnType<T = any> {
 }
 
 const useBrands = () => {
-  const [isLoading, setIsLoading] = useState(false);
-
   async function getAllBrands(): Promise<ReturnType<any[]>> {
-    setIsLoading(true);
     try {
       const { data, error } = await supabase.from("Brands").select("*");
       if (error) throw new Error(error.message);
@@ -18,12 +15,10 @@ const useBrands = () => {
     } catch (error: unknown) {
       return { data: null, err: String(error) };
     } finally {
-      setIsLoading(false);
     }
   }
 
   async function getBrandByID(id: string): Promise<ReturnType<any>> {
-    setIsLoading(true);
     try {
       const { data, error } = await supabase
         .from("Brands")
@@ -35,12 +30,10 @@ const useBrands = () => {
     } catch (error: unknown) {
       return { data: null, err: String(error) };
     } finally {
-      setIsLoading(false);
     }
   }
 
   async function createBrand(newBrand: object): Promise<ReturnType> {
-    setIsLoading(true);
     try {
       const { data, error } = await supabase
         .from("Brands")
@@ -51,12 +44,10 @@ const useBrands = () => {
     } catch (error: unknown) {
       return { data: null, err: String(error) };
     } finally {
-      setIsLoading(false);
     }
   }
 
   async function updateBrand(id: string, updates: object): Promise<ReturnType> {
-    setIsLoading(true);
     try {
       const { data, error } = await supabase
         .from("brands")
@@ -68,12 +59,10 @@ const useBrands = () => {
     } catch (error: unknown) {
       return { data: null, err: String(error) };
     } finally {
-      setIsLoading(false);
     }
   }
 
   async function deleteBrand(id: string): Promise<ReturnType> {
-    setIsLoading(true);
     try {
       const { data, error } = await supabase
         .from("brands")
@@ -85,7 +74,6 @@ const useBrands = () => {
     } catch (error: unknown) {
       return { data: null, err: String(error) };
     } finally {
-      setIsLoading(false);
     }
   }
 
@@ -95,7 +83,6 @@ const useBrands = () => {
     createBrand,
     updateBrand,
     deleteBrand,
-    isLoading,
   };
 };
 

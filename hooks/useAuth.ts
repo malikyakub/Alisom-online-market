@@ -5,7 +5,6 @@ import useUsers from "./useUsers";
 
 interface UseAuthReturn {
   user: User | null;
-  loading: boolean;
   login: (email: string, password: string) => Promise<{ user: User | null }>;
   signup: (userData: {
     email: string;
@@ -159,7 +158,6 @@ const useAuth = (): UseAuthReturn => {
 
   return {
     user,
-    loading,
     login,
     signup,
     logout,

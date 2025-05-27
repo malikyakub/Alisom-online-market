@@ -18,7 +18,7 @@ const LoadingProgressBar = () => {
   return (
     <div className="w-full h-2 bg-gray-200 overflow-hidden">
       <motion.div
-        className="h-full bg-teal-500 rounded"
+        className="h-full bg-teal-500"
         style={{ width: "0%" }}
         animate={controls}
       />
@@ -27,15 +27,17 @@ const LoadingProgressBar = () => {
 };
 
 export default function AdminLayout() {
+  const [loading, setLoading] = useState(false);
   const { GetUserById } = useUsers();
-  const { user, loading } = useAuth();
+  const { user } = useAuth();
   const navigate = useNavigate();
   const [checkingAuth, setCheckingAuth] = useState(true);
   const [isAdmin, setIsAdmin] = useState(false);
 
   useEffect(() => {
     const verifyAdmin = async () => {
-      if (!loading && user) {
+      setLoading(true);
+      if (user) {
         try {
           const { data, err } = await GetUserById(user.id);
           if (err || !data || data.role !== "Admin") {
@@ -49,18 +51,20 @@ export default function AdminLayout() {
           navigate("/");
         } finally {
           setCheckingAuth(false);
+          setLoading(false);
         }
-      } else if (!user && !loading) {
+      } else if (!user) {
         setIsAdmin(false);
         setCheckingAuth(false);
+        setLoading(false);
         navigate("/");
       }
     };
 
     verifyAdmin();
-  }, [loading, user]);
+  }, [user]);
 
-  if (loading || checkingAuth) {
+  if (checkingAuth) {
     return (
       <div className="flex mt-2 w-full mx-auto max-w-[1170px] px-4 sm:px-6 flex-col gap-4">
         <LoadingProgressBar />

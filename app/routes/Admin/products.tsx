@@ -49,7 +49,7 @@ const ProductTable: React.FC = () => {
     type: "info",
   });
 
-  const { AllProducts, DeleteProduct, isLoading } = useProducts();
+  const { AllProducts, DeleteProduct } = useProducts();
   const rowsPerPage = 12;
   const [products, setProducts] = useState<Product[] | null>(null);
 
@@ -383,14 +383,7 @@ const ProductTable: React.FC = () => {
                           }
                           className="block w-full text-left px-4 py-2 text-sm text-white bg-[#DC3545] hover:bg-[#C82333] rounded"
                         >
-                          {isLoading ? (
-                            <span className="flex items-center gap-2">
-                              <ClipLoader size={16} color="#fff" />
-                              Deleting...
-                            </span>
-                          ) : (
-                            "Delete"
-                          )}
+                          Delete
                         </button>
                       </motion.div>
                     )}

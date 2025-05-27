@@ -20,12 +20,9 @@ interface ReturnType<T = any> {
 }
 
 const useProductReviews = () => {
-  const [isLoading, setIsLoading] = useState(false);
-
   async function GetProductReviews(
     productId: string
   ): Promise<ReturnType<Review[]>> {
-    setIsLoading(true);
     try {
       const { data, error } = await supabase
         .from("product_reviews")
@@ -39,7 +36,6 @@ const useProductReviews = () => {
     } catch (error) {
       return { data: null, err: String(error) };
     } finally {
-      setIsLoading(false);
     }
   }
 
@@ -54,7 +50,6 @@ const useProductReviews = () => {
     comment?: string;
     rating_stars: number;
   }): Promise<ReturnType> {
-    setIsLoading(true);
     try {
       const { data, error } = await supabase.from("product_reviews").insert([
         {
@@ -70,12 +65,10 @@ const useProductReviews = () => {
     } catch (error) {
       return { data: null, err: String(error) };
     } finally {
-      setIsLoading(false);
     }
   }
 
   async function getUserReviews(userId: string): Promise<ReturnType<any[]>> {
-    setIsLoading(true);
     try {
       const { data, error } = await supabase
         .from("product_reviews")
@@ -116,7 +109,6 @@ const useProductReviews = () => {
     } catch (error: unknown) {
       return { data: null, err: String(error) };
     } finally {
-      setIsLoading(false);
     }
   }
 
@@ -129,7 +121,6 @@ const useProductReviews = () => {
     comment: string;
     rating_stars: number;
   }): Promise<ReturnType> {
-    setIsLoading(true);
     try {
       const { data, error } = await supabase
         .from("product_reviews")
@@ -145,7 +136,6 @@ const useProductReviews = () => {
     } catch (error) {
       return { data: null, err: String(error) };
     } finally {
-      setIsLoading(false);
     }
   }
 
@@ -154,7 +144,6 @@ const useProductReviews = () => {
     AddReview,
     getUserReviews,
     UpdateReview,
-    isLoading,
   };
 };
 

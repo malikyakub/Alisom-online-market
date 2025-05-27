@@ -24,12 +24,10 @@ interface ReturnType<T = any> {
 }
 
 const useDashboard = () => {
-  const [isLoading, setIsLoading] = useState(false);
   const [newOrders, setNewOrders] = useState<Order[]>([]);
   const [recentOrders, setRecentOrders] = useState<Order[]>([]);
 
   async function fetchPendingOrders() {
-    setIsLoading(true);
     try {
       const { data, error } = await supabase
         .from("Orders")
@@ -41,12 +39,10 @@ const useDashboard = () => {
     } catch (error) {
       console.error("Error fetching pending orders:", error);
     } finally {
-      setIsLoading(false);
     }
   }
 
   async function fetchRecentOrdersLast24h() {
-    setIsLoading(true);
     try {
       const yesterday = new Date();
       yesterday.setDate(yesterday.getDate() - 1);
@@ -62,12 +58,10 @@ const useDashboard = () => {
     } catch (error) {
       console.error("Error fetching recent orders:", error);
     } finally {
-      setIsLoading(false);
     }
   }
 
   async function getDashboardSummary(): Promise<ReturnType<DashboardSummary>> {
-    setIsLoading(true);
     try {
       const now = new Date();
       const firstDayLastMonth = new Date(
@@ -178,12 +172,10 @@ const useDashboard = () => {
       console.error("Error fetching dashboard summary:", error);
       return { data: null, err: String(error) };
     } finally {
-      setIsLoading(false);
     }
   }
 
   async function getDashboardData(period: "daily" | "weekly" | "monthly") {
-    setIsLoading(true);
     try {
       const now = new Date();
       let startDate: Date;
@@ -259,7 +251,6 @@ const useDashboard = () => {
       console.error("Error fetching dashboard data:", error);
       return { data: null };
     } finally {
-      setIsLoading(false);
     }
   }
 
@@ -331,7 +322,6 @@ const useDashboard = () => {
   }
 
   return {
-    isLoading,
     newOrders,
     recentOrders,
     getDashboardSummary,

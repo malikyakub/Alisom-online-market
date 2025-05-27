@@ -27,7 +27,7 @@ const ProductReview: React.FC<ProductReviewProps> = ({ productId }) => {
     description: "",
   });
 
-  const { GetProductReviews, AddReview, isLoading } = useProductReviews();
+  const { GetProductReviews, AddReview } = useProductReviews();
 
   useEffect(() => {
     if (viewingReviews) {
@@ -126,10 +126,7 @@ const ProductReview: React.FC<ProductReviewProps> = ({ productId }) => {
 
         {viewingReviews ? (
           <div className="space-y-3">
-            {isLoading && (
-              <p className="text-sm text-gray-500">Loading reviews...</p>
-            )}
-            {!isLoading && reviews.length === 0 && (
+            {reviews.length === 0 && (
               <p className="text-sm text-gray-500">No reviews yet.</p>
             )}
             <div className="flex flex-col gap-2 py-2 [&::-webkit-scrollbar]:hidden overflow-scroll h-[200px]">
@@ -181,14 +178,9 @@ const ProductReview: React.FC<ProductReviewProps> = ({ productId }) => {
 
             <button
               onClick={handleSubmit}
-              disabled={isLoading}
               className="bg-[#007BFF] hover:bg-[#007bffde] text-white w-full py-2 rounded-md font-semibold flex justify-center items-center disabled:opacity-60"
             >
-              {isLoading ? (
-                <ClipLoader size={20} color="#fff" />
-              ) : (
-                "Submit Review"
-              )}
+              Submit Review
             </button>
           </>
         )}

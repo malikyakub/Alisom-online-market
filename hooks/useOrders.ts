@@ -24,8 +24,6 @@ interface CreateOrderArgs {
 }
 
 const useOrders = () => {
-  const [isLoading, setIsLoading] = useState(false);
-
   type CreateOrderArgs = {
     user_id?: string;
     fullname: string;
@@ -51,7 +49,6 @@ const useOrders = () => {
     items,
     is_Guest,
   }: CreateOrderArgs): Promise<ReturnType> {
-    setIsLoading(true);
     try {
       const orderPayload: any = {
         total_price: total_price.toFixed(2),
@@ -100,7 +97,6 @@ const useOrders = () => {
       console.error("🔥 Unexpected error:", error);
       return { data: null, err: String(error) };
     } finally {
-      setIsLoading(false);
     }
   }
 
@@ -108,7 +104,6 @@ const useOrders = () => {
     order_id: string,
     action: "Approved" | "Denied" | "Pending"
   ): Promise<ReturnType> {
-    setIsLoading(true);
     try {
       const { error: statusError } = await supabase
         .from("Orders")
@@ -150,7 +145,6 @@ const useOrders = () => {
     } catch (error) {
       return { data: null, err: String(error) };
     } finally {
-      setIsLoading(false);
     }
   }
 
@@ -158,8 +152,6 @@ const useOrders = () => {
     user_id?: string,
     email?: string
   ): Promise<{ data: any[] | null; err: string | null }> {
-    setIsLoading(true);
-
     try {
       let query = supabase.from("Orders").select("*").order("created_at", {
         ascending: false,
@@ -180,14 +172,12 @@ const useOrders = () => {
     } catch (error) {
       return { data: null, err: String(error) };
     } finally {
-      setIsLoading(false);
     }
   }
 
   async function deleteOrderAndRestockItems(
     order_id: string
   ): Promise<ReturnType> {
-    setIsLoading(true);
     try {
       // ✅ Get order to check its status
       const { data: orderData, error: orderError } = await supabase
@@ -244,12 +234,10 @@ const useOrders = () => {
     } catch (error) {
       return { data: null, err: String(error) };
     } finally {
-      setIsLoading(false);
     }
   }
 
   async function AllOrders(): Promise<ReturnType> {
-    setIsLoading(true);
     try {
       const { data, error } = await supabase
         .from("Orders")
@@ -261,12 +249,10 @@ const useOrders = () => {
     } catch (error) {
       return { data: null, err: String(error) };
     } finally {
-      setIsLoading(false);
     }
   }
 
   async function getOrder(order_id: string): Promise<ReturnType> {
-    setIsLoading(true);
     try {
       const { data: order, error: orderError } = await supabase
         .from("Orders")
@@ -290,7 +276,6 @@ const useOrders = () => {
     } catch (error) {
       return { data: null, err: String(error) };
     } finally {
-      setIsLoading(false);
     }
   }
 
@@ -298,7 +283,6 @@ const useOrders = () => {
     order_id: string,
     order_item_id: string
   ): Promise<ReturnType> {
-    setIsLoading(true);
     try {
       const { data, err } = await getOrder(order_id);
       if (err) {
@@ -369,7 +353,6 @@ const useOrders = () => {
     } catch (error) {
       return { data: null, err: String(error) };
     } finally {
-      setIsLoading(false);
     }
   }
 
@@ -377,7 +360,6 @@ const useOrders = () => {
     order_id: string,
     tracking_number: string
   ): Promise<ReturnType> {
-    setIsLoading(true);
     try {
       const { error: statusError } = await supabase
         .from("Orders")
@@ -393,7 +375,6 @@ const useOrders = () => {
     } catch (error) {
       return { data: null, err: String(error) };
     } finally {
-      setIsLoading(false);
     }
   }
 
@@ -406,7 +387,6 @@ const useOrders = () => {
     AllOrders,
     deleteOrderAndRestockItems,
     SetOrderShippingData,
-    isLoading,
   };
 };
 

@@ -7,8 +7,6 @@ interface ReturnType<T = any> {
 }
 
 const useProducts = () => {
-  const [isLoading, setIsLoading] = useState(false);
-
   async function AllProducts({
     search = "",
     featured,
@@ -18,7 +16,6 @@ const useProducts = () => {
     featured?: boolean;
     brand?: string;
   } = {}): Promise<ReturnType<any[]>> {
-    setIsLoading(true);
     try {
       let query = supabase.from("products").select(
         `
@@ -46,12 +43,10 @@ const useProducts = () => {
     } catch (error: unknown) {
       return { data: null, err: String(error) };
     } finally {
-      setIsLoading(false);
     }
   }
 
   async function GetFeaturedProducts(): Promise<ReturnType<any[]>> {
-    setIsLoading(true);
     try {
       const { data, error } = await supabase
         .from("products")
@@ -76,12 +71,10 @@ const useProducts = () => {
     } catch (error: unknown) {
       return { data: null, err: String(error) };
     } finally {
-      setIsLoading(false);
     }
   }
 
   async function GetProductById(id: string): Promise<ReturnType> {
-    setIsLoading(true);
     try {
       const { data, error } = await supabase
         .from("products")
@@ -107,12 +100,10 @@ const useProducts = () => {
     } catch (error: unknown) {
       return { data: null, err: String(error) };
     } finally {
-      setIsLoading(false);
     }
   }
 
   async function DeleteProduct(id: string): Promise<ReturnType> {
-    setIsLoading(true);
     try {
       const { data: images, error: fetchError } = await supabase
         .from("product_images")
@@ -165,7 +156,6 @@ const useProducts = () => {
     } catch (error: unknown) {
       return { data: null, err: String(error) };
     } finally {
-      setIsLoading(false);
     }
   }
 
@@ -173,7 +163,6 @@ const useProducts = () => {
     id: string,
     newData: object
   ): Promise<ReturnType> {
-    setIsLoading(true);
     try {
       const { data, error } = await supabase
         .from("products")
@@ -186,12 +175,10 @@ const useProducts = () => {
     } catch (error: unknown) {
       return { data: null, err: String(error) };
     } finally {
-      setIsLoading(false);
     }
   }
 
   async function NewProduct(newProductData: object): Promise<ReturnType> {
-    setIsLoading(true);
     try {
       const { data, error } = await supabase
         .from("products")
@@ -203,7 +190,6 @@ const useProducts = () => {
     } catch (error: unknown) {
       return { data: null, err: String(error) };
     } finally {
-      setIsLoading(false);
     }
   }
 
@@ -219,7 +205,6 @@ const useProducts = () => {
       const file = files[i];
       const fileExt = file.name.split(".").pop();
       const filePath = `${folderName}/image_${i + 1}.${fileExt}`;
-      setIsLoading(true);
       try {
         const { error: uploadError } = await supabase.storage
           .from("product-images")
@@ -264,12 +249,10 @@ const useProducts = () => {
       return { data: null, err: "All uploads failed" };
     }
 
-    setIsLoading(false);
     return { data: uploadedUrls, err: null };
   }
 
   async function getFirstEight(): Promise<ReturnType<any[]>> {
-    setIsLoading(true);
     try {
       const { data, error } = await supabase
         .from("products")
@@ -294,7 +277,6 @@ const useProducts = () => {
     } catch (error: unknown) {
       return { data: null, err: String(error) };
     } finally {
-      setIsLoading(false);
     }
   }
 
@@ -321,7 +303,6 @@ const useProducts = () => {
     brandId: string,
     excludeProductId?: string
   ): Promise<ReturnType<any[]>> {
-    setIsLoading(true);
     try {
       let query = supabase
         .from("products")
@@ -353,7 +334,6 @@ const useProducts = () => {
     } catch (error) {
       return { data: null, err: String(error) };
     } finally {
-      setIsLoading(false);
     }
   }
 
@@ -395,7 +375,6 @@ const useProducts = () => {
     GetProductImages,
     GetRelatedProducts,
     GetAverageRating,
-    isLoading,
   };
 };
 

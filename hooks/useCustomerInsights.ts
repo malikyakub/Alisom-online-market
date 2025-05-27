@@ -17,10 +17,8 @@ interface CustomerInsight {
 }
 
 const useCustomerInsights = () => {
-  const [isLoading, setIsLoading] = useState(false);
 
   async function getCustomerInsights(): Promise<ReturnType<CustomerInsight[]>> {
-    setIsLoading(true);
     try {
       // Step 1: Get all users with role = 'Customer'
       const { data: users, error: userError } = await supabase
@@ -71,13 +69,11 @@ const useCustomerInsights = () => {
     } catch (error: unknown) {
       return { data: null, err: String(error) };
     } finally {
-      setIsLoading(false);
     }
   }
 
   return {
     getCustomerInsights,
-    isLoading,
   };
 };
 

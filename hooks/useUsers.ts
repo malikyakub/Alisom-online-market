@@ -7,10 +7,7 @@ interface ReturnType {
 }
 
 const useUsers = () => {
-  const [isLoading, setIsLoading] = useState(false);
-
   async function AllUsers(): Promise<ReturnType> {
-    setIsLoading(true);
     try {
       const { data, error } = await supabase.from("users").select("*");
       if (error) throw new Error(error.message);
@@ -20,7 +17,6 @@ const useUsers = () => {
     } catch (error: unknown) {
       return { data: null, err: String(error) };
     } finally {
-      setIsLoading(false);
     }
   }
 
@@ -39,7 +35,6 @@ const useUsers = () => {
   };
 
   async function DeleteUser(id: string): Promise<ReturnType> {
-    setIsLoading(true);
     try {
       const { data: supabaseData, error: supabaseError } = await supabase
         .from("users")
@@ -53,12 +48,10 @@ const useUsers = () => {
     } catch (error: unknown) {
       return { data: null, err: String(error) };
     } finally {
-      setIsLoading(false);
     }
   }
 
   async function UpdateUser(id: string, newData: any): Promise<ReturnType> {
-    setIsLoading(true);
     try {
       const { data: currentUser, error: getUserError } = await supabase
         .from("users")
@@ -89,12 +82,10 @@ const useUsers = () => {
     } catch (error: unknown) {
       return { data: null, err: String(error) };
     } finally {
-      setIsLoading(false);
     }
   }
 
   async function NewUser(newUserData: object): Promise<ReturnType> {
-    setIsLoading(true);
     try {
       const { data: userData, error: userError } = await supabase
         .from("users")
@@ -107,7 +98,6 @@ const useUsers = () => {
     } catch (error: unknown) {
       return { data: null, err: String(error) };
     } finally {
-      setIsLoading(false);
     }
   }
 
@@ -117,7 +107,6 @@ const useUsers = () => {
     DeleteUser,
     UpdateUser,
     NewUser,
-    isLoading,
   };
 };
 

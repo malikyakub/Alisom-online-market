@@ -17,12 +17,9 @@ export type EmailMessage = {
 };
 
 const useSendEmail = () => {
-  const [isLoading, setIsLoading] = useState(false);
-
   async function sendBatchEmails(
     messages: EmailMessage[]
   ): Promise<ReturnType<any>> {
-    setIsLoading(true);
     try {
       const result = await resend.batch.send(messages);
 
@@ -34,13 +31,11 @@ const useSendEmail = () => {
     } catch (error: unknown) {
       return { data: null, err: String(error) };
     } finally {
-      setIsLoading(false);
     }
   }
 
   return {
     sendBatchEmails,
-    isLoading,
   };
 };
 

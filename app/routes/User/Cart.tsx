@@ -10,7 +10,7 @@ import supabase from "utils/supabase";
 
 export default function Cart() {
   const { user } = useAuth();
-  const { getCart, isLoading, updateCartItem } = useCart();
+  const { getCart,  updateCartItem } = useCart();
   const { GetProductById } = useProducts();
 
   const [cartItems, setCartItems] = useState<any[]>([]);
@@ -156,9 +156,7 @@ export default function Cart() {
         <span className="text-black dark:text-white font-semibold">Cart</span>
       </div>
 
-      {isLoading ? (
-        <p className="text-gray-700 dark:text-gray-300">Loading cart...</p>
-      ) : cartProducts.length === 0 ? (
+      {cartProducts.length === 0 ? (
         <div className="text-center py-12">
           <svg
             className="mx-auto mb-4 w-24 h-24 text-gray-400 dark:text-gray-600"

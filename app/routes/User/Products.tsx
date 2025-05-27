@@ -17,7 +17,7 @@ const Products = () => {
     sortBy: undefined,
   });
 
-  const { FilterProducts, isLoading } = useFilterProducts();
+  const { FilterProducts } = useFilterProducts();
   const [products, setProducts] = useState<any[]>([]);
 
   useEffect(() => {
@@ -88,9 +88,7 @@ const Products = () => {
           />
         </div>
         <div className="p-4 flex-1 bg-red-50 dark:bg-gray-800 rounded-lg shadow flex flex-wrap gap-4 min-h-[50vh]">
-          {isLoading ? (
-            <p className="text-gray-600 dark:text-gray-300">Loading...</p>
-          ) : products.length ? (
+          {products.length ? (
             products.map((product, idx) => (
               <ProductCard
                 key={product.product_id || idx}

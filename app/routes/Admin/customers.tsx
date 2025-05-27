@@ -21,7 +21,7 @@ const CustomerTable: React.FC = () => {
   const [dropdownOpenId, setDropdownOpenId] = useState<number | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
-  const { getCustomerInsights, isLoading } = useCustomerInsights();
+  const { getCustomerInsights } = useCustomerInsights();
   const rowsPerPage = 12;
 
   useEffect(() => {

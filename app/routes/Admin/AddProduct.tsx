@@ -13,13 +13,8 @@ const AddProduct: React.FC = () => {
   const id = searchParams.get("id");
 
   const fileInputRef = useRef<HTMLInputElement | null>(null);
-  const {
-    NewProduct,
-    UploadProductImages,
-    GetProductById,
-    UpdateProduct,
-    isLoading,
-  } = useProducts();
+  const { NewProduct, UploadProductImages, GetProductById, UpdateProduct } =
+    useProducts();
   const { Allcategory } = useCategories();
   const { getAllBrands } = useBrands();
   const [discount, setDiscount] = useState("");
@@ -469,17 +464,10 @@ const AddProduct: React.FC = () => {
           </button>
           <button
             type="submit"
-            disabled={isLoading}
             className="inline-flex items-center justify-center gap-2 px-5 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:opacity-70 transition"
           >
-            {isLoading && <ClipLoader color="#fff" size={16} />}
-            {isLoading
-              ? id
-                ? "Updating..."
-                : "Adding..."
-              : id
-              ? "Update Product"
-              : "Add Product"}
+            {<ClipLoader color="#fff" size={16} />}
+            {id ? "Update Product" : "Add Product"}
           </button>
         </div>
       </form>

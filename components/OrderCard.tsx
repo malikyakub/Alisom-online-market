@@ -47,7 +47,7 @@ const formatDateDDMMYYYY = (dateStr: string) => {
 const OrderCard = ({ order }: OrderCardProps) => {
   const [showAccountModal, setShowAccountModal] = useState(false);
   const [showAlert, setShowAlert] = useState(false);
-  const { updateOrderStatusAndAdjustStock, isLoading } = useOrders();
+  const { updateOrderStatusAndAdjustStock } = useOrders();
 
   const displayStatus = order.shipping_status ?? order.Status;
   const statusClass = getStatusStyles(displayStatus);
@@ -85,7 +85,7 @@ const OrderCard = ({ order }: OrderCardProps) => {
           </h3>
           <div className="flex items-center space-x-2">
             {displayStatus === "Denied" ? (
-              <button onClick={handleDeniedClick} disabled={isLoading}>
+              <button onClick={handleDeniedClick}>
                 <span
                   className={`inline-block font-semibold text-sm rounded px-3 py-2 ${statusClass}`}
                 >

@@ -21,7 +21,7 @@ const DashboardChart: React.FC = () => {
     income: [],
   });
 
-  const { getDashboardData, isLoading } = useDashboard();
+  const { getDashboardData } = useDashboard();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -128,39 +128,35 @@ const DashboardChart: React.FC = () => {
         className="relative w-full flex items-center justify-center rounded-lg"
         style={{ minHeight: 400 }}
       >
-        {isLoading ? (
-          <ClipLoader color="#3B82F6" size={50} />
-        ) : (
-          <BarChart
-            xAxis={[
-              {
-                id: "categories",
-                data: displayedLabels,
-                scaleType: "band",
-                tickLabelStyle: { fill: "white" },
-              },
-            ]}
-            yAxis={[
-              {
-                tickLabelStyle: { fill: "white" },
-              },
-            ]}
-            series={[
-              {
-                label: "Sales",
-                data: displayedSales,
-                color: "#3B82F6",
-              },
-              {
-                label: "Income",
-                data: displayedIncome,
-                color: "#10B981",
-                valueFormatter: (value) => `$${(value ?? 0).toFixed(2)}`,
-              },
-            ]}
-            height={380}
-          />
-        )}
+        <BarChart
+          xAxis={[
+            {
+              id: "categories",
+              data: displayedLabels,
+              scaleType: "band",
+              tickLabelStyle: { fill: "white" },
+            },
+          ]}
+          yAxis={[
+            {
+              tickLabelStyle: { fill: "white" },
+            },
+          ]}
+          series={[
+            {
+              label: "Sales",
+              data: displayedSales,
+              color: "#3B82F6",
+            },
+            {
+              label: "Income",
+              data: displayedIncome,
+              color: "#10B981",
+              valueFormatter: (value) => `$${(value ?? 0).toFixed(2)}`,
+            },
+          ]}
+          height={380}
+        />
       </div>
     </div>
   );

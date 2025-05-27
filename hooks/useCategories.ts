@@ -7,10 +7,7 @@ interface ReturnType<T = any> {
 }
 
 const usecategory = () => {
-  const [isLoading, setIsLoading] = useState(false);
-
   async function Allcategory(): Promise<ReturnType<any[]>> {
-    setIsLoading(true);
     try {
       const { data, error } = await supabase.from("category").select("*");
       if (error) throw new Error(error.message);
@@ -18,12 +15,10 @@ const usecategory = () => {
     } catch (error: unknown) {
       return { data: null, err: String(error) };
     } finally {
-      setIsLoading(false);
     }
   }
 
   async function getCategoryByID(id: string): Promise<ReturnType<any>> {
-    setIsLoading(true);
     try {
       const { data, error } = await supabase
         .from("category")
@@ -36,14 +31,12 @@ const usecategory = () => {
     } catch (error: unknown) {
       return { data: null, err: String(error) };
     } finally {
-      setIsLoading(false);
     }
   }
 
   async function getCategoryProducts(
     categoryId: string
   ): Promise<ReturnType<any[]>> {
-    setIsLoading(true);
     try {
       const { data, error } = await supabase
         .from("products")
@@ -61,14 +54,12 @@ const usecategory = () => {
     } catch (error: unknown) {
       return { data: null, err: String(error) };
     } finally {
-      setIsLoading(false);
     }
   }
 
   async function getProductCountByCategory(
     categoryId: string
   ): Promise<ReturnType<number>> {
-    setIsLoading(true);
     try {
       const { count, error } = await supabase
         .from("products")
@@ -81,12 +72,10 @@ const usecategory = () => {
     } catch (error: unknown) {
       return { data: null, err: String(error) };
     } finally {
-      setIsLoading(false);
     }
   }
 
   async function DeleteCategory(id: string): Promise<ReturnType> {
-    setIsLoading(true);
     try {
       const { data, error } = await supabase
         .from("category")
@@ -99,7 +88,6 @@ const usecategory = () => {
     } catch (error: unknown) {
       return { data: null, err: String(error) };
     } finally {
-      setIsLoading(false);
     }
   }
 
@@ -107,7 +95,6 @@ const usecategory = () => {
     id: string,
     newData: object
   ): Promise<ReturnType> {
-    setIsLoading(true);
     try {
       const { data, error } = await supabase
         .from("category")
@@ -120,12 +107,10 @@ const usecategory = () => {
     } catch (error: unknown) {
       return { data: null, err: String(error) };
     } finally {
-      setIsLoading(false);
     }
   }
 
   async function NewCategory(newCategoryData: object): Promise<ReturnType> {
-    setIsLoading(true);
     try {
       const { data, error } = await supabase
         .from("category")
@@ -137,7 +122,6 @@ const usecategory = () => {
     } catch (error: unknown) {
       return { data: null, err: String(error) };
     } finally {
-      setIsLoading(false);
     }
   }
 
@@ -149,7 +133,6 @@ const usecategory = () => {
     DeleteCategory,
     UpdateCategory,
     NewCategory,
-    isLoading,
   };
 };
 

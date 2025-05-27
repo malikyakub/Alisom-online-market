@@ -37,7 +37,6 @@ const OrdersTable: React.FC = () => {
     updateOrderStatusAndAdjustStock,
     deleteOrderAndRestockItems,
     SetOrderShippingData,
-    isLoading,
   } = useOrders();
 
   const [orders, setOrders] = useState<Order[]>([]);
@@ -472,7 +471,6 @@ const OrdersTable: React.FC = () => {
 
       {showPaymentModal && selectedOrder && (
         <PaymentApprovalModal
-          isLoading={isLoading}
           onApprove={() => handlePaymentDecision("Approved")}
           onDeny={() => handlePaymentDecision("Denied")}
           onCancel={handleCancelPayment}

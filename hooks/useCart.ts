@@ -23,7 +23,6 @@ interface ReturnType<T = any> {
 const LOCAL_KEY = "guest_cart";
 
 const useCart = () => {
-  const [isLoading, setIsLoading] = useState(false);
   const { GetProductById } = useProducts();
 
   const getLocalCart = (): CartItem[] => {
@@ -43,7 +42,6 @@ const useCart = () => {
   async function getCart(
     user_id?: string
   ): Promise<ReturnType<CartItem[] | DetailedCartItem[]>> {
-    setIsLoading(true);
     try {
       if (user_id) {
         const { data, error } = await supabase
@@ -71,12 +69,10 @@ const useCart = () => {
     } catch (error: unknown) {
       return { data: null, err: String(error) };
     } finally {
-      setIsLoading(false);
     }
   }
 
   async function addToCart(item: CartItem): Promise<ReturnType> {
-    setIsLoading(true);
     try {
       const quantityToAdd = item.quantity ?? 1;
       const { err, data: product } = await GetProductById(item.product_id);
@@ -147,7 +143,6 @@ const useCart = () => {
     } catch (error: unknown) {
       return { data: null, err: String(error) };
     } finally {
-      setIsLoading(false);
     }
   }
 
@@ -160,7 +155,6 @@ const useCart = () => {
       return await removeFromCart(product_id, user_id);
     }
 
-    setIsLoading(true);
     try {
       const { data: product, err } = await GetProductById(product_id);
       if (err || !product) {
@@ -193,7 +187,6 @@ const useCart = () => {
     } catch (error: unknown) {
       return { data: null, err: String(error) };
     } finally {
-      setIsLoading(false);
     }
   }
 
@@ -201,7 +194,6 @@ const useCart = () => {
     product_id: string,
     user_id?: string
   ): Promise<ReturnType> {
-    setIsLoading(true);
     try {
       if (user_id) {
         const { data, error } = await supabase
@@ -222,12 +214,10 @@ const useCart = () => {
     } catch (error: unknown) {
       return { data: null, err: String(error) };
     } finally {
-      setIsLoading(false);
     }
   }
 
   async function clearCart(user_id?: string): Promise<ReturnType> {
-    setIsLoading(true);
     try {
       if (user_id) {
         const { error } = await supabase
@@ -243,7 +233,6 @@ const useCart = () => {
     } catch (error: unknown) {
       return { data: null, err: String(error) };
     } finally {
-      setIsLoading(false);
     }
   }
 
@@ -267,7 +256,6 @@ const useCart = () => {
     removeFromCart,
     clearCart,
     syncGuestCartToUser,
-    isLoading,
   };
 };
 

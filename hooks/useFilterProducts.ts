@@ -27,11 +27,8 @@ type ReturnType = {
 };
 
 export function useFilterProducts() {
-  const [isLoading, setIsLoading] = useState(false);
-
   async function FilterProducts(filters: FilterParams): Promise<ReturnType> {
     console.log("FilterProducts called with filters:", filters);
-    setIsLoading(true);
     try {
       let queryBuilder = supabase.from("products").select(
         `
@@ -111,10 +108,9 @@ export function useFilterProducts() {
       console.error("FilterProducts caught error:", error);
       return { data: null, err: String(error) };
     } finally {
-      setIsLoading(false);
       console.log("FilterProducts finished, isLoading set to false");
     }
   }
 
-  return { FilterProducts, isLoading };
+  return { FilterProducts };
 }

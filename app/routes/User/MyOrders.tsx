@@ -6,7 +6,7 @@ import OrderCard from "components/OrderCard";
 
 const MyOrders = () => {
   const { user } = useAuth();
-  const { getOrdersByUserOrEmail, isLoading } = useOrders();
+  const { getOrdersByUserOrEmail } = useOrders();
   const [orders, setOrders] = useState<any[]>([]);
 
   useEffect(() => {
@@ -60,9 +60,7 @@ const MyOrders = () => {
       />
 
       <div>
-        {isLoading ? (
-          <p className="text-lg">Loading...</p>
-        ) : orders.length === 0 ? (
+        {orders.length === 0 ? (
           <div className="w-full h-screen flex py-4">
             <p className="text-lg text-[#DC3545]">
               {user ? "No orders found." : "No guest orders found."}

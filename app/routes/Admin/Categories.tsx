@@ -22,7 +22,6 @@ const CategoryTable: React.FC = () => {
     UpdateCategory,
     getCategoryProducts,
     DeleteCategory,
-    isLoading,
   } = usecategory();
 
   const [categories, setCategories] = useState<Category[]>([]);
@@ -305,14 +304,7 @@ const CategoryTable: React.FC = () => {
                           }
                           className="block w-full text-left px-4 py-2 text-sm text-white bg-[#DC3545] hover:bg-[#C82333] rounded"
                         >
-                          {isLoading ? (
-                            <span className="flex items-center gap-2">
-                              <ClipLoader size={16} color="#fff" />
-                              Deleting...
-                            </span>
-                          ) : (
-                            "Delete"
-                          )}
+                          Delete
                         </button>
                       </motion.div>
                     )}
@@ -356,7 +348,6 @@ const CategoryTable: React.FC = () => {
       <AnimatePresence>
         {isModalOpen && (
           <AddCategoryModal
-            isLoading={isLoading}
             isOpen={isModalOpen}
             onClose={() => {
               setIsModalOpen(false);

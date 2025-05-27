@@ -19,7 +19,7 @@ interface Review {
 
 const MyReviews = () => {
   const { user } = useAuth();
-  const { getUserReviews, UpdateReview, isLoading } = useProductReviews();
+  const { getUserReviews, UpdateReview } = useProductReviews();
   const [reviews, setReviews] = useState<Review[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
@@ -79,9 +79,6 @@ const MyReviews = () => {
     );
   }
 
-  if (isLoading) {
-    return <p className="text-lg">Loading your reviews...</p>;
-  }
 
   if (error) {
     return (
@@ -123,7 +120,6 @@ const MyReviews = () => {
         <div className="flex justify-start flex-wrap gap-4">
           {filteredReviews.map((review) => (
             <ReviewCard
-              isLoading={isLoading}
               key={review.review_id}
               review={review}
               onSave={handleSave}

@@ -5,7 +5,7 @@ import useAuth from "hooks/useAuth";
 import Alert from "components/Alert";
 
 const UserAccount = () => {
-  const { user, loading, updatePassword } = useAuth();
+  const { user, updatePassword } = useAuth();
   const { GetUserById, UpdateUser } = useUsers();
   const navigate = useNavigate();
 
@@ -30,7 +30,7 @@ const UserAccount = () => {
   });
 
   useEffect(() => {
-    if (!loading && !user) {
+    if (!user) {
       navigate("/signup");
     } else if (user && !loaded) {
       GetUserById(user.id).then(({ data, err }) => {
@@ -53,7 +53,7 @@ const UserAccount = () => {
         }
       });
     }
-  }, [user, loading, loaded, navigate, GetUserById]);
+  }, [user, loaded, navigate, GetUserById]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;

@@ -13,7 +13,6 @@ const Dashboard = () => {
     recentOrders,
     subscribeToNewPendingOrders,
     subscribeToNewApprovedOrders,
-    isLoading,
   } = useDashboard();
 
   const [summary, setSummary] = useState({
@@ -112,7 +111,7 @@ const Dashboard = () => {
         </div>
 
         <div className="lg:w-1/3 w-full flex flex-col gap-2">
-          <RecentOrders orders={recentOrders} isLoading={isLoading} />
+          <RecentOrders orders={recentOrders} isLoading={false} />
           {/* <ServiceBookCard /> //? still under development */}
         </div>
       </div>
