@@ -54,13 +54,13 @@ const Login: React.FC = () => {
   const handleGoogleSignIn = async () => {
     try {
       setLoading(true);
-      // await continueWithGoogle();
-      setAlertTitle("Google Sign-In In progress");
-      setAlertMessage(
-        "This feature is still in developmet please login manually."
-      );
-      setAlertType("warning");
-      setAlertOpen(true);
+      await continueWithGoogle();
+      // setAlertTitle("Google Sign-In In progress");
+      // setAlertMessage(
+      //   "This feature is still in development please login manually."
+      // );
+      // setAlertType("warning");
+      // setAlertOpen(true);
       setTimeout(() => {
         setLoading(false);
       }, 3000);
