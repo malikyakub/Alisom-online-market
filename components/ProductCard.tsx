@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { BiCart, BiHeart, BiCheck, BiShow } from "react-icons/bi";
 import { AiFillStar, AiOutlineStar, AiTwotoneStar } from "react-icons/ai";
 import useCart from "hooks/useCart";
@@ -29,8 +30,6 @@ const ProductCard = ({
   badgeColor,
   productId,
 }: ProductCardProps) => {
-  const [isInCart, setIsInCart] = useState(false);
-  const [isInWishlist, setIsInWishlist] = useState(false);
   const [alertOpen, setAlertOpen] = useState(false);
   const [alertMessage, setAlertMessage] = useState("");
   const [alertType, setAlertType] = useState<"success" | "danger">("success");
@@ -39,35 +38,57 @@ const ProductCard = ({
   const { addToCart } = useCart();
   const { addToWishlist } = useWishlist();
   const { user } = useAuth();
+  const queryClient = useQueryClient();
 
-  const handleAddToCart = async () => {
-    setIsInCart(true);
-    const result = await addToCart({
-      product_id: productId,
-      quantity: 1,
-      ...(user?.id ? { user_id: user.id } : {}),
-    });
+  const computedOldPrice =
+    oldPrice ??
+    (Math.round((price + Math.random() * (price * 0.75)) * 100) / 100).toFixed(
+      2
+    );
 
-    if (result.err) {
-      setAlertType("danger");
-      setAlertMessage(result.err);
-    } else {
+  const addToCartMutation = useMutation({
+    mutationFn: () =>
+      addToCart({
+        product_id: productId,
+        quantity: 1,
+        ...(user?.id ? { user_id: user.id } : {}),
+      }),
+    onSuccess: () => {
       setAlertType("success");
       setAlertMessage(`"${name}" has been added to your cart.`);
-    }
+      setAlertOpen(true);
+      queryClient.invalidateQueries({ queryKey: ["cart"] });
+    },
+    onError: (error: any) => {
+      setAlertType("danger");
+      setAlertMessage(error.message || "Failed to add to cart.");
+      setAlertOpen(true);
+    },
+  });
 
-    setAlertOpen(true);
-    setTimeout(() => setIsInCart(false), 2000);
+  const addToWishlistMutation = useMutation({
+    mutationFn: () =>
+      addToWishlist({
+        product_id: productId,
+        ...(user?.id ? { user_id: user.id } : {}),
+      }),
+    onSuccess: () => {
+      setWishlistAlertOpen(true);
+      queryClient.invalidateQueries({ queryKey: ["wishlist"] });
+    },
+    onError: (error: any) => {
+      setAlertType("danger");
+      setAlertMessage(error.message || "Failed to add to wishlist.");
+      setAlertOpen(true);
+    },
+  });
+
+  const handleAddToCart = () => {
+    addToCartMutation.mutate();
   };
 
-  const handleAddToWishlist = async () => {
-    setIsInWishlist(true);
-    await addToWishlist({
-      product_id: productId,
-      ...(user?.id ? { user_id: user.id } : {}),
-    });
-    setWishlistAlertOpen(true);
-    setTimeout(() => setIsInWishlist(false), 2000);
+  const handleAddToWishlist = () => {
+    addToWishlistMutation.mutate();
   };
 
   const renderStars = () => {
@@ -122,10 +143,11 @@ const ProductCard = ({
               <button
                 onClick={handleAddToWishlist}
                 className={`p-1.5 rounded-full transition-transform duration-300 ${
-                  isInWishlist
-                    ? "bg-[#DC3545]/80 hover:bg-[#DC3545]/90"
+                  addToWishlistMutation.status === "pending"
+                    ? "bg-[#DC3545]/80"
                     : "bg-[#007BFF]/10 hover:bg-[#007BFF]/20"
                 }`}
+                disabled={addToWishlistMutation.status === "pending"}
               >
                 <BiHeart className="text-white text-xl" />
               </button>
@@ -150,27 +172,30 @@ const ProductCard = ({
           </h1>
           <div className="flex flex-row gap-2 items-center">
             <p className="text-sm text-[#28A745] font-bold">${price}</p>
-            {oldPrice && (
-              <p className="text-sm text-[#DC3545] line-through italic font-medium">
-                ${oldPrice}
-              </p>
-            )}
+            <p className="text-sm text-[#DC3545] line-through italic font-medium">
+              ${computedOldPrice}
+            </p>
           </div>
           {renderStars()}
         </div>
         <button
           onClick={handleAddToCart}
           className={`absolute bottom-0 w-full py-2 text-white font-medium transition-all duration-300 ${
-            isInCart ? "bg-[#17C3B2]" : "bg-[#007BFF]/80 hover:bg-[#007BFF]"
+            addToCartMutation.status === "pending"
+              ? "bg-[#17C3B2]"
+              : "bg-[#007BFF]/80 hover:bg-[#007BFF]"
           }`}
+          disabled={addToCartMutation.status === "pending"}
         >
           <div className="flex justify-center items-center gap-2">
-            {isInCart ? (
-              <BiCheck className="text-lg" />
+            {addToCartMutation.status === "pending" ? (
+              <BiCheck className="text-lg animate-spin" />
             ) : (
               <BiCart className="text-lg" />
             )}
-            {isInCart ? "Added" : "Add to Cart"}
+            {addToCartMutation.status === "pending"
+              ? "Adding..."
+              : "Add to Cart"}
           </div>
         </button>
       </div>

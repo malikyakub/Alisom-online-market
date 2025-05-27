@@ -3,6 +3,7 @@ import RegisterForm from "components/RegisterForm";
 import LoginIllustrator from "/assets/images/Login-illustrator.png";
 import useAuth from "hooks/useAuth";
 import Alert from "components/Alert";
+import { useMutation } from "@tanstack/react-query";
 
 export function meta() {
   return [{ title: "Alisom Online market - Login" }];
@@ -10,68 +11,73 @@ export function meta() {
 
 const Login: React.FC = () => {
   const { login, continueWithGoogle } = useAuth();
-  const [loading, setLoading] = useState(false);
-
   const [alertOpen, setAlertOpen] = useState(false);
   const [alertMessage, setAlertMessage] = useState("");
   const [alertTitle, setAlertTitle] = useState("");
   const [alertType, setAlertType] = useState<
     "danger" | "info" | "success" | "warning"
   >("danger");
+  const [formError, setFormError] = useState<string | null>(null);
 
-  const handleSubmit = async (formData: {
-    email: string;
-    password: string;
-  }) => {
-    try {
-      setLoading(true);
+  const loginMutation = useMutation({
+    mutationFn: async (formData: { email: string; password: string }) => {
       const { user } = await login(formData.email, formData.password);
-      if (user) {
-        console.log("Login successful!", user);
-        setAlertTitle("Login Successful");
-        setAlertMessage("You have successfully logged in.");
-        setAlertType("success");
-        setAlertOpen(true);
-        window.location.href = "/user/account";
-      } else {
-        setLoading(false);
-        console.warn("No user returned from login.");
-        setAlertTitle("Login Error");
-        setAlertMessage("No user returned from login.");
-        setAlertType("warning");
-        setAlertOpen(true);
-      }
-    } catch (error: any) {
-      setLoading(false);
-      console.error("Login failed:", error.message || error);
+      if (!user) throw new Error("No user returned from login.");
+      return user;
+    },
+    onSuccess: () => {
+      setAlertTitle("Login Successful");
+      setAlertMessage("You have successfully logged in.");
+      setAlertType("success");
+      setAlertOpen(true);
+      setFormError(null);
+      window.location.href = "/user/account";
+    },
+    onError: (error: any) => {
       setAlertTitle("Login Failed");
       setAlertMessage(error.message || "Unexpected error");
       setAlertType("danger");
       setAlertOpen(true);
-    }
-  };
+      setFormError(error.message || "Unexpected error");
+    },
+  });
 
-  const handleGoogleSignIn = async () => {
-    try {
-      setLoading(true);
+  const googleMutation = useMutation({
+    mutationFn: async () => {
       await continueWithGoogle();
-      // setAlertTitle("Google Sign-In In progress");
-      // setAlertMessage(
-      //   "This feature is still in development please login manually."
-      // );
-      // setAlertType("warning");
-      // setAlertOpen(true);
-      setTimeout(() => {
-        setLoading(false);
-      }, 3000);
-    } catch (error: any) {
-      setLoading(false);
-      console.error("Google sign-in failed:", error.message || error);
+    },
+    onSuccess: () => {
+      setAlertTitle("Google Sign-In Successful");
+      setAlertMessage("You have successfully signed in with Google.");
+      setAlertType("success");
+      setAlertOpen(true);
+      setFormError(null);
+    },
+    onError: (error: any) => {
       setAlertTitle("Google Sign-In Failed");
       setAlertMessage(error.message || "Unexpected error");
       setAlertType("danger");
       setAlertOpen(true);
-    }
+      setFormError(error.message || "Unexpected error");
+    },
+  });
+
+  const handleSubmit = (formData: {
+    name: string;
+    phone: string;
+    address: string;
+    email: string;
+    password: string;
+    confirmPassword: string;
+  }) => {
+    loginMutation.mutate({
+      email: formData.email,
+      password: formData.password,
+    });
+  };
+
+  const handleGoogleSignIn = () => {
+    googleMutation.mutate();
   };
 
   return (
@@ -83,18 +89,17 @@ const Login: React.FC = () => {
         isOpen={alertOpen}
         onClose={() => setAlertOpen(false)}
       />
-
       <div className="relative flex flex-col lg:flex-row justify-between items-center w-full max-w-7xl">
         <div className="w-full lg:w-1/2 overflow-hidden hidden lg:block">
           <img src={LoginIllustrator} alt="login illustrator" />
         </div>
-
         <div className="w-full lg:w-1/2">
           <RegisterForm
             isLogin={true}
             onSubmit={handleSubmit}
-            isLoading={loading}
             onGoogleSignIn={handleGoogleSignIn}
+            loading={loginMutation.status === "pending" || googleMutation.status === "pending"}
+            onError={formError}
           />
         </div>
       </div>

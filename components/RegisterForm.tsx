@@ -1,10 +1,13 @@
-import React, { useState, type ChangeEvent, type FormEvent } from "react";
+import React, { useState, useEffect } from "react";
+import type { FormEvent } from "react";
+import type { ChangeEvent } from "react";
 
 type RegisterFormProps = {
   isLogin?: boolean;
-  isLoading?: boolean;
   onSubmit?: (formData: FormData) => void;
-  onGoogleSignIn?: () => Promise<void>;
+  onGoogleSignIn?: () => void;
+  loading?: boolean;
+  onError?: string | null;
 };
 
 type FormData = {
@@ -18,9 +21,10 @@ type FormData = {
 
 const RegisterForm: React.FC<RegisterFormProps> = ({
   isLogin = false,
-  isLoading = false,
   onSubmit,
   onGoogleSignIn,
+  loading = false,
+  onError = null,
 }) => {
   const [formData, setFormData] = useState<FormData>({
     name: "",
@@ -30,6 +34,12 @@ const RegisterForm: React.FC<RegisterFormProps> = ({
     password: "",
     confirmPassword: "",
   });
+
+  const [hasError, setHasError] = useState(false);
+
+  useEffect(() => {
+    setHasError(!!onError);
+  }, [onError]);
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -43,8 +53,9 @@ const RegisterForm: React.FC<RegisterFormProps> = ({
     }
   };
 
-  const inputClass =
-    "w-full border rounded px-4 py-2 focus:outline-none focus:bg-blue-100 focus:border-[#007BFF] border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-black dark:placeholder-gray-400";
+  const inputClass = hasError
+    ? "w-full border rounded px-4 py-2 border-[#DC3545] bg-[#DC3545]/30 focus:border-[#DC3545] focus:bg-[#DC3545]/30 dark:bg-gray-800 dark:text-black dark:placeholder-gray-400"
+    : "w-full border rounded px-4 py-2 border-gray-300 focus:bg-blue-100/30 focus:border-[#007BFF] dark:border-gray-600 dark:bg-gray-800 dark:text-black dark:placeholder-gray-400";
 
   return (
     <div className="flex items-center justify-center w-full">
@@ -57,7 +68,6 @@ const RegisterForm: React.FC<RegisterFormProps> = ({
             ? "Enter your credentials to login"
             : "Enter your details below"}
         </p>
-
         <form className="space-y-4" onSubmit={handleFormSubmit}>
           {!isLogin && (
             <>
@@ -68,6 +78,7 @@ const RegisterForm: React.FC<RegisterFormProps> = ({
                 onChange={handleChange}
                 placeholder="Name"
                 className={inputClass}
+                disabled={loading}
               />
               <input
                 type="text"
@@ -76,6 +87,7 @@ const RegisterForm: React.FC<RegisterFormProps> = ({
                 onChange={handleChange}
                 placeholder="Phone"
                 className={inputClass}
+                disabled={loading}
               />
               <input
                 type="text"
@@ -84,6 +96,7 @@ const RegisterForm: React.FC<RegisterFormProps> = ({
                 onChange={handleChange}
                 placeholder="Address"
                 className={inputClass}
+                disabled={loading}
               />
             </>
           )}
@@ -94,6 +107,7 @@ const RegisterForm: React.FC<RegisterFormProps> = ({
             onChange={handleChange}
             placeholder="Email"
             className={inputClass}
+            disabled={loading}
           />
           <input
             type="password"
@@ -102,6 +116,7 @@ const RegisterForm: React.FC<RegisterFormProps> = ({
             onChange={handleChange}
             placeholder={isLogin ? "Password" : "Create Password"}
             className={inputClass}
+            disabled={loading}
           />
           {!isLogin && (
             <input
@@ -111,41 +126,29 @@ const RegisterForm: React.FC<RegisterFormProps> = ({
               onChange={handleChange}
               placeholder="Confirm Password"
               className={inputClass}
+              disabled={loading}
             />
           )}
-
           <button
             type="submit"
+            disabled={loading}
             className="w-full bg-blue-600 hover:bg-blue-700 text-white rounded px-4 py-2 font-semibold flex items-center justify-center disabled:opacity-70"
-            disabled={isLoading}
           >
-            {isLoading ? (
-              <>
-                <div
-                  className="w-5 h-5 border-2 border-t-transparent border-white rounded-full animate-spin"
-                  role="status"
-                  aria-label="loading"
-                />
-                <span className="ml-2">Please wait...</span>
-              </>
-            ) : (
-              <span>{isLogin ? "Log In" : "Create Account"}</span>
-            )}
+            <span>{isLogin ? "Log In" : "Create Account"}</span>
           </button>
         </form>
-
         <div className="my-4 flex items-center">
           <div className="flex-grow border-t border-gray-300 dark:border-gray-600"></div>
           <span className="mx-4 text-gray-500 dark:text-gray-400">or</span>
           <div className="flex-grow border-t border-gray-300 dark:border-gray-600"></div>
         </div>
-
         <button
           type="button"
-          onClick={async () => {
-            if (onGoogleSignIn) await onGoogleSignIn();
+          onClick={() => {
+            if (onGoogleSignIn) onGoogleSignIn();
           }}
-          className="w-full border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-black dark:text-white rounded px-4 py-2 flex items-center justify-center gap-2 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+          disabled={loading}
+          className="w-full border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-black dark:text-white rounded px-4 py-2 flex items-center justify-center gap-2 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors disabled:opacity-70"
         >
           <img
             src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg"
@@ -154,7 +157,6 @@ const RegisterForm: React.FC<RegisterFormProps> = ({
           />
           {isLogin ? "Log in with Google" : "Sign up with Google"}
         </button>
-
         <p className="mt-6 text-center text-sm text-gray-700 dark:text-gray-300">
           {isLogin ? "Don't have an account?" : "Already have an account?"}{" "}
           <a
