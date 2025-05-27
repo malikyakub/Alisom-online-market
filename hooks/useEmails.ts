@@ -1,158 +1,184 @@
 import { useState } from "react";
-import supabase from "utils/supabase";
 import useOrders from "./useOrders";
 
-interface ReturnType<T = any> {
-  data: T | null;
-  err: string | null;
+async function sendEmail({
+  to,
+  subject,
+  html,
+}: {
+  to: string;
+  subject: string;
+  html: string;
+}) {
+  console.log(`Sending email to ${to} with subject "${subject}"`);
+  return true;
 }
 
 const useEmails = () => {
-  const [isLoading, setIsLoading] = useState(false);
   const { getOrder } = useOrders();
+  const [isLoading, setIsLoading] = useState(false);
 
-  async function ApprovePayment(
-    order: any
-  ): Promise<{ data: string | null; err: string | null }> {
+  async function sendOrderApprovalRequest(order_id: string) {
     setIsLoading(true);
     try {
-      const { data: adminUser, error: adminErr } = await supabase
-        .from("users")
-        .select("email, fullname")
-        .eq("role", "Admin")
-        .limit(1)
-        .single();
+      const { data: order, err } = await getOrder(order_id);
+      if (err || !order) throw new Error("Order not found");
 
-      if (adminErr || !adminUser) throw new Error("Admin user not found");
-      if (!order) throw new Error("Order data not provided");
+      const adminEmail = "mkyareyacquub@gmail.com";
+      const adminName = "Store Admin";
 
-      // const items = order.items || [];
-
-      interface Product {
-        name?: string;
-        price?: number;
-      }
-
-      interface OrderItem {
-        products?: Product;
-        quantity?: number;
-      }
-
-      interface Order {
-        Order_id?: string;
-        Full_name?: string;
-        Email?: string;
-        user?: {
-          fullname?: string;
-          email?: string;
-        };
-        items?: OrderItem[];
-        total_price?: number;
-        Address?: string;
-        City?: string;
-      }
-
-      interface AdminUser {
-        email?: string;
-        fullname?: string;
-      }
-
-      const adminUserTyped: AdminUser = adminUser;
-      const orderTyped: Order = order;
-      const items: OrderItem[] = orderTyped.items || [];
+      const itemsHtml = order.items
+        .map(
+          (item: any) =>
+            `<li>${item.products?.name || "Product"} x ${item.quantity} @ $${
+              item.products?.price
+            }</li>`
+        )
+        .join("");
 
       const html = `
-    <h2>Payment Approval for Order #${orderTyped.Order_id}</h2>
-    <p>Hello ${adminUserTyped.fullname},</p>
-    <p>The order placed by <strong>${
-      orderTyped.Full_name || orderTyped.user?.fullname
-    }</strong> (${
-        orderTyped.Email || orderTyped.user?.email
-      }) has been requested for payment approval.</p>
-    <h3>Order Details:</h3>
-    <ul>
-      ${items
-        .map(
-          (item) =>
-            `<li>${item.products?.name || "Unknown product"} x ${
-              item.quantity
-            } @ $${item.products?.price || "0"}</li>`
-        )
-        .join("")}
-    </ul>
-    <p><strong>Total Price:</strong> $${orderTyped.total_price}</p>
-    <p>Shipping Address: ${orderTyped.Address}, ${orderTyped.City}</p>
-    <p>Please review and approve the payment.</p>
-    <footer><small>This is an automated message from your eCommerce platform.</small></footer>
-    `;
+        <h2>Payment Approval Needed for Order #${order.Order_id}</h2>
+        <p>Hello ${adminName},</p>
+        <p>Order placed by <strong>${order.Full_name}</strong> (${order.Email}) requires your payment approval.</p>
+        <h3>Order Details:</h3>
+        <ul>${itemsHtml}</ul>
+        <p><strong>Total Price:</strong> $${order.total_price}</p>
+        <p>Shipping Address: ${order.Address}, ${order.City}</p>
+        <p>Please review and approve the payment.</p>
+        <footer><small>This is an automated message from your eCommerce platform.</small></footer>
+      `;
 
-      console.log(`email sent to ${adminUser.email}`);
+      await sendEmail({
+        to: adminEmail,
+        subject: `Payment Approval for Order #${order.Order_id}`,
+        html,
+      });
 
-      return { data: html, err: null };
+      return { success: true, err: null };
     } catch (error) {
-      return { data: null, err: String(error) };
+      return { success: false, err: String(error) };
     } finally {
       setIsLoading(false);
     }
   }
 
-  function ApproveReply(
+  function generateOrderStatusUpdate(
     order_id: string,
     from: string,
     to: string,
     status: "Approved" | "Denied" | "Pending"
-  ): ReturnType<string> {
-    try {
-      const html = `
+  ) {
+    return {
+      subject: `Order #${order_id} Payment Status Update`,
+      html: `
         <h2>Order #${order_id} Payment Status Update</h2>
         <p>From: ${from}</p>
         <p>To: ${to}</p>
         <p>The payment for order <strong>#${order_id}</strong> has been <strong>${status}</strong>.</p>
         <p>Thank you for using our service.</p>
         <footer><small>This is an automated message from your eCommerce platform.</small></footer>
-      `;
-      return { data: html, err: null };
+      `,
+    };
+  }
+
+  async function sendOrderStatusEmail(
+    order_id: string,
+    from: string,
+    to: string,
+    status: "Approved" | "Denied" | "Pending"
+  ) {
+    setIsLoading(true);
+    try {
+      const { subject, html } = generateOrderStatusUpdate(
+        order_id,
+        from,
+        to,
+        status
+      );
+      await sendEmail({ to, subject, html });
+      return { success: true, err: null };
     } catch (error) {
-      return { data: null, err: String(error) };
+      return { success: false, err: String(error) };
+    } finally {
+      setIsLoading(false);
     }
   }
 
-  async function OrderShipping(
-    order_id: string,
-    shipping_status: string
-  ): Promise<ReturnType<string>> {
+  async function sendContactFormEmail(
+    name: string,
+    email: string,
+    message: string
+  ) {
     setIsLoading(true);
     try {
-      const { data: order, error: orderErr } = await supabase
-        .from("Orders")
-        .select("Full_name, Email")
-        .eq("Order_id", order_id)
-        .single();
-
-      if (orderErr || !order) {
-        throw new Error("Order not found");
-      }
-
+      const adminEmail = import.meta.env.VITE_EMAIL_USER || "";
+      const subject = `New Contact Form Message from ${name}`;
       const html = `
-        <h2>Shipping Update for Order #${order_id}</h2>
-        <p>Dear ${order.Full_name},</p>
-        <p>Your order shipping status has been updated to: <strong>${shipping_status}</strong>.</p>
-        <p>Thank you for shopping with us!</p>
+        <h2>Contact Form Submission</h2>
+        <p><strong>Name:</strong> ${name}</p>
+        <p><strong>Email:</strong> ${email}</p>
+        <p><strong>Message:</strong></p>
+        <p>${message}</p>
         <footer><small>This is an automated message from your eCommerce platform.</small></footer>
       `;
-
-      return { data: html, err: null };
+      await sendEmail({ to: adminEmail, subject, html });
+      return { success: true, err: null };
     } catch (error) {
-      return { data: null, err: String(error) };
+      return { success: false, err: String(error) };
+    } finally {
+      setIsLoading(false);
+    }
+  }
+
+  async function sendPasswordResetEmail(email: string, resetLink: string) {
+    setIsLoading(true);
+    try {
+      const subject = "Password Reset Request";
+      const html = `
+        <h2>Password Reset</h2>
+        <p>You requested a password reset. Click the link below to reset your password:</p>
+        <p><a href="${resetLink}">${resetLink}</a></p>
+        <p>If you didn't request this, please ignore this email.</p>
+        <footer><small>This is an automated message from your eCommerce platform.</small></footer>
+      `;
+      await sendEmail({ to: email, subject, html });
+      return { success: true, err: null };
+    } catch (error) {
+      return { success: false, err: String(error) };
+    } finally {
+      setIsLoading(false);
+    }
+  }
+
+  async function sendNewAccountConfirmationEmail(
+    email: string,
+    fullname: string
+  ) {
+    setIsLoading(true);
+    try {
+      const subject = "Welcome to Our Store!";
+      const html = `
+        <h2>Account Created Successfully</h2>
+        <p>Hello ${fullname},</p>
+        <p>Thank you for creating an account with us.</p>
+        <p>We’re excited to have you onboard!</p>
+        <footer><small>This is an automated message from your eCommerce platform.</small></footer>
+      `;
+      await sendEmail({ to: email, subject, html });
+      return { success: true, err: null };
+    } catch (error) {
+      return { success: false, err: String(error) };
     } finally {
       setIsLoading(false);
     }
   }
 
   return {
-    ApprovePayment,
-    ApproveReply,
-    OrderShipping,
+    sendOrderApprovalRequest,
+    sendOrderStatusEmail,
+    sendContactFormEmail,
+    sendPasswordResetEmail,
+    sendNewAccountConfirmationEmail,
     isLoading,
   };
 };
