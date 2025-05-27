@@ -66,7 +66,9 @@ const useDashboard = () => {
     }
   }
 
-  async function getDashboardSummary(): Promise<ReturnType<DashboardSummary>> {
+  async function getDashboardSummary(
+    period?: "daily" | "weekly" | "monthly"
+  ): Promise<ReturnType<DashboardSummary>> {
     setIsLoading(true);
     try {
       const now = new Date();
@@ -84,10 +86,32 @@ const useDashboard = () => {
         59
       );
 
-      const { data: totalRevenueData, error: revErr } = await supabase
+      let periodStartDate: Date | null = null;
+      if (period) {
+        if (period === "daily") {
+          periodStartDate = new Date(
+            now.getFullYear(),
+            now.getMonth(),
+            now.getDate()
+          );
+        } else if (period === "weekly") {
+          periodStartDate = new Date(now.getTime() - 6 * 24 * 60 * 60 * 1000);
+        } else if (period === "monthly") {
+          periodStartDate = new Date(now.getFullYear(), now.getMonth(), 1);
+        }
+      }
+
+      let totalRevenueQuery = supabase
         .from("Orders")
         .select("total_price")
         .eq("Status", "Approved");
+      if (periodStartDate) {
+        totalRevenueQuery = totalRevenueQuery.gte(
+          "created_at",
+          periodStartDate.toISOString()
+        );
+      }
+      const { data: totalRevenueData, error: revErr } = await totalRevenueQuery;
       if (revErr) throw revErr;
 
       const totalRevenue =
@@ -96,26 +120,37 @@ const useDashboard = () => {
           0
         ) ?? 0;
 
-      const { data: lastMonthRevenueData, error: lastRevErr } = await supabase
-        .from("Orders")
-        .select("total_price")
-        .eq("Status", "Approved")
-        .gte("created_at", firstDayLastMonth.toISOString())
-        .lte("created_at", lastDayLastMonth.toISOString());
-      if (lastRevErr) throw lastRevErr;
-
-      const totalRevenueLastMonth =
-        lastMonthRevenueData?.reduce(
-          (acc, order) => acc + Number(order.total_price ?? 0),
-          0
-        ) ?? 0;
-
-      const { data: approvedOrdersData, error: approvedOrdersErr } =
-        await supabase
+      let totalRevenueLastMonth = 0;
+      if (!period) {
+        const { data: lastMonthRevenueData, error: lastRevErr } = await supabase
           .from("Orders")
-          .select("Order_id")
-          .eq("Status", "Approved");
+          .select("total_price")
+          .eq("Status", "Approved")
+          .gte("created_at", firstDayLastMonth.toISOString())
+          .lte("created_at", lastDayLastMonth.toISOString());
+        if (lastRevErr) throw lastRevErr;
+
+        totalRevenueLastMonth =
+          lastMonthRevenueData?.reduce(
+            (acc, order) => acc + Number(order.total_price ?? 0),
+            0
+          ) ?? 0;
+      }
+
+      let approvedOrdersQuery = supabase
+        .from("Orders")
+        .select("Order_id")
+        .eq("Status", "Approved");
+      if (periodStartDate) {
+        approvedOrdersQuery = approvedOrdersQuery.gte(
+          "created_at",
+          periodStartDate.toISOString()
+        );
+      }
+      const { data: approvedOrdersData, error: approvedOrdersErr } =
+        await approvedOrdersQuery;
       if (approvedOrdersErr) throw approvedOrdersErr;
+
       const approvedOrderIds = approvedOrdersData?.map((o) => o.Order_id) ?? [];
 
       const { data: productsSoldData, error: productsSoldErr } = await supabase
@@ -130,31 +165,35 @@ const useDashboard = () => {
           0
         ) ?? 0;
 
-      const { data: lastMonthApprovedOrders, error: lastMonthOrdersErr } =
-        await supabase
-          .from("Orders")
-          .select("Order_id")
-          .eq("Status", "Approved")
-          .gte("created_at", firstDayLastMonth.toISOString())
-          .lte("created_at", lastDayLastMonth.toISOString());
-      if (lastMonthOrdersErr) throw lastMonthOrdersErr;
-      const lastMonthOrderIds =
-        lastMonthApprovedOrders?.map((o) => o.Order_id) ?? [];
+      let productsSoldLastMonth = 0;
+      if (!period) {
+        const { data: lastMonthApprovedOrders, error: lastMonthOrdersErr } =
+          await supabase
+            .from("Orders")
+            .select("Order_id")
+            .eq("Status", "Approved")
+            .gte("created_at", firstDayLastMonth.toISOString())
+            .lte("created_at", lastDayLastMonth.toISOString());
+        if (lastMonthOrdersErr) throw lastMonthOrdersErr;
 
-      const {
-        data: productsSoldLastMonthData,
-        error: productsSoldLastMonthErr,
-      } = await supabase
-        .from("Order_items")
-        .select("quantity, order_id")
-        .in("order_id", lastMonthOrderIds);
-      if (productsSoldLastMonthErr) throw productsSoldLastMonthErr;
+        const lastMonthOrderIds =
+          lastMonthApprovedOrders?.map((o) => o.Order_id) ?? [];
 
-      const productsSoldLastMonth =
-        productsSoldLastMonthData?.reduce(
-          (acc, item) => acc + Number(item.quantity ?? 0),
-          0
-        ) ?? 0;
+        const {
+          data: productsSoldLastMonthData,
+          error: productsSoldLastMonthErr,
+        } = await supabase
+          .from("Order_items")
+          .select("quantity, order_id")
+          .in("order_id", lastMonthOrderIds);
+        if (productsSoldLastMonthErr) throw productsSoldLastMonthErr;
+
+        productsSoldLastMonth =
+          productsSoldLastMonthData?.reduce(
+            (acc, item) => acc + Number(item.quantity ?? 0),
+            0
+          ) ?? 0;
+      }
 
       const { data: stockData, error: stockErr } = await supabase
         .from("products")

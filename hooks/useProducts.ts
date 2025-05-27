@@ -20,14 +20,17 @@ const useProducts = () => {
   } = {}): Promise<ReturnType<any[]>> {
     setIsLoading(true);
     try {
-      let query = supabase.from("products").select(
+      let query = supabase
+        .from("products")
+        .select(
+          `
+          *,
+          category:category_id ( name ),
+          brand:brand_id ( name ),
+          images:product_images ( image_url )
         `
-        *,
-        category:category_id ( name ),
-        brand:brand_id ( name ),
-        images:product_images ( image_url )
-      `
-      );
+        )
+        .gt("stock_quantity", 0);
 
       if (search) query = query.ilike("name", `%${search}%`);
       if (typeof featured === "boolean") query = query.eq("featured", featured);
@@ -63,7 +66,8 @@ const useProducts = () => {
           images:product_images ( image_url )
         `
         )
-        .eq("featured", true);
+        .eq("featured", true)
+        .gt("stock_quantity", 0);
 
       if (error) throw error;
 
@@ -281,6 +285,7 @@ const useProducts = () => {
         images:product_images ( image_url )
       `
         )
+        .gt("stock_quantity", 0)
         .limit(8);
 
       if (error) throw error;

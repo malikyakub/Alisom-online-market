@@ -6,10 +6,18 @@ import useDashboard from "hooks/useDashboard";
 
 type TimePeriod = "daily" | "weekly" | "monthly";
 
-const DashboardChart: React.FC = () => {
+interface DashboardChartProps {
+  data: { period: string; sales: number; income: number }[];
+  isLoading: boolean;
+  onDurationChange: (period: "today" | "thisWeek" | "thisMonth") => void;
+}
+
+const DashboardChart: React.FC<DashboardChartProps> = ({
+  onDurationChange,
+}) => {
   const [timePeriod, setTimePeriod] = useState<
     "today" | "thisWeek" | "thisMonth"
-  >("today");
+  >("thisMonth");
   const [timeRange, setTimeRange] = useState<number[]>([0, 0]);
   const [chartData, setChartData] = useState<{
     labels: string[];
@@ -24,21 +32,25 @@ const DashboardChart: React.FC = () => {
   const { getDashboardData, isLoading } = useDashboard();
 
   useEffect(() => {
+    onDurationChange(timePeriod);
     const fetchData = async () => {
-      const periodMap: Record<"today" | "thisWeek" | "thisMonth", TimePeriod> =
-        {
-          today: "daily",
-          thisWeek: "weekly",
-          thisMonth: "monthly",
-        };
-
+      const periodMap: Record<
+        "today" | "thisWeek" | "thisMonth",
+        "daily" | "weekly" | "monthly"
+      > = {
+        today: "daily",
+        thisWeek: "weekly",
+        thisMonth: "monthly",
+      };
       const { data } = await getDashboardData(periodMap[timePeriod]);
       if (!data) return;
 
-      let labelsFormatted: string[] = [];
-
+      let labelsFormatted = [];
       if (timePeriod === "today") {
-        labelsFormatted = data.map((d) => `${Number(d.period)}h`);
+        labelsFormatted = data.map((d) => {
+          const hour = Number(d.period);
+          return `${hour.toString().padStart(2, "0")}:00`;
+        });
       } else if (timePeriod === "thisWeek") {
         const weekdays = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
         labelsFormatted = data.map((d) => {
@@ -57,7 +69,6 @@ const DashboardChart: React.FC = () => {
         sales: data.map((d) => d.sales),
         income: data.map((d) => d.income),
       });
-
       setTimeRange([0, data.length - 1]);
     };
 
@@ -74,7 +85,14 @@ const DashboardChart: React.FC = () => {
     timeRange[1] + 1
   );
 
-  const handleRangeChange = (_event: Event, newValue: number | number[]) => {
+  interface RangeChangeEvent {
+    // You can extend this if you need more specific event typing
+  }
+
+  const handleRangeChange = (
+    _event: RangeChangeEvent,
+    newValue: number | number[]
+  ): void => {
     if (Array.isArray(newValue)) setTimeRange(newValue);
   };
 
@@ -110,10 +128,8 @@ const DashboardChart: React.FC = () => {
               onChange={handleRangeChange}
               valueLabelDisplay="auto"
               sx={{
-                color: "#3B82F6", // Tailwind blue-500
-                "& .MuiSlider-markLabel": {
-                  color: "#9CA3AF", // Tailwind gray-400
-                },
+                color: "#3B82F6",
+                "& .MuiSlider-markLabel": { color: "#9CA3AF" },
               }}
               min={0}
               max={chartData.labels.length - 1}
@@ -140,17 +156,9 @@ const DashboardChart: React.FC = () => {
                 tickLabelStyle: { fill: "white" },
               },
             ]}
-            yAxis={[
-              {
-                tickLabelStyle: { fill: "white" },
-              },
-            ]}
+            yAxis={[{ tickLabelStyle: { fill: "white" } }]}
             series={[
-              {
-                label: "Sales",
-                data: displayedSales,
-                color: "#3B82F6",
-              },
+              { label: "Sales", data: displayedSales, color: "#3B82F6" },
               {
                 label: "Income",
                 data: displayedIncome,
