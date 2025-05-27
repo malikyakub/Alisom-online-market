@@ -15,7 +15,6 @@ type Props = {
   setSelectedPayment: (method: string) => void;
   selectedShippingType: "Delivery" | "Pickup";
   setSelectedShippingType: (type: "Delivery" | "Pickup") => void;
-  onPlaceOrder: () => void;
 };
 
 const SkeletonItem = () => (
