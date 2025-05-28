@@ -19,7 +19,7 @@ const AccountNumberModal: React.FC<Props> = ({
         initial={{ scale: 0.8, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
         exit={{ scale: 0.8, opacity: 0 }}
-        className="bg-gray-900 p-8 rounded-xl shadow-xl text-center max-w-md w-full text-gray-100"
+        className="bg-white dark:bg-gray-900 p-8 rounded-xl shadow-xl text-center max-w-md w-full text-gray-900 dark:text-gray-100"
       >
         <motion.div
           initial={{ scale: 0 }}
@@ -27,19 +27,23 @@ const AccountNumberModal: React.FC<Props> = ({
           transition={{ type: "spring", stiffness: 300, damping: 15 }}
           className="flex justify-center mb-4"
         >
-          <Banknote className="text-blue-500 w-16 h-16" />
+          <Banknote className="text-blue-600 dark:text-blue-400 w-16 h-16" />
         </motion.div>
 
         <h2 className="text-xl font-bold mb-2">Payment Instructions</h2>
-        <p className="text-gray-400 mb-4">Send the total amount to:</p>
+        <p className="text-gray-600 dark:text-gray-400 mb-4">
+          Send the total amount to:
+        </p>
 
-        <div className="bg-gray-800 rounded-md p-4 text-lg font-mono text-blue-100 mb-2 border border-gray-700">
+        <div className="bg-gray-100 dark:bg-gray-800 rounded-md p-4 text-lg font-mono text-blue-800 dark:text-blue-100 mb-2 border border-gray-300 dark:border-gray-700">
           {accountNumber}
         </div>
 
         <div className="mb-6 text-lg">
-          <span className="font-semibold text-gray-200">Total:</span>{" "}
-          <span className="font-mono text-blue-400">
+          <span className="font-semibold text-gray-800 dark:text-gray-200">
+            Total:
+          </span>{" "}
+          <span className="font-mono text-blue-700 dark:text-blue-400">
             {total.toLocaleString(undefined, {
               style: "currency",
               currency: "USD",
