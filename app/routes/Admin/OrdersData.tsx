@@ -14,7 +14,7 @@ const getStatusStyles = (status: string) => {
     case "Pending":
     case "Pickup":
       return "bg-[#FFC107]/40 text-[#FFC107]";
-    case "Not-paid":
+    case "Denied":
     case "Canceled":
       return "bg-[#DC3545]/40 text-[#DC3545]";
     case "Shipped":

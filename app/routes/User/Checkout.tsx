@@ -197,7 +197,7 @@ const Checkout: React.FC = () => {
 
     setShowAccountPopup(false);
     setTimeout(() => {
-      window.history.back();
+      window.location.href = "/user/orders";
     }, 3000);
   };
 

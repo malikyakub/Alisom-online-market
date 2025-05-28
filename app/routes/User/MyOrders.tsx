@@ -12,7 +12,7 @@ const MyOrders = () => {
   useEffect(() => {
     const fetchOrders = async () => {
       if (user?.id) {
-        const { data, err } = await getOrdersByUserOrEmail(user.id);
+        const { data, err } = await getOrdersByUserOrEmail(user.id, user.email);
         if (!err && data) {
           setOrders(data);
         }

@@ -161,22 +161,53 @@ const useOrders = () => {
     setIsLoading(true);
 
     try {
-      let query = supabase.from("Orders").select("*").order("created_at", {
-        ascending: false,
-      });
+      let results: any[] = [];
 
-      if (user_id) {
-        query = query.eq("user_id", user_id);
-      } else if (email) {
-        query = query.eq("Email", email);
-      } else {
+      if (!user_id && !email) {
         throw new Error("No user_id or email provided");
       }
 
-      const { data, error } = await query;
+      const queries = [];
 
-      if (error) throw error;
-      return { data, err: null };
+      if (user_id) {
+        queries.push(
+          supabase
+            .from("Orders")
+            .select("*")
+            .eq("user_id", user_id)
+            .order("created_at", { ascending: false })
+        );
+      }
+
+      if (email) {
+        queries.push(
+          supabase
+            .from("Orders")
+            .select("*")
+            .eq("Email", email)
+            .order("created_at", { ascending: false })
+        );
+      }
+
+      const responses = await Promise.all(queries);
+
+      for (const { data, error } of responses) {
+        if (error) throw error;
+        if (data) {
+          results = results.concat(data);
+        }
+      }
+
+      const uniqueResults = Array.from(
+        new Map(results.map((item) => [item.id, item])).values()
+      );
+
+      uniqueResults.sort(
+        (a, b) =>
+          new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+      );
+
+      return { data: uniqueResults, err: null };
     } catch (error) {
       return { data: null, err: String(error) };
     } finally {

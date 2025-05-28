@@ -19,7 +19,6 @@ const ShippingInfoModel: React.FC<Props> = ({ orderId, onClose, onSave }) => {
         exit={{ scale: 0.8, opacity: 0 }}
         className="relative bg-white dark:bg-gray-900 p-8 rounded-xl shadow-xl text-center max-w-md w-full text-gray-900 dark:text-gray-100"
       >
-        {/* Close Button */}
         <button
           className="absolute top-4 right-4 text-gray-500 hover:text-gray-800 dark:text-gray-400 dark:hover:text-white"
           onClick={onClose}
