@@ -4,6 +4,7 @@ import PaymentApprovalModal from "components/PaymentApprovalModal";
 import useOrders from "hooks/useOrders";
 import Alert from "components/Alert";
 import ShippingInfoModel from "components/ShippingInfoModel";
+import ClipLoader from "react-spinners/ClipLoader";
 
 type OrderStatus = "Paid" | "Pending" | "Not-paid";
 type OrderStatusWithShipping =
@@ -427,9 +428,22 @@ const OrdersTable: React.FC = () => {
                         </button>
                         <button
                           onClick={() => handleAction("delete", order.Order_id)}
-                          className="block w-full text-left px-4 py-2 text-sm text-white bg-red-500 hover:bg-red-600 rounded"
+                          disabled={isLoading}
+                          className={`block w-full text-left px-4 py-2 text-sm rounded 
+                            ${
+                              isLoading
+                                ? "bg-red-400 cursor-not-allowed"
+                                : "bg-red-500 hover:bg-red-600"
+                            } text-white flex items-center justify-center gap-2`}
                         >
-                          Delete
+                          {isLoading ? (
+                            <div className="flex flex-row gap-1 items-center">
+                              <ClipLoader size={16} color="#fff" />
+                              Deleting...
+                            </div>
+                          ) : (
+                            "Delete"
+                          )}
                         </button>
                       </motion.div>
                     )}

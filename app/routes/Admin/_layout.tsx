@@ -18,7 +18,7 @@ const LoadingProgressBar = () => {
   return (
     <div className="w-full h-2 bg-gray-200 overflow-hidden">
       <motion.div
-        className="h-full bg-teal-500 rounded"
+        className="h-full bg-teal-500"
         style={{ width: "0%" }}
         animate={controls}
       />

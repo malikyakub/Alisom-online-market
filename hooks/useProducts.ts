@@ -30,7 +30,7 @@ const useProducts = () => {
           images:product_images ( image_url )
         `
         )
-        .gt("stock_quantity", 0);
+        // .gt("stock_quantity", 0);
 
       if (search) query = query.ilike("name", `%${search}%`);
       if (typeof featured === "boolean") query = query.eq("featured", featured);
