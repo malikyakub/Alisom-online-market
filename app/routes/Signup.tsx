@@ -78,7 +78,10 @@ const Signup: React.FC = () => {
   const handleGoogleSignIn = async () => {
     try {
       setIsLoading(true);
-      await continueWithGoogle();
+      const { error } = await continueWithGoogle();
+      if (error) {
+        triggerAlert("Google Sign-In Error", error, "danger");
+      }
       // triggerAlert(
       //   "Google Sign-In In progress",
       //   "This feature is still in development please login manually",
