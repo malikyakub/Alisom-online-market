@@ -22,7 +22,7 @@ const Checkout: React.FC = () => {
   const [showAccountPopup, setShowAccountPopup] = useState(false);
   const [showOrderPlaced, setShowOrderPlaced] = useState(false);
   const [selectedPayment, setSelectedPayment] = useState("EVC Plus");
-  const { createOrder, isLoading } = useOrders();
+  const { createOrder } = useOrders();
   const { user } = useAuth();
   const { GetUserById } = useUsers();
   const { GetProductById } = useProducts();
@@ -236,7 +236,7 @@ const Checkout: React.FC = () => {
         </span>
       </div>
 
-      {!isLoading && purchasedProducts.length === 0 ? (
+      {purchasedProducts.length === 0 ? (
         <div className="flex flex-col items-center justify-center py-16">
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -331,16 +331,8 @@ const Checkout: React.FC = () => {
                 <button
                   type="submit"
                   className="mt-6 w-full bg-blue-600 text-white py-2 rounded-md font-semibold text-sm hover:bg-blue-700 transition flex items-center justify-center"
-                  disabled={isLoading}
                 >
-                  {isLoading ? (
-                    <>
-                      <ClipLoader size={20} color="#fff" />
-                      <span className="ml-2">Placing Order...</span>
-                    </>
-                  ) : (
-                    "Confirm and Continue"
-                  )}
+                  Confirm and Continue
                 </button>
               </form>
             </div>
@@ -353,7 +345,7 @@ const Checkout: React.FC = () => {
                 selectedShippingType={selectedShippingType}
                 setSelectedShippingType={setSelectedShippingType}
                 onPlaceOrder={() => {}}
-                loading={isLoading}
+                loading={false}
               />
             </div>
           </div>

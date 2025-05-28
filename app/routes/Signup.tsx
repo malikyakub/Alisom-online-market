@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useMutation } from "@tanstack/react-query";
 import RegisterForm from "components/RegisterForm";
 import SignupIllustrator from "/assets/images/Login-illustrator.png";
 import useAuth from "hooks/useAuth";
@@ -12,7 +13,7 @@ export function meta() {
 const Signup: React.FC = () => {
   const { signup, continueWithGoogle } = useAuth();
   const { NewUser } = useUsers();
-  const [isLoading, setIsLoading] = useState(false);
+
   const [alertOpen, setAlertOpen] = useState(false);
   const [alertProps, setAlertProps] = useState<{
     title: string;
@@ -29,22 +30,19 @@ const Signup: React.FC = () => {
     setAlertOpen(true);
   };
 
-  const handleSubmit = async (formData: {
-    name: string;
-    phone: string;
-    address: string;
-    email: string;
-    password: string;
-    confirmPassword: string;
-  }) => {
-    if (formData.password !== formData.confirmPassword) {
-      triggerAlert("Password Mismatch", "Passwords do not match.", "warning");
-      return;
-    }
+  const signupMutation = useMutation({
+    mutationFn: async (formData: {
+      name: string;
+      phone: string;
+      address: string;
+      email: string;
+      password: string;
+      confirmPassword: string;
+    }) => {
+      if (formData.password !== formData.confirmPassword) {
+        throw new Error("Passwords do not match.");
+      }
 
-    setIsLoading(true);
-
-    try {
       const { user: authUser } = await signup({
         email: formData.email,
         password: formData.password,
@@ -54,49 +52,57 @@ const Signup: React.FC = () => {
       });
 
       if (!authUser) {
-        triggerAlert(
-          "Signup Failed",
-          "No user was returned after signup. Please try again.",
-          "danger"
-        );
-        return;
+        throw new Error("No user was returned after signup. Please try again.");
       }
 
+      return authUser;
+    },
+    onSuccess: (authUser) => {
       triggerAlert("Signup Successful", "Welcome aboard!", "success");
       setTimeout(() => {
         window.location.href = "/";
       }, 3000);
-    } catch (error: any) {
+    },
+    onError: (error: any) => {
       const errorMsg =
         error?.message || error?.toString() || "Unexpected error occurred.";
       triggerAlert("Signup Error", errorMsg, "danger");
-    } finally {
-      setIsLoading(false);
-    }
-  };
+    },
+  });
 
-  const handleGoogleSignIn = async () => {
-    try {
-      setIsLoading(true);
+  const googleMutation = useMutation({
+    mutationFn: async () => {
       const { error } = await continueWithGoogle();
-      if (error) {
-        triggerAlert("Google Sign-In Error", error, "danger");
-      }
-      // triggerAlert(
-      //   "Google Sign-In In progress",
-      //   "This feature is still in development please login manually",
-      //   "warning"
-      // );
-      setTimeout(() => {
-        setIsLoading(false);
-      }, 3000);
-    } catch (error: any) {
+      if (error) throw new Error(error);
+    },
+    onSuccess: () => {
+      // Optional: Handle successful Google sign-in
+    },
+    onError: (error: any) => {
       const errorMsg =
         error?.message || error?.toString() || "Unexpected error occurred.";
       triggerAlert("Google Sign-In Error", errorMsg, "danger");
-    } finally {
-      setIsLoading(false);
-    }
+    },
+  });
+
+  const handleSubmit = (formData: {
+    name: string;
+    phone: string;
+    address: string;
+    email: string;
+    password: string;
+    confirmPassword: string;
+  }) => {
+    signupMutation.mutate(formData);
+  };
+
+  const handleGoogleSignIn = () => {
+    return new Promise<void>((resolve) => {
+      googleMutation.mutate(undefined, {
+        onSuccess: () => resolve(),
+        onError: () => resolve(),
+      });
+    });
   };
 
   return (
@@ -118,8 +124,8 @@ const Signup: React.FC = () => {
           <RegisterForm
             isLogin={false}
             onSubmit={handleSubmit}
-            isLoading={isLoading}
             onGoogleSignIn={handleGoogleSignIn}
+            isLoading={signupMutation.isPending || googleMutation.isPending}
           />
         </div>
       </div>
