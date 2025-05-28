@@ -3,10 +3,11 @@ import { useNavigate } from "react-router-dom";
 import useUsers from "hooks/useUsers";
 import useAuth from "hooks/useAuth";
 import Alert from "components/Alert";
+import ClipLoader from "react-spinners/ClipLoader";
 
 const UserAccount = () => {
   const { user, loading, updatePassword } = useAuth();
-  const { GetUserById, UpdateUser } = useUsers();
+  const { GetUserById, UpdateUser, isLoading } = useUsers();
   const navigate = useNavigate();
 
   const [formData, setFormData] = useState({
@@ -76,11 +77,7 @@ const UserAccount = () => {
       return;
     }
 
-    if (
-      formData.currentPassword ||
-      formData.newPassword ||
-      formData.confirmPassword
-    ) {
+    if (formData.newPassword || formData.confirmPassword) {
       if (
         !formData.currentPassword ||
         !formData.newPassword ||
@@ -123,7 +120,6 @@ const UserAccount = () => {
 
     const updatedData = {
       fullname: `${formData.firstName} ${formData.lastName}`.trim(),
-      email: formData.email,
       address: formData.address,
     };
 
@@ -202,6 +198,7 @@ const UserAccount = () => {
                     <input
                       type={field === "email" ? "email" : "text"}
                       name={field}
+                      disabled={field === "email" ? true : false}
                       placeholder={`Enter your ${field}`}
                       value={formData[field as keyof typeof formData] as string}
                       onChange={handleChange}
@@ -272,7 +269,14 @@ const UserAccount = () => {
                   type="submit"
                   className="bg-blue-600 dark:bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-700 dark:hover:bg-blue-600"
                 >
-                  Save Changes
+                  {isLoading || loading ? (
+                    <span className="flex items-center gap-2">
+                      <ClipLoader size={16} color="#fff" />
+                      Saving...
+                    </span>
+                  ) : (
+                    "Save Changes"
+                  )}
                 </button>
               </div>
             </form>

@@ -136,11 +136,11 @@ const useAuth = (): UseAuthReturn => {
     return { success: true };
   };
 
-  const continueWithGoogle = async (): Promise<{ error: any }> => {
+    const continueWithGoogle = async (): Promise<{ error: any }> => {
     const { error } = await supabase.auth.signInWithOAuth({
       provider: "google",
       options: {
-        redirectTo: "https://alisom-online-market.vercel.app/",
+        redirectTo: window.location.origin,
       },
     });
     return { error };
