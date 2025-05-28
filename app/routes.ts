@@ -7,8 +7,8 @@ export default [
   route("Signup", "routes/Signup.tsx"),
   route("Contact", "routes/Contact.tsx"),
   route("About", "routes/About.tsx"),
-  route("privacy-policy"rms-of-servic, "routes/PrivacyPolicy.tsx"),
-  route("tees", "routes/TermsOfService.tsx"),
+  route("privacy-policy", "routes/PrivacyPolicy.tsx"),
+  route("terms-of-services", "routes/TermsOfService.tsx"),
   route("User", "routes/User/_layout.tsx", {}, [
     route("Account", "routes/User/Account.tsx"),
     route("Checkout", "routes/User/Checkout.tsx"),
