@@ -4,9 +4,15 @@ type TotalCardProps = {
   subtotal: number;
   shipping: string;
   total: number;
+  onCheckout: () => void;
 };
 
-const TotalCard: React.FC<TotalCardProps> = ({ subtotal, shipping, total }) => {
+const TotalCard: React.FC<TotalCardProps> = ({
+  subtotal,
+  shipping,
+  total,
+  onCheckout,
+}) => {
   return (
     <div className="bg-white dark:bg-gray-900 p-6 rounded-lg shadow-md w-full md:max-w-md mx-auto">
       <h2 className="text-lg font-bold mb-4 text-gray-900 dark:text-white">
@@ -44,12 +50,12 @@ const TotalCard: React.FC<TotalCardProps> = ({ subtotal, shipping, total }) => {
         </span>
       </div>
 
-      <a
-        href="/user/checkout"
+      <button
+        onClick={onCheckout}
         className="block w-full text-center bg-[#007BFF] text-white font-semibold py-2 rounded hover:bg-blue-700 transition duration-300 shadow-md hover:shadow-lg"
       >
         Proceed to Checkout
-      </a>
+      </button>
     </div>
   );
 };

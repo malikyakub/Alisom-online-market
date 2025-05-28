@@ -1,7 +1,8 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { FiFilter } from "react-icons/fi";
 import { Slider } from "@mui/material";
+import { useQuery } from "@tanstack/react-query";
 import usecategory from "hooks/useCategories";
 import useBrands from "hooks/useBrands";
 
@@ -54,30 +55,36 @@ export default function ProductFilter({
     discount = [],
   } = filters;
 
-  const [categoriesData, setCategoriesData] = useState<Category[]>([]);
-  const [brandsData, setBrandsData] = useState<Brand[]>([]);
-  const [isLoadingCategories, setIsLoadingCategories] = useState(false);
-  const [isLoadingBrands, setIsLoadingBrands] = useState(false);
-
   const { Allcategory } = usecategory();
   const { getAllBrands } = useBrands();
 
-  useEffect(() => {
-    const getCategories = async () => {
-      setIsLoadingCategories(true);
+  const {
+    data: categoriesData = [],
+    isLoading: isLoadingCategories,
+    isError: isErrorCategories,
+    refetch: refetchCategories,
+  } = useQuery<Category[], Error>({
+    queryKey: ["categories"],
+    queryFn: async () => {
       const { data, err } = await Allcategory();
-      if (!err) setCategoriesData(data ?? []);
-      setIsLoadingCategories(false);
-    };
-    const getBrands = async () => {
-      setIsLoadingBrands(true);
+      if (err) throw err;
+      return data ?? [];
+    },
+  });
+
+  const {
+    data: brandsData = [],
+    isLoading: isLoadingBrands,
+    isError: isErrorBrands,
+    refetch: refetchBrands,
+  } = useQuery<Brand[], Error>({
+    queryKey: ["brands"],
+    queryFn: async () => {
       const { data, err } = await getAllBrands();
-      if (!err) setBrandsData(data ?? []);
-      setIsLoadingBrands(false);
-    };
-    getCategories();
-    getBrands();
-  }, []);
+      if (err) throw err;
+      return data ?? [];
+    },
+  });
 
   const handleQueryChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     onFiltersChange({ ...filters, query: e.target.value });
@@ -157,11 +164,11 @@ export default function ProductFilter({
   );
 
   const renderSkeleton = (count: number) => (
-    <div className="space-y-2">
+    <div className="flex flex-wrap gap-2">
       {Array.from({ length: count }).map((_, i) => (
         <div
           key={i}
-          className="h-6 bg-gray-300 dark:bg-gray-600 rounded animate-pulse w-24"
+          className="h-6 bg-gray-300 dark:bg-gray-600 rounded animate-pulse w-16"
         ></div>
       ))}
     </div>
@@ -212,22 +219,43 @@ export default function ProductFilter({
                 max={5000}
               />
             </div>
-            {isLoadingCategories
-              ? renderSkeleton(5)
-              : renderRadioGroup(
-                  "Category",
-                  categoriesData.map((c) => c.name),
-                  categorySelected,
-                  handleCategoryChange
-                )}
-            {isLoadingBrands
-              ? renderSkeleton(5)
-              : renderRadioGroup(
-                  "Brand",
-                  brandsData.map((b) => b.name),
-                  brandSelected,
-                  handleBrandChange
-                )}
+            {isLoadingCategories ? (
+              renderSkeleton(5)
+            ) : isErrorCategories ? (
+              <div className="text-red-500">
+                Failed to load categories.{" "}
+                <button
+                  onClick={() => refetchCategories()}
+                  className="underline"
+                >
+                  Retry
+                </button>
+              </div>
+            ) : (
+              renderRadioGroup(
+                "Category",
+                categoriesData.map((c) => c.name),
+                categorySelected,
+                handleCategoryChange
+              )
+            )}
+            {isLoadingBrands ? (
+              renderSkeleton(5)
+            ) : isErrorBrands ? (
+              <div className="text-red-500">
+                Failed to load brands.{" "}
+                <button onClick={() => refetchBrands()} className="underline">
+                  Retry
+                </button>
+              </div>
+            ) : (
+              renderRadioGroup(
+                "Brand",
+                brandsData.map((b) => b.name),
+                brandSelected,
+                handleBrandChange
+              )
+            )}
             <div>
               <h3 className="font-semibold text-sm text-gray-700 dark:text-gray-200 mb-2">
                 Sort By
@@ -285,45 +313,79 @@ export default function ProductFilter({
             max={5000}
           />
         </div>
-        {isLoadingCategories
-          ? renderSkeleton(5)
-          : renderRadioGroup(
-              "Category",
-              categoriesData.map((c) => c.name),
-              categorySelected,
-              handleCategoryChange
-            )}
-        {isLoadingBrands
-          ? renderSkeleton(5)
-          : renderRadioGroup(
-              "Brand",
-              brandsData.map((b) => b.name),
-              brandSelected,
-              handleBrandChange
-            )}
+        {isLoadingCategories ? (
+          <div>
+            <h3 className="font-semibold text-sm text-gray-700 dark:text-gray-200 mb-2">
+              Category
+            </h3>
+            {renderSkeleton(5)}
+          </div>
+        ) : isErrorCategories ? (
+          <div className="text-red-500">
+            Failed to load categories.{" "}
+            <button onClick={() => refetchCategories()} className="underline">
+              Retry
+            </button>
+          </div>
+        ) : (
+          renderRadioGroup(
+            "Category",
+            categoriesData.map((c) => c.name),
+            categorySelected,
+            handleCategoryChange
+          )
+        )}
+
+        {isLoadingBrands ? (
+          <div>
+            <h3 className="font-semibold text-sm text-gray-700 dark:text-gray-200 mb-2">
+              Brand
+            </h3>
+            {renderSkeleton(5)}
+          </div>
+        ) : isErrorBrands ? (
+          <div className="text-red-500">
+            Failed to load brands.{" "}
+            <button onClick={() => refetchBrands()} className="underline">
+              Retry
+            </button>
+          </div>
+        ) : (
+          renderRadioGroup(
+            "Brand",
+            brandsData.map((b) => b.name),
+            brandSelected,
+            handleBrandChange
+          )
+        )}
+
         <div>
           <h3 className="font-semibold text-sm text-gray-700 dark:text-gray-200 mb-2">
             Sort By
           </h3>
           <div className="flex flex-wrap gap-2">
-            {sortOptions.map((opt) => {
-              const isSelected = sortBy === opt.value;
-              return (
-                <div
-                  key={opt.value}
-                  className={`px-3 py-1 text-sm rounded cursor-pointer border transition ${
-                    isSelected
-                      ? "text-[#007BFF] border-[#007BFF] bg-[#007BFF22] dark:bg-[#007BFF33]"
-                      : "text-[#666666] dark:text-gray-300 border-[#A3A3A3] dark:border-gray-600 hover:bg-gray-100 dark:hover:bg-gray-700"
-                  }`}
-                  onClick={() =>
-                    handleSortChange(isSelected ? null : opt.value)
-                  }
-                >
-                  {opt.label}
-                </div>
-              );
-            })}
+            {isLoadingBrands || isLoadingCategories ? (
+              <div>{renderSkeleton(5)}</div>
+            ) : (
+              sortOptions.map((opt) => {
+                const isSelected = sortBy === opt.value;
+                return (
+                  <div
+                    key={opt.value}
+                    className={`px-3 py-1 text-sm rounded cursor-pointer border transition ${
+                      isSelected
+                        ? "text-[#007BFF] border-[#007BFF] bg-[#007BFF22] dark:bg-[#007BFF33]"
+                        : "text-[#666666] dark:text-gray-300 border-[#A3A3A3] dark:border-gray-600 hover:bg-gray-100 dark:hover:bg-gray-700"
+                    }`}
+                    onClick={() =>
+                      handleSortChange(isSelected ? null : opt.value)
+                    }
+                  >
+                    {opt.label}
+                  </div>
+                );
+              })
+            )}
           </div>
         </div>
         <button
