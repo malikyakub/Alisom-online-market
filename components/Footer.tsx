@@ -1,11 +1,12 @@
 import React, { useState } from "react";
+import { Link } from "react-router-dom";
 import {
   FaFacebookF,
   FaTwitter,
   FaInstagram,
   FaLinkedinIn,
 } from "react-icons/fa";
-import Alert from "./Alert"; // Adjust the import path if needed
+import Alert from "./Alert";
 
 const Footer = () => {
   const [email, setEmail] = useState("");
@@ -28,7 +29,6 @@ const Footer = () => {
       return;
     }
 
-    // Simulate API call or subscription logic here
     console.log("Subscribed email:", email);
 
     setAlertInfo({
@@ -104,21 +104,61 @@ const Footer = () => {
         <div>
           <h2 className="text-xl font-bold mb-4">Account</h2>
           <ul className="space-y-2 text-sm">
-            <li>My Account</li>
-            <li>Login / Register</li>
-            <li>Cart</li>
-            <li>Wishlist</li>
-            <li>Shop</li>
+            <li>
+              <Link to="/User/Account" className="hover:underline">
+                My Account
+              </Link>
+            </li>
+            <li>
+              <Link to="/login" className="hover:underline">
+                Login
+              </Link>{" "}
+              /{" "}
+              <Link to="/signup" className="hover:underline">
+                Register
+              </Link>
+            </li>
+            <li>
+              <Link to="/User/Cart" className="hover:underline">
+                Cart
+              </Link>
+            </li>
+            <li>
+              <Link to="/User/Wishlist" className="hover:underline">
+                Wishlist
+              </Link>
+            </li>
+            <li>
+              <Link to="/User/Products" className="hover:underline">
+                Shop
+              </Link>
+            </li>
           </ul>
         </div>
 
         <div>
           <h2 className="text-xl font-bold mb-4">Quick Link</h2>
           <ul className="space-y-2 text-sm">
-            <li>Privacy Policy</li>
-            <li>Terms Of Use</li>
-            <li>FAQ</li>
-            <li>Contact</li>
+            <li>
+              <Link to="/privacy-policy" className="hover:underline">
+                Privacy Policy
+              </Link>
+            </li>
+            <li>
+              <Link to="/terms-of-services" className="hover:underline">
+                Terms Of Use
+              </Link>
+            </li>
+            <li>
+              <Link to="/contact" className="hover:underline">
+                FAQ
+              </Link>
+            </li>
+            <li>
+              <Link to="/contact" className="hover:underline">
+                Contact
+              </Link>
+            </li>
           </ul>
           <div className="flex space-x-4 mt-4">
             <FaFacebookF className="cursor-pointer" />
@@ -130,7 +170,7 @@ const Footer = () => {
       </div>
 
       <div className="text-center text-sm mt-8 border-t border-white pt-4">
-        <p>&copy; Copyright Alisom online market 2025. All right reserved</p>
+        <p>&copy; Copyright Alisom online market 2025. All rights reserved</p>
       </div>
     </div>
   );
