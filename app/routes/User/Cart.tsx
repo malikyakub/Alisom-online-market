@@ -1,4 +1,5 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useRef, useState, useEffect } from "react";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import ProductDetailsCard from "components/ProductDetailsCard";
 import TotalCard from "components/TotalCard";
 import useAuth from "hooks/useAuth";
@@ -10,103 +11,107 @@ import supabase from "utils/supabase";
 
 export default function Cart() {
   const { user } = useAuth();
-  const { getCart,  updateCartItem } = useCart();
+  const { getCart, updateCartItem } = useCart();
   const { GetProductById } = useProducts();
-
-  const [cartItems, setCartItems] = useState<any[]>([]);
-  const [cartProducts, setCartProducts] = useState<any[]>([]);
-  const [updating, setUpdating] = useState(false);
+  const queryClient = useQueryClient();
+  const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
   const [alertVisible, setAlertVisible] = useState(false);
-  const [alertContent, setAlertContent] = useState<{
-    type: "info" | "success" | "warning" | "danger";
-    title: string;
-    description: string;
-  }>({
-    type: "info",
+  const [alertContent, setAlertContent] = useState({
+    type: "info" as "info" | "success" | "warning" | "danger",
     title: "Cart Loaded",
     description: "Product details have been successfully loaded.",
   });
 
   const tempQuantitiesRef = useRef<number[]>([]);
+  const [updating, setUpdating] = useState(false);
 
-  useEffect(() => {
-    const fetchCart = async (userId: string) => {
-      const { data, err } = await getCart(userId);
-      if (err) return;
+  const enrichCartProducts = async (items: any[]) => {
+    const detailedProducts = await Promise.all(
+      items.map(async (item) => {
+        const { data: productDetails, err } = await GetProductById(
+          item.product_id
+        );
+        if (err || !productDetails) return null;
+        return { ...productDetails, quantity: item.quantity };
+      })
+    );
+    return detailedProducts.filter(Boolean);
+  };
 
-      setCartItems(data || []);
-      tempQuantitiesRef.current = (data || []).map(
-        (item: any) => item.quantity
-      );
+  const {
+    data: cartProducts = [],
+    isLoading: isCartLoading,
+    refetch: refetchCart,
+  } = useQuery({
+    queryKey: ["cart", user?.id],
+    queryFn: async () => {
+      if (!user?.id) return [];
 
-      const detailedProducts = await Promise.all(
-        (data || []).map(async (item: any) => {
-          const { data: productDetails, err } = await GetProductById(
-            item.product_id
-          );
-          if (err) return null;
-          return { ...productDetails, quantity: item.quantity };
-        })
-      );
+      const { data, err } = await getCart(user.id);
+      if (err || !data) return [];
 
-      setCartProducts(detailedProducts.filter(Boolean));
-    };
+      tempQuantitiesRef.current = data.map((item: any) => item.quantity);
+      return await enrichCartProducts(data);
+    },
+    enabled: !!user?.id,
+  });
 
-    if (user?.id) {
-      fetchCart(user.id);
-
-      const subscription = supabase
-        .channel("public:cart")
-        .on(
-          "postgres_changes",
-          {
-            event: "*",
-            schema: "public",
-            table: "cart",
-            filter: `user_id=eq.${user.id}`,
-          },
-          async () => {
-            await fetchCart(user.id);
-          }
-        )
-        .subscribe();
-
-      return () => {
-        supabase.removeChannel(subscription);
-      };
-    } else {
+  const {
+    data: guestCartProducts = [],
+    isLoading: isGuestCartLoading,
+    refetch: refetchGuestCart,
+  } = useQuery({
+    queryKey: ["guestCart"],
+    queryFn: async () => {
       const guestCart = localStorage.getItem("guest_cart");
       const items = guestCart ? JSON.parse(guestCart) : [];
-      setCartItems(items);
       tempQuantitiesRef.current = items.map((item: any) => item.quantity);
+      return await enrichCartProducts(items);
+    },
+    enabled: !user?.id,
+  });
 
-      Promise.all(
-        items.map(async (item: any) => {
-          const { data: productDetails, err } = await GetProductById(
-            item.product_id
-          );
-          if (err) return null;
-          return { ...productDetails, quantity: item.quantity };
-        })
-      ).then((results) => {
-        setCartProducts(results.filter(Boolean));
-      });
-    }
-  }, [user]);
+  useEffect(() => {
+    if (!user?.id) return;
+
+    const subscription = supabase
+      .channel("public:cart")
+      .on(
+        "postgres_changes",
+        {
+          event: "*",
+          schema: "public",
+          table: "cart",
+          filter: `user_id=eq.${user.id}`,
+        },
+        async () => {
+          await refetchCart();
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(subscription);
+    };
+  }, [user, refetchCart]);
+
+  const displayedCart = user?.id ? cartProducts : guestCartProducts;
+  const displayedLoading = user?.id ? isCartLoading : isGuestCartLoading;
 
   const handleQuantityTempChange = (index: number, newQty: number) => {
+    if (tempQuantitiesRef.current[index] !== newQty) {
+      setHasUnsavedChanges(true);
+    }
     tempQuantitiesRef.current[index] = newQty;
   };
 
   const handleUpdateCart = async () => {
     setUpdating(true);
 
-    const updated = cartProducts.map((item, i) => ({
+    const updated = displayedCart.map((item, i) => ({
       ...item,
       quantity: tempQuantitiesRef.current[i],
     }));
-
-    setCartProducts(updated);
 
     for (let i = 0; i < updated.length; i++) {
       const product = updated[i];
@@ -127,16 +132,36 @@ export default function Cart() {
       }
     }
 
+    if (user?.id) {
+      await refetchCart();
+    } else {
+      await refetchGuestCart();
+    }
+
     setAlertContent({
       type: "success",
       title: "Cart Updated",
       description: "Your cart has been successfully updated.",
     });
     setAlertVisible(true);
+    setHasUnsavedChanges(false);
     setUpdating(false);
   };
 
-  const subtotal = cartProducts.reduce(
+  const handleProceedToCheckout = () => {
+    if (hasUnsavedChanges) {
+      setAlertContent({
+        type: "warning",
+        title: "Unsaved Changes",
+        description: "Please update your cart before proceeding to checkout.",
+      });
+      setAlertVisible(true);
+      return;
+    }
+    window.location.href = "/user/checkout";
+  };
+
+  const subtotal = displayedCart.reduce(
     (sum, item) => sum + item.price * item.quantity,
     0
   );
@@ -156,7 +181,28 @@ export default function Cart() {
         <span className="text-black dark:text-white font-semibold">Cart</span>
       </div>
 
-      {cartProducts.length === 0 ? (
+      {displayedLoading ? (
+        <div className="flex flex-col gap-4">
+          {[1, 2].map((skeleton) => (
+            <div
+              key={skeleton}
+              className="h-24 bg-gray-200 dark:bg-gray-700 animate-pulse rounded"
+            />
+          ))}
+          <div className="flex justify-between my-4">
+            <a
+              href="/user/products"
+              className="px-6 py-2 border border-[#1A2238] dark:border-[#F4F4F4] font-bold rounded text-sm text-[#666666] dark:text-gray-300 hover:bg-[#1A2238] dark:hover:bg-[#17C3B2] transition hover:text-white"
+            >
+              Return to Shop
+            </a>
+            <button className="bg-[#007BFF] hover:bg-blue-700 font-bold transition text-white px-6 py-2 rounded text-sm flex items-center gap-2">
+              {updating ? <ClipLoader size={16} color="#ffffff" /> : null}
+              {updating ? "Updating..." : "Update Cart"}
+            </button>
+          </div>
+        </div>
+      ) : displayedCart.length === 0 ? (
         <div className="text-center py-12">
           <svg
             className="mx-auto mb-4 w-24 h-24 text-gray-400 dark:text-gray-600"
@@ -179,7 +225,7 @@ export default function Cart() {
           </p>
           <a
             href="/user/products"
-            className="px-6 py-2 border border-[#1A2238] font-bold rounded text-sm text-[#666666] dark:text-gray-300 hover:bg-[#1A2238] dark:hover:bg-[#17C3B2] transition hover:text-white"
+            className="px-6 py-2 border border-[#1A2238] dark:border-[#F4F4F4] font-bold rounded text-sm text-[#666666] dark:text-gray-300 hover:bg-[#1A2238] dark:hover:bg-[#17C3B2] transition hover:text-white"
           >
             Return to Shop
           </a>
@@ -187,7 +233,7 @@ export default function Cart() {
       ) : (
         <>
           <div className="flex flex-col gap-2">
-            {cartProducts.map((item, index) => (
+            {displayedCart.map((item, index) => (
               <ProductDetailsCard
                 key={item.product_id}
                 product={item}
@@ -200,7 +246,7 @@ export default function Cart() {
           <div className="flex justify-between my-4">
             <a
               href="/user/products"
-              className="px-6 py-2 border border-[#1A2238] font-bold rounded text-sm text-[#666666] dark:text-gray-300 hover:bg-[#1A2238] dark:hover:bg-[#17C3B2] transition hover:text-white"
+              className="px-6 py-2 border border-[#1A2238] dark:border-[#F4F4F4] font-bold rounded text-sm text-[#666666] dark:text-gray-300 hover:bg-[#1A2238] dark:hover:bg-[#17C3B2] transition hover:text-white"
             >
               Return to Shop
             </a>
@@ -215,7 +261,12 @@ export default function Cart() {
           </div>
 
           <div className="w-full md:w-1/3">
-            <TotalCard subtotal={subtotal} shipping="Free" total={subtotal} />
+            <TotalCard
+              subtotal={subtotal}
+              shipping="Free"
+              total={subtotal}
+              onCheckout={handleProceedToCheckout}
+            />
           </div>
         </>
       )}
