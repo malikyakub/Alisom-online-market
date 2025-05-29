@@ -1,5 +1,5 @@
 import React from "react";
-import { FiPhoneCall, FiMail } from "react-icons/fi";
+import { FiPhoneCall, FiMail, FiMapPin } from "react-icons/fi";
 
 const ContactInfo = () => {
   return (
@@ -41,6 +41,36 @@ const ContactInfo = () => {
           <p className="font-semibold text-[#1A2238] dark:text-white">
             support@alisom.com
           </p>
+        </div>
+      </div>
+
+      <hr className="border-gray-300 dark:border-gray-500" />
+
+      <div className="flex items-start gap-4 flex-col">
+        <div className="flex flex-row items-center gap-2">
+          <div className="p-2 bg-[#17C3B2] dark:bg-[#007BFF] rounded-full text-white text-2xl">
+            <FiMapPin />
+          </div>
+          <h2 className="text-lg font-semibold text-[#1A2238] dark:text-white">
+            Visit Us
+          </h2>
+        </div>
+        <div>
+          <p className="text-sm text-[#333333] dark:text-gray-300">
+            Come visit our office at:
+          </p>
+          <p className="font-semibold text-[#1A2238] dark:text-white">
+            Mogadishu, Somalia
+          </p>
+        </div>
+        <div className="w-full h-64 rounded-lg overflow-hidden shadow">
+          <iframe
+            title="Our Location"
+            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d4817.975493841025!2d45.28469117575606!3d2.039832797941831!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3d5869f1a28fa34f%3A0x537672eb16b71c57!2sSomali%20National%20University!5e1!3m2!1sen!2sso!4v1748488225950!5m2!1sen!2sso"
+            width="100%"
+            height="100%"
+            loading="lazy"
+          ></iframe>
         </div>
       </div>
     </div>

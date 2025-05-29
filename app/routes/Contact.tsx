@@ -8,7 +8,7 @@ const Contact = () => {
   const [message, setMessage] = useState("");
 
   return (
-    <div className="p-4 sm:p-6 lg:p-8 h-full">
+    <div className="p-4 sm:p-6 lg:p-8">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 space-y-2 sm:space-y-0">
         <div className="text-sm text-gray-500 dark:text-gray-300">
           Home /{" "}
@@ -49,7 +49,7 @@ const Contact = () => {
           </div>
 
           <textarea
-            className="w-full h-52 border p-3 rounded bg-gray-200 dark:bg-white/5 dark:text-white dark:border-gray-600 focus:bg-[#007BFF33] focus:border-[#007BFF] outline-none mt-4"
+            className="w-full h-3/5 max-h-4/5 min-h-[60px] border p-3 rounded bg-gray-200 dark:bg-white/5 dark:text-white dark:border-gray-600 focus:bg-[#007BFF33] focus:border-[#007BFF] outline-none mt-4"
             placeholder="Your Message"
             value={message}
             onChange={(e) => setMessage(e.target.value)}
