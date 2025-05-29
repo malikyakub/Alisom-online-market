@@ -103,6 +103,17 @@ const RegisterForm: React.FC<RegisterFormProps> = ({
             placeholder={isLogin ? "Password" : "Create Password"}
             className={inputClass}
           />
+          {isLogin && (
+            <div className="text-right text-sm mt-1">
+              <a
+                href="/forgot-password"
+                className="text-blue-600 dark:text-blue-400 hover:underline"
+              >
+                Forgot password?
+              </a>
+            </div>
+          )}
+
           {!isLogin && (
             <input
               type="password"

@@ -20,6 +20,8 @@ interface UseAuthReturn {
     newPassword: string
   ) => Promise<{ success: boolean; error?: string }>;
   continueWithGoogle: () => Promise<{ error: any }>;
+  sendMagicLink: (email: string) => Promise<{ error: any }>;
+  sendPasswordResetEmail: (email: string) => Promise<void>;
 }
 
 const useAuth = (): UseAuthReturn => {
@@ -136,7 +138,7 @@ const useAuth = (): UseAuthReturn => {
     return { success: true };
   };
 
-    const continueWithGoogle = async (): Promise<{ error: any }> => {
+  const continueWithGoogle = async (): Promise<{ error: any }> => {
     const { error } = await supabase.auth.signInWithOAuth({
       provider: "google",
       options: {
@@ -144,6 +146,18 @@ const useAuth = (): UseAuthReturn => {
       },
     });
     return { error };
+  };
+
+  const sendMagicLink = async (email: string): Promise<{ error: any }> => {
+    const { error } = await supabase.auth.signInWithOtp({ email });
+    return { error };
+  };
+
+  const sendPasswordResetEmail = async (email: string): Promise<void> => {
+    const { error } = await supabase.auth.resetPasswordForEmail(email, {
+      redirectTo: window.location.origin + "/forgot-password",
+    });
+    if (error) throw error;
   };
 
   return {
@@ -154,6 +168,8 @@ const useAuth = (): UseAuthReturn => {
     logout,
     updatePassword,
     continueWithGoogle,
+    sendPasswordResetEmail,
+    sendMagicLink,
   };
 };
 
