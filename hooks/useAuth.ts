@@ -22,6 +22,7 @@ interface UseAuthReturn {
   continueWithGoogle: () => Promise<{ error: any }>;
   sendMagicLink: (email: string) => Promise<{ error: any }>;
   sendPasswordResetEmail: (email: string) => Promise<void>;
+  resetPassword: (accessToken: string, newPassword: string) => Promise<void>;
 }
 
 const useAuth = (): UseAuthReturn => {
@@ -155,8 +156,24 @@ const useAuth = (): UseAuthReturn => {
 
   const sendPasswordResetEmail = async (email: string): Promise<void> => {
     const { error } = await supabase.auth.resetPasswordForEmail(email, {
-      redirectTo: window.location.origin + "/forgot-password",
+      redirectTo: window.location.origin + "/reset-password",
     });
+    if (error) throw error;
+  };
+
+  const resetPassword = async (newPassword: string): Promise<void> => {
+    const {
+      data: { user },
+      error: sessionError,
+    } = await supabase.auth.getUser();
+
+    if (sessionError || !user) {
+      throw new Error(
+        "No authenticated user found. Make sure you visited the reset link."
+      );
+    }
+
+    const { error } = await supabase.auth.updateUser({ password: newPassword });
     if (error) throw error;
   };
 
@@ -170,6 +187,7 @@ const useAuth = (): UseAuthReturn => {
     continueWithGoogle,
     sendPasswordResetEmail,
     sendMagicLink,
+    resetPassword,
   };
 };
 
