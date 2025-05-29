@@ -1,13 +1,16 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import useAuth from "hooks/useAuth";
 import Alert from "components/Alert";
 import { useMutation } from "@tanstack/react-query";
+import UnderDevelopmentModal from "components/UnderDevelopmentModal";
 
 export function meta() {
   return [{ title: "Alisom Online market - Forgot Password" }];
 }
 
 const ForgotPassword: React.FC = () => {
+  const navigate = useNavigate();
   const { sendPasswordResetEmail } = useAuth();
 
   const [alertOpen, setAlertOpen] = useState(false);
@@ -18,7 +21,7 @@ const ForgotPassword: React.FC = () => {
   >("info");
 
   const emailInputRef = React.useRef<HTMLInputElement>(null);
-  React.useEffect(() => {
+  useEffect(() => {
     emailInputRef.current?.focus();
   }, []);
 
@@ -45,10 +48,15 @@ const ForgotPassword: React.FC = () => {
   });
 
   const [email, setEmail] = useState("");
+  const [showDevModal, setShowDevModal] = useState(true);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     forgotPasswordMutation.mutate(email.trim());
+  };
+
+  const handleModalClose = () => {
+    navigate(-1);
   };
 
   const inputClass =
@@ -56,6 +64,8 @@ const ForgotPassword: React.FC = () => {
 
   return (
     <div className="p-4 flex flex-col gap-10 justify-center items-center h-dvh">
+      {showDevModal && <UnderDevelopmentModal onClose={handleModalClose} />}
+
       <Alert
         title={alertTitle}
         description={alertMessage}
