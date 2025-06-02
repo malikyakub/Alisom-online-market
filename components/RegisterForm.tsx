@@ -44,7 +44,8 @@ const RegisterForm: React.FC<RegisterFormProps> = ({
   };
 
   const inputClass =
-    "w-full border rounded px-4 py-2 focus:outline-none focus:bg-blue-100 focus:border-[#007BFF] border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-black dark:placeholder-gray-400";
+  "w-full border rounded px-4 py-2 focus:outline-none border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-black dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 focus:bg-blue-100 dark:focus:bg-blue-900 focus:border-[#007BFF]";
+
 
   return (
     <div className="flex items-center justify-center w-full">

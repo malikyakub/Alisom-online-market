@@ -24,6 +24,7 @@ const LOCAL_KEY = "guest_cart";
 
 const useCart = () => {
   const [isLoading, setIsLoading] = useState(false);
+
   const { GetProductById } = useProducts();
 
   const getLocalCart = (): CartItem[] => {
