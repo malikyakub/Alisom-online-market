@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState, useRef, use } from "react";
 import { BiHeart, BiSearch } from "react-icons/bi";
 import { LuShoppingCart } from "react-icons/lu";
 import { CgProfile } from "react-icons/cg";
@@ -23,6 +23,7 @@ const Header = () => {
   const [alertOpen, setAlertOpen] = useState(false);
   const [alertTitle, setAlertTitle] = useState("");
   const [alertMessage, setAlertMessage] = useState("");
+  const [userProfile, setUserProfile] = useState("");
   const [alertType, setAlertType] = useState<
     "success" | "info" | "danger" | "warning"
   >("info");
@@ -99,6 +100,14 @@ const Header = () => {
   useEffect(() => {
     setCurrentPath(window.location.pathname);
   }, []);
+
+  useEffect(() => {
+    if (user?.user_metadata) {
+      setUserProfile(user.user_metadata.avatar_url);
+    } else {
+      setUserProfile("");
+    }
+  }, [user]);
 
   useEffect(() => {
     function handleClickOutside(event: any) {
@@ -249,7 +258,15 @@ const Header = () => {
                   setShowProfilePopupDesktop(!showProfilePopupDesktop)
                 }
               >
-                <CgProfile size={24} />
+                {userProfile ? (
+                  <img
+                    src={userProfile}
+                    alt="User Avatar"
+                    className="w-8 h-8 rounded-full object-cover"
+                  />
+                ) : (
+                  <CgProfile size={24} />
+                )}
               </button>
               {showProfilePopupDesktop && (
                 <div className="absolute top-10 right-0 z-50">
@@ -279,7 +296,15 @@ const Header = () => {
               className="text-gray-700 dark:text-white"
               aria-label="Profile"
             >
-              <CgProfile size={24} />
+              {userProfile ? (
+                <img
+                  src={userProfile}
+                  alt="User Avatar"
+                  className="w-8 h-8 rounded-full object-cover"
+                />
+              ) : (
+                <CgProfile size={24} />
+              )}
             </button>
             {showProfilePopupMobile && (
               <div className="absolute top-10 right-0 z-50">
