@@ -29,7 +29,6 @@ export const links: Route.LinksFunction = () => [
 
 export function Layout({ children }: { children: React.ReactNode }) {
   const location = useLocation();
-
   const isAdmin = location.pathname.startsWith("/admin");
 
   return (
@@ -41,6 +40,33 @@ export function Layout({ children }: { children: React.ReactNode }) {
           name="google-site-verification"
           content="Y1vA2nUZLX4-71mk5UsyQO4j62krPyy5-PX1rvK3a-E"
         />
+
+        <title>Alison Online Market | Buy Smartphones & More</title>
+        <meta
+          name="description"
+          content="Shop the latest smartphones and electronics at Alison Online Market. Explore top deals, wishlists, and quick checkout."
+        />
+        <meta
+          name="keywords"
+          content="smartphones, electronics, online store, Alison market"
+        />
+        <link rel="canonical" href="https://alison-online-market.vercel.app/" />
+
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "Store",
+              name: "Alison Online Market",
+              url: "https://alison-online-market.vercel.app",
+              description: "Online smartphone and electronics marketplace",
+              logo: "https://alison-online-market.vercel.app/logo.png",
+              sameAs: ["https://www.facebook.com/Alcasainternet"],
+            }),
+          }}
+        />
+
         <Meta />
         <Links />
       </head>
